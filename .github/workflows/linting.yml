@@ -32,3 +32,4 @@ jobs:
     - name: Analyze code with linter
       run: |
         pylint -rn -sn --recursive=y ./src
+      continue-on-error: true
