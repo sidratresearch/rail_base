@@ -16,7 +16,9 @@ classifiers = [
 dynamic = ["version"]
 dependencies = [
     "deprecated",
+    "pyyaml",
     "numpy",
+    "click",
     "ceci>=1.10.1",
     "qp-prob>=0.8.3",
     "scipy>=1.9.0",
@@ -32,6 +34,9 @@ dev = [
     "pre-commit", # Used to run checks before finalizing a git commit
     "pylint", # Used for static linting of files
 ]
+
+[project.scripts]
+rail = "rail.cli.commands:cli"
 
 [build-system]
 requires = [
