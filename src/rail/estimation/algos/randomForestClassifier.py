@@ -7,7 +7,7 @@ Note: extra dependence on sklearn and input training file.
 
 import numpy as np
 from ceci.config import StageParameter as Param
-from rail.estimation.tomographer import PZTomographer
+from rail.estimation.tomographer import CatTomographer
 from rail.core.data import TanbleHandle
 from sklearn.ensemble import RandomForestClassifier
 import tables_io
