@@ -19,8 +19,8 @@ class randomForestClassifier(CatTomographer):
     name = 'randomForestClassifier'
     config_options = CatSummarizer.config_options.copy()
     config_options.update(
-        bands=Param(tuple, ["g","r","z"], msg="Which bands to use for classification"),
-        band_names=param(dict, {}, msg="Band column names"),
+        bands=Param(tuple, ["r","i","z"], msg="Which bands to use for classification"),
+        band_names=param(dict, {"r": "mag_r", "i": "mag_i", "z":"mag_z"}, msg="Band column names"),
         z_name=param(str, "sz", msg="Redshift column names"),
         traning_file=Param(str, '', msg="Training file to use"),
         bin_edges=Param(tuple, [0,0.5,1.0], msg="Binning for training data"),
