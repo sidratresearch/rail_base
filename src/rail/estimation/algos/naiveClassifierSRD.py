@@ -13,7 +13,7 @@ class naiveClassifierSRD(PZTomographer):
     bins based on point estimate according to SRD"""
     
     name = 'naiveClassifierSRD'
-    config_options = PZSummarizer.config_options.copy()
+    config_options = PZTomographer.config_options.copy()
     config_options.update(
         tomo_config=Param(str, 'tomo_binning.ini', msg="Configuration file for tomographic binning"),
         point_estimate=Param(str, 'zmode', msg="Which point estimate to use"),)

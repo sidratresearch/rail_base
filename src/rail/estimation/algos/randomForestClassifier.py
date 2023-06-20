@@ -7,32 +7,42 @@ Note: extra dependence on sklearn and input training file.
 
 import numpy as np
 from ceci.config import StageParameter as Param
-from rail.estimation.tomographer import CatTomographer
-from rail.core.data import TanbleHandle
+from rail.estimation.tomographer import CatTomographer, CatInformer
+from rail.core.data import TanbleHandle, ModelHandle
 from sklearn.ensemble import RandomForestClassifier
-import tables_io
 
-class randomForestClassifier(CatTomographer):
-    """Classifier that assigns tomographic 
-    bins based on random forest method"""
+
+class randomForestmodel:
+    """
+    Temporary class to store the trained model.
+    """
+    def __init__(self, classifier, features):
+        self.classifier = classifier
+        self.features = features
+
+
+class Inform_randomForestClassifier(CatInformer):
+    """Train the random forest classifier"""
     
-    name = 'randomForestClassifier'
-    config_options = CatSummarizer.config_options.copy()
+    name = 'Inform_randomForestClassifier'
+    config_options = CatInformer.config_options.copy()
     config_options.update(
         bands=Param(tuple, ["r","i","z"], msg="Which bands to use for classification"),
         band_names=param(dict, {"r": "mag_r", "i": "mag_i", "z":"mag_z"}, msg="Band column names"),
         z_name=param(str, "sz", msg="Redshift column names"),
-        traning_file=Param(str, '', msg="Training file to use"),
         bin_edges=Param(tuple, [0,0.5,1.0], msg="Binning for training data"),
         random_seed=Param(int, msg="random seed"),)
-    outputs = [('output', TableHandle)]
+    outputs = [('model', ModelHandle)]
     
     def __init__(self, args, comm=None):
-        PZTomographer.__init__(self, args, comm=comm)
-            
-    def build_tomographic_classifier(self):
+        CatInformer.__init__(self, args, comm=comm)
+        
+    def run(self):
         # Load the training data
-        training_data_table = tables_io.read(self.config.training_file)
+        if self.config.hdf5_groupname:
+            training_data = self.get_data('input')[self.config.hdf5_groupname]
+        else:  # pragma: no cover
+            training_data = self.get_data('input')
 
         # Pull out the appropriate columns and combinations of the data
         print(f"Using these bands to train the tomography selector: {self.config.bands}")
@@ -76,14 +86,41 @@ class randomForestClassifier(CatTomographer):
         )
         classifier.fit(training_data, training_bin)
 
-        return classifier, features
+        #return classifier, features
+        self.model = randomForestmodel(classifier, features)
+        self.add_data('model', self.model)
+        
+
+class randomForestClassifier(CatTomographer):
+    """Classifier that assigns tomographic 
+    bins based on random forest method"""
+    
+    name = 'randomForestClassifier'
+    config_options = CatTomographer.config_options.copy()
+    config_options.update(
+        bands=Param(tuple, ["r","i","z"], msg="Which bands to use for classification"),
+        band_names=param(dict, {"r": "mag_r", "i": "mag_i", "z":"mag_z"}, msg="Band column names"),)
+    outputs = [('output', TableHandle)]
+    
+    def __init__(self, args, comm=None):
+        CatTomographer.__init__(self, args, comm=comm)
+            
+            
+    def open_model(self, **kwargs):
+        CatTomographer.open_model(self, **kwargs)
+        if self.model is None:  # pragma: no cover
+            return
+        self.classifier = self.model.classifier
+        self.features = self.model.features
 
     
-    def apply_classifier(self, test_data, classifier, features):
+    def run(self):
         """Apply the classifier to the measured magnitudes"""
-
+        
+        test_data = self.get_data('input')
+        
         data = []
-        for f in features:
+        for f in self.features:
             # may be a single band
             if len(f) == 1:
                 f_cat=self.config.band_names[f]
@@ -104,15 +141,7 @@ class randomForestClassifier(CatTomographer):
             data = np.array(data).T
 
         # Run the random forest on this data chunk
-        bin_index = classifier.predict(data)
-        return bin_index
-        
-        
-    def run(self):
-        """Run random forest classifier"""
-        
-        test_data = self.get_data('input')
-        classifier, features = build_tomographic_classifier()
-        bin_index=apply_classifier(test_data, classifier, features)
+        bin_index = self.classifier.predict(data)
+
         tomo = {"tomo": bin_index}
         self.add_data('output', tomo)
