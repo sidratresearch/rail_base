@@ -54,3 +54,11 @@ def info(**kwargs):
     """Print information about the rail ecosystem"""
     scripts.info(**kwargs)
     return 0
+
+
+@cli.command()
+@options.verbose_download()
+def get_data(verbose, **kwargs):
+    """Downloads data from NERSC (if not already found)"""
+    scripts.get_data(verbose, **kwargs)
+    return 0
