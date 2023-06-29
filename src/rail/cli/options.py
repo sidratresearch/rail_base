@@ -18,6 +18,7 @@ __all__ = [
     "print_stages",
     "package_file",
     "inputs",
+    "verbose_download"
 ]
 
 
