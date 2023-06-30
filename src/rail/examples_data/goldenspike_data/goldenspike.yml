@@ -51,7 +51,7 @@ stages:
 - classname: TrainZ
   name: estimate_trainZ
   nprocess: 1
-- classname: RandomPZ
+- classname: RandomGaussEstimator
   name: estimate_randomZ
   nprocess: 1
 - classname: PointEstHistSummarizer
