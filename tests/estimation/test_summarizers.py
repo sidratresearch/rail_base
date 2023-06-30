@@ -7,7 +7,7 @@ import pytest
 from rail.core.data import QPHandle
 from rail.core.stage import RailStage
 from rail.core.utils import RAILDIR
-from rail.estimation.algos import naive_stack, pointEstimateHist, varInference
+from rail.estimation.algos import naive_stack, point_est_hist, varInference
 
 testdata = os.path.join(RAILDIR, "rail/examples_data/testdata/output_BPZ_lite.fits")
 DS = RailStage.data_store
@@ -35,7 +35,7 @@ def test_naive_stack():
 
 def test_point_estimate_hist():
     summary_config_dict = {}
-    summarizer_class = pointEstimateHist.PointEstimateHist
+    summarizer_class = point_est_hist.PointEstHistSummarizer
     results = one_algo("PointEstimateHist", summarizer_class, summary_config_dict)
 
 
