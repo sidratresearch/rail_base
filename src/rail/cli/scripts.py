@@ -120,8 +120,8 @@ def info(**kwargs):
         print("\n\n")
     
 
-def get_data(verbose, **kwargs):
-    
+def get_data(verbose, **kwargs):  # pragma: no cover
+
     data_files = [
         {
             "local_path": "src/rail/examples_data/goldenspike_data/data/base_catalog.pq",
