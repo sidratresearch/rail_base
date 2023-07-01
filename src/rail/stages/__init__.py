@@ -7,7 +7,7 @@ from rail.estimation.summarizer import *
 from rail.estimation.algos.naive_stack import *
 from rail.estimation.algos.random_gauss import *
 from rail.estimation.algos.point_est_hist import *
-from rail.estimation.algos.trainZ import *
+from rail.estimation.algos.train_z import *
 from rail.estimation.algos.varInference import *
 
 from rail.creation.degrader import *
