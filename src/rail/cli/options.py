@@ -18,6 +18,7 @@ __all__ = [
     "print_stages",
     "package_file",
     "inputs",
+    "verbose_download"
 ]
 
 
@@ -131,10 +132,6 @@ print_stages = PartialOption(
     is_flag=True,
 )
 
-
-
-
-
 package_file = PartialOption(
     "--package-file",
     type=click.Path(),
@@ -147,3 +144,9 @@ inputs = PartialArgument(
     nargs=-1
 )
 
+verbose_download = PartialOption(
+    "-v",
+    "--verbose",
+    help="Verbose output when downloading",
+    is_flag=True
+)
