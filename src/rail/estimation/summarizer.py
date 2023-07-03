@@ -106,7 +106,7 @@ class PZSummarizer(RailStage):
 
 class SZPZSummarizer(RailStage):  #pragma: no cover
     """The base class for classes that use two sets of data: a photometry sample with
-    spec-z values, and a photometry sample with unknown redshifts, e.g. simpleSOM and
+    spec-z values, and a photometry sample with unknown redshifts, e.g. minisom_som and
     outputs a QP Ensemble with bootstrap realization of the N(z) distribution
     """
     name = 'SZPZtoNZSummarizer'
