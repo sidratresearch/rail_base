@@ -51,5 +51,3 @@ def test_train_pz():
     )
     assert np.isclose(results.ancil["zmode"], zb_expected).all()
     assert np.isclose(results.ancil["zmode"], rerun_results.ancil["zmode"]).all()
-
-
