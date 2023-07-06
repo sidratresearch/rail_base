@@ -4,7 +4,8 @@ Abstract base classes defining redshift estimations Tomographers
 from rail.core.data import QPHandle, TableHandle, ModelHandle
 from rail.core.stage import RailStage
 
-class CatTomographer(RailStage):
+
+class CatTomographer(RailStage):  #pragma: no cover
     """The base class for assigning tomographic bins to catalogue-like table.
 
     Tomographer use a generic "model", the details of which depends on the sub-class.
@@ -92,7 +93,7 @@ class CatTomographer(RailStage):
         return self.get_handle('output')
     
 
-class CatInformer(RailStage):
+class CatTomoInformer(RailStage):  #pragma: no cover
     """The base class for informing models used to classify objects into tomographic bins
     from catalog-like inputs (i.e., tables with fluxes in photometric bands among
     the set of columns).
@@ -108,7 +109,7 @@ class CatInformer(RailStage):
 
     They take as "input" catalog-like tabular data, which is used to "inform" the model.
     """
-    name = 'Informer'
+    name = 'CatTomoInformer'
     config_options = RailStage.config_options.copy()
     config_options.update(save_train=True, hdf5_groupname=str)
     inputs = [('input', TableHandle)]
