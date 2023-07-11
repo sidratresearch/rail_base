@@ -15,69 +15,52 @@ class naiveClassifierSRD(PZTomographer):
     name = 'naiveClassifierSRD'
     config_options = PZTomographer.config_options.copy()
     config_options.update(
-        tomo_config=Param(str, 'tomo_binning.ini', msg="Configuration file for tomographic binning"),
-        point_estimate=Param(str, 'zmode', msg="Which point estimate to use"),)
+        #tomo_config=Param(str, 'tomo_binning.ini', msg="Configuration file for tomographic binning"),
+        point_estimate=Param(str, 'zmode', msg="Which point estimate to use"),
+        zbin_edges=Param(list, [], msg="The tomographic redshift bin edges. If this is given (contains two or more entries), all settings below will be ignored."),
+        zmin=Param(float, 0.0, msg="Minimum redshift of the sample"),
+        zmax=Param(float, 3.0, msg="Maximum redshift of the sample"),
+        nbins=Param(int, 5, msg="Number of tomographic bins"),
+        equal_ngal=Param(bool, False, msg="If equal_ngal=0, creat linear nbins between zmin and zmax; if equal_ngal=1, create nbins between zmin and zmax containing same number of galaxies."),
+        )
     outputs = [('output', TableHandle)]
 
     def __init__(self, args, comm=None):
         PZTomographer.__init__(self, args, comm=comm)
 
-    def read_bins(self):
-        # read the binning_option:
-        param_list=["zmin", "zmax", "nbins", "equal_ngal", "zbin_edges"]
-        bin_config={}
-
-        lines=open(self.config.tomo_config,'r').readlines() #read all the lines
-        nline=len(lines)
-        for tmp in lines:
-            tsplit=tmp.split()
-            if(tmp=='\n' or tmp[0]=='#'):
-                continue
-            elif(tsplit[0] in param_list and tsplit[1]=='='):
-                if tsplit[0] in ["zmin", "zmax"]:
-                    bin_config[tsplit[0]]=float(tsplit[2])
-                elif tsplit[0] in ["nbins", "equal_ngal"]:
-                    bin_config[tsplit[0]]=int(tsplit[2])
-                elif tsplit[0] == "zbin_edges":
-                    bin_config[tsplit[0]]=[]
-                    for jj in range(2,len(tsplit)):
-                         bin_config[tsplit[0]].append(float(tsplit[jj]))
-
-        return bin_config
-
     def run(self):
 
         # load config:
-        bin_config = self.read_bins()
+        #bin_config = self.read_bins()
         test_data = self.get_data('input')
         npdf = test_data.npdf
         zb = test_data.ancil[self.config.point_estimate]
 
         # binning options
-        if "zbin_edges" in list(bin_config.keys()):
+        if len(self.config.zbin_edges)>=2:
             # this overwrites all other key words
             # linear binning defined by zmin, zmax, and nbins
-            bin_index = np.digitize(zb, bin_config["zbin_edges"])
+            bin_index = np.digitize(zb, self.config.zbin_edges)
             # assign -99 to objects not in any bin:
             bin_index[bin_index==0]=-99
-            bin_index[bin_index==len(bin_config["zbin_edges"])]=-99
+            bin_index[bin_index==len(self.config.zbin_edges)]=-99
 
         else:
-            if bin_config["equal_ngal"] == 0:
+            if self.config.equal_ngal == 0:
                 # linear binning defined by zmin, zmax, and nbins
-                bin_index = np.digitize(zb, np.linspace(bin_config["zmin"], bin_config["zmax"], bin_config["nbins"]+1))
+                bin_index = np.digitize(zb, np.linspace(self.config.zmin, self.config.zmax, self.config.nbins+1))
                 # assign -99 to objects not in any bin:
                 bin_index[bin_index==0]=-99
-                bin_index[bin_index==(bin_config["nbins"]+1)]=-99
+                bin_index[bin_index==(self.config.nbins+1)]=-99
 
-            elif bin_config["equal_ngal"] == 1:
+            elif self.config.equal_ngal == 1:
                 # tomographic bins with equal number density
                 sortind = np.argsort(zb)
                 cum=np.arange(1,(len(zb)+1))
                 bin_index = np.zeros(len(zb))
-                for ii in range(bin_config["nbins"]):
-                    perc1=ii/bin_config["nbins"]
-                    perc2=(ii+1)/bin_config["nbins"]
+                for ii in range(self.config.nbins):
+                    perc1=ii/self.config.nbins
+                    perc2=(ii+1)/self.config.nbins
                     ind=(cum/cum[-1]>perc1)&(cum/cum[-1]<=perc2)
                     useind=sortind[ind]
                     bin_index[useind] = int(ii+1)

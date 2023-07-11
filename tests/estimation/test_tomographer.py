@@ -19,8 +19,8 @@ def test_tomographer():
     input_data = DS.read_file('input_data', QPHandle, inputdata)
 
     tomo = naiveClassifierSRD.make_stage(
-        tomo_config=find_rail_file('examples_data/estimation_data/configs/tomo_binning.ini'),
-        point_estimate='zmode'
+        point_estimate='zmode',
+        zbin_edges=[0.0,0.3],
     )
     
     out_data = tomo.tomography(input_data)
