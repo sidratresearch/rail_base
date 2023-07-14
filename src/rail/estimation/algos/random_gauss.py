@@ -12,11 +12,11 @@ from rail.core.data import TableHandle
 import qp
 
 
-class RandomPZ(CatEstimator):
+class RandomGaussEstimator(CatEstimator):
     """Random CatEstimator
     """
 
-    name = 'RandomPZ'
+    name = 'RandomGaussEstimator'
     inputs = [('input', TableHandle)]
     config_options = CatEstimator.config_options.copy()
     config_options.update(rand_width=Param(float, 0.025, "ad hock width of PDF"),

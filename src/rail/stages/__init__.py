@@ -4,11 +4,11 @@ from rail.core import RailEnv
 
 from rail.estimation.estimator import *
 from rail.estimation.summarizer import *
-from rail.estimation.algos.naiveStack import *
-from rail.estimation.algos.randomPZ import *
-from rail.estimation.algos.pointEstimateHist import *
-from rail.estimation.algos.trainZ import *
-from rail.estimation.algos.varInference import *
+from rail.estimation.algos.naive_stack import *
+from rail.estimation.algos.random_gauss import *
+from rail.estimation.algos.point_est_hist import *
+from rail.estimation.algos.train_z import *
+from rail.estimation.algos.var_inf import *
 
 from rail.creation.degrader import *
 #from rail.creation.degradation.spectroscopic_degraders import *

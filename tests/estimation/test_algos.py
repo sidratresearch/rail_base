@@ -4,7 +4,7 @@ import scipy.special
 
 from rail.core.algo_utils import one_algo
 from rail.core.stage import RailStage
-from rail.estimation.algos import randomPZ, trainZ
+from rail.estimation.algos import random_gauss, train_z
 
 sci_ver_str = scipy.__version__.split(".")
 
@@ -25,7 +25,7 @@ def test_random_pz():
     }
     # zb_expected = np.array([1.359, 0.013, 0.944, 1.831, 2.982, 1.565, 0.308, 0.157, 0.986, 1.679])
     train_algo = None
-    pz_algo = randomPZ.RandomPZ
+    pz_algo = random_gauss.RandomGaussEstimator
     results, rerun_results, rerun3_results = one_algo(
         "RandomPZ", train_algo, pz_algo, train_config_dict, estim_config_dict
     )
@@ -44,8 +44,8 @@ def test_train_pz():
     zb_expected = np.repeat(0.1445183, 10)
     pdf_expected = np.zeros(shape=(301,))
     pdf_expected[10:16] = [7, 23, 8, 23, 26, 13]
-    train_algo = trainZ.Inform_trainZ
-    pz_algo = trainZ.TrainZ
+    train_algo = train_z.TrainZInformer
+    pz_algo = train_z.TrainZEstimator
     results, rerun_results, rerun3_results = one_algo(
         "TrainZ", train_algo, pz_algo, train_config_dict, estim_config_dict
     )
