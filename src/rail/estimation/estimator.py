@@ -2,8 +2,10 @@
 Abstract base classes defining redshift estimations Informers and Estimators
 """
 
+from rail.core.common_params import SHARED_PARAMS
 from rail.core.data import TableHandle, QPHandle, ModelHandle
 from rail.core.stage import RailStage
+
 import gc
 
 class CatEstimator(RailStage):
@@ -19,7 +21,10 @@ class CatEstimator(RailStage):
 
     name = 'CatEstimator'
     config_options = RailStage.config_options.copy()
-    config_options.update(chunk_size=10000, hdf5_groupname=str)
+    config_options.update(
+        chunk_size=10000,
+        hdf5_groupname=SHARED_PARAMS['hdf5_groupname'],
+        calculated_point_estimates=SHARED_PARAMS['calculated_point_estimates'])
     inputs = [('model', ModelHandle),
               ('input', TableHandle)]
     outputs = [('output', QPHandle)]
