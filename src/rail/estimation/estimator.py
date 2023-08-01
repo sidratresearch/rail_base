@@ -1,5 +1,5 @@
 """
-Abstract base classes defining redshift Estimators
+Abstract base classes defining Estimators of individual galaxy redshift uncertainties
 """
 
 from rail.core.data import TableHandle, QPHandle, ModelHandle
