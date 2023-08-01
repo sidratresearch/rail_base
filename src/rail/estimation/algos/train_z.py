@@ -81,7 +81,7 @@ class TrainZEstimator(CatEstimator):
         self.zmode = self.model.zmode
 
     def _process_chunk(self, start, end, data, first):
-        test_size = len(data['mag_i_lsst'])
+        test_size = end - start
         zmode = np.repeat(self.zmode, test_size)
         qp_d = qp.Ensemble(qp.interp,
                            data=dict(xvals=self.zgrid, yvals=np.tile(self.train_pdf, (test_size, 1))))
