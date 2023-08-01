@@ -1,5 +1,5 @@
 """
-Abstract base classes defining redshift estimations Informers and Estimators
+Abstract base classes defining Summarizers of the redshift distribution of an ensemble of galaxies
 """
 from rail.core.data import QPHandle, TableHandle, ModelHandle
 from rail.core.stage import RailStage
