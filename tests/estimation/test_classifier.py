@@ -57,11 +57,11 @@ def test_UniformBinningClassifier_binsize():
     
     zb = input_data.data.ancil['zmode']
     if 1 in out_data["class_id"]:
-        assert (zb[out_data["class_id"]==1]>=0.0)&(zb[out_data["class_id"]==1]<1.0)
+        assert ((zb[out_data["class_id"]==1]>=0.0)&(zb[out_data["class_id"]==1]<1.0)).all()
     if 2 in out_data["class_id"]:
-        assert (zb[out_data["class_id"]==2]>=1.0)&(zb[out_data["class_id"]==2]<2.0)
+        assert ((zb[out_data["class_id"]==2]>=1.0)&(zb[out_data["class_id"]==2]<2.0)).all()
     if -99 in out_data["class_id"]:
-        assert (zb[out_data["class_id"]==-99]<0.0)|(zb[out_data["class_id"]==-99]>=2.0)
+        assert ((zb[out_data["class_id"]==-99]<0.0)|(zb[out_data["class_id"]==-99]>=2.0)).all()
     
 
 @pytest.mark.parametrize(
@@ -111,4 +111,4 @@ def test_EqualCountClassifier_nobj():
     # check no assignment is correct
     if Ngal<len(out_data["class_id"]):
         zb = input_data.data.ancil['zmode']
-        assert (zb[out_data["class_id"]==-99]<0.0)|(zb[out_data["class_id"]==-99]>=2.0)
+        assert ((zb[out_data["class_id"]==-99]<0.0)|(zb[out_data["class_id"]==-99]>=2.0)).all()
