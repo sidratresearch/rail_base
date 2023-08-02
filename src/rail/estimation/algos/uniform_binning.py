@@ -34,7 +34,7 @@ class UniformBinningClassifier(PZClassifier):
         
         try:
             zb = test_data.ancil[self.config.point_estimate]
-        except NameError:
+        except KeyError:
             print(f"{self.config.point_estimate} is not contained in the data ancil, you will need to compute it explicitly.")
 
         # binning options

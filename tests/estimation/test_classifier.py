@@ -75,7 +75,7 @@ def test_UniformBinningClassifier_ancil():
         zmax=2.0, 
         nbins=2,
     )
-    with pytest.raises(NameError):
+    with pytest.raises(KeyError):
         out_data = tomo.classify(input_data)
     
 
@@ -140,5 +140,5 @@ def test_EqualCountClassifier_ancil():
         zmax=2.0, 
         nbins=2,
     )
-    with pytest.raises(NameError):
+    with pytest.raises(KeyError):
         out_data = tomo.classify(input_data)
