@@ -9,11 +9,11 @@ from rail.core.data import QPHandle
 import qp
 
 
-class NaiveStack(PZSummarizer):
+class NaiveStackSummarizer(PZSummarizer):
     """Summarizer which simply histograms a point estimate
     """
 
-    name = 'NaiveStack'
+    name = 'NaiveStackSummarizer'
     config_options = PZSummarizer.config_options.copy()
     config_options.update(zmin=Param(float, 0.0, msg="The minimum redshift of the z grid"),
                           zmax=Param(float, 3.0, msg="The maximum redshift of the z grid"),

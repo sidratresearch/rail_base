@@ -23,11 +23,11 @@ class trainZmodel:
         self.zmode = zmode
 
 
-class Inform_trainZ(CatInformer):
+class TrainZInformer(CatInformer):
     """Train an Estimator which returns a global PDF for all galaxies
     """
 
-    name = 'Inform_trainZ'
+    name = 'TrainZInformer'
     config_options = CatInformer.config_options.copy()
     config_options.update(zmin=SHARED_PARAMS,
                           zmax=SHARED_PARAMS,
@@ -56,11 +56,11 @@ class Inform_trainZ(CatInformer):
         self.add_data('model', self.model)
 
 
-class TrainZ(CatEstimator):
+class TrainZEstimator(CatEstimator):
     """CatEstimator which returns a global PDF for all galaxies
     """
 
-    name = 'TrainZ'
+    name = 'TrainZEstimator'
     config_options = CatEstimator.config_options.copy()
     config_options.update(zmin=SHARED_PARAMS,
                           zmax=SHARED_PARAMS,
@@ -81,7 +81,7 @@ class TrainZ(CatEstimator):
         self.zmode = self.model.zmode
 
     def _process_chunk(self, start, end, data, first):
-        test_size = len(data['mag_i_lsst'])
+        test_size = end - start
         zmode = np.repeat(self.zmode, test_size)
         qp_d = qp.Ensemble(qp.interp,
                            data=dict(xvals=self.zgrid, yvals=np.tile(self.train_pdf, (test_size, 1))))

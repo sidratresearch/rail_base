@@ -13,7 +13,7 @@ from scipy.stats import dirichlet
 TEENY = 1.e-15
 
 
-class VarInferenceStack(PZSummarizer):
+class VarInfStackSummarizer(PZSummarizer):
     """Variational inference summarizer based on notebook created by Markus Rau
     The summzarizer is appropriate for the likelihoods returned by
     template-based codes, for which the NaiveSummarizer are not appropriate.
@@ -32,7 +32,7 @@ class VarInferenceStack(PZSummarizer):
       number of samples used in dirichlet to determind error bar
     """
 
-    name = 'VarInferenceStack'
+    name = 'VarInfStackSummarizer'
     config_options = PZSummarizer.config_options.copy()
     config_options.update(zmin=Param(float, 0.0, msg="The minimum redshift of the z grid"),
                           zmax=Param(float, 3.0, msg="The maximum redshift of the z grid"),
