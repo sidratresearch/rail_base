@@ -5,8 +5,8 @@ import pytest
 from rail.core.utils import RAILDIR, find_rail_file
 from rail.core.stage import RailStage
 from rail.core.data import QPHandle
-from rail.estimation.algos.UniformBinningClassifier import UniformBinningClassifier
-from rail.estimation.algos.EqualCountClassifier import EqualCountClassifier
+from rail.estimation.algos.uniform_binning import UniformBinningClassifier
+from rail.estimation.algos.equal_count import EqualCountClassifier
 
 
 DS = RailStage.data_store
