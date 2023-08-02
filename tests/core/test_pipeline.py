@@ -73,6 +73,11 @@ def test_golden_v2():
     rename_dict = {f"mag_{band}_lsst": f"{band}_lsst" for band in bands}
     post_grid = [float(x) for x in np.linspace(0.0, 5, 21)]
 
+    pipe.col_remapper_test = ColumnMapper.build(
+         hdf5_groupname="",
+         columns=rename_dict,
+     )
+
     pipe.table_conv_test = TableConverter.build(
         connections=dict(input=pipe.col_remapper_test.io.output),
         output_format="numpyDict",
