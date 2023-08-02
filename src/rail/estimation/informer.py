@@ -9,7 +9,7 @@ from rail.core.stage import RailStage
 import gc
 
 class CatInformer(RailStage):
-    """The base class for informing models used to make photo-z posterior estimates
+    """The base class for informing models used to make photo-z data products  
     from catalog-like inputs (i.e., tables with fluxes in photometric bands among
     the set of columns).
 
@@ -66,8 +66,7 @@ class CatInformer(RailStage):
         return self.get_handle('model')
 
 class PzInformer(RailStage):
-    """The base class for informing models used to summarize photo-z posterior estimates
-    from ensembles of p(z) distributions.
+    """The base class for informing models used to make photo-z data products from existing ensembles of p(z) distributions.
 
     PzSummarizers can use a generic "model", the details of which depends on the sub-class.
     Some summaer will have associated PzInformer classes, which can be used to inform
