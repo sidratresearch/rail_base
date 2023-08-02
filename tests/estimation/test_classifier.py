@@ -12,7 +12,7 @@ from rail.estimation.algos.EqualCountClassifier import EqualCountClassifier
 DS = RailStage.data_store
 DS.__class__.allow_overwrite = True
 
-inputdata = os.path.join(RAILDIR, 'rail/examples_data/testdata/output_BPZ_lite.fits')
+inputdata = find_rail_file('rail/examples_data/testdata/output_BPZ_lite.fits')
 
 @pytest.mark.parametrize(
     "input_param", 
@@ -55,7 +55,7 @@ def test_UniformBinningClassifier_binsize():
     # check that the assignment is as expected:
     assert (np.in1d(np.unique(out_data["class_id"]),[1,2,-99])).all()
     
-    zb = input_data.ancil['zmode']
+    zb = input_data.data.ancil['zmode']
     if 1 in out_data["class_id"]:
         assert (zb[out_data["class_id"]==1]>=0.0)&(zb[out_data["class_id"]==1]<1.0)
     if 2 in out_data["class_id"]:
