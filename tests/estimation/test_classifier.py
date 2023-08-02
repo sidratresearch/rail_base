@@ -42,9 +42,9 @@ def test_UniformBinningClassifier_binsize():
     tomo = UniformBinningClassifier.make_stage(
         point_estimate='zmode',
         no_assign=-99,
-        "zmin": 0.0, 
-        "zmax": 2.0, 
-        "nbins": 2,
+        zmin=0.0, 
+        zmax=2.0, 
+        nbins=2,
     )
     out_data = tomo.classify(input_data)
     
@@ -87,9 +87,9 @@ def test_EqualCountClassifier_nobj():
     tomo = EqualCountClassifier.make_stage(
         point_estimate='zmode',
         no_assign=-99,
-        "zmin": 0.0, 
-        "zmax": 2.0, 
-        "nbins": 2,
+        zmin=0.0, 
+        zmax=2.0, 
+        nbins=2,
     )
     out_data = tomo.classify(input_data)
     
