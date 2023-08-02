@@ -46,7 +46,8 @@ def test_UniformBinningClassifier_binsize():
         zmax=2.0, 
         nbins=2,
     )
-    out_data = tomo.classify(input_data)
+    output_data = tomo.classify(input_data)
+    out_data=output_data.data
     
     # check length:
     assert len(out_data["class_id"])==len(out_data["row_index"])
@@ -94,7 +95,8 @@ def test_EqualCountClassifier_nobj():
         zmax=2.0, 
         nbins=2,
     )
-    out_data = tomo.classify(input_data)
+    output_data = tomo.classify(input_data)
+    out_data=output_data.data
     
     # check that there are equal number of object in each bin modulo Ngal%Nbins
     assert (np.in1d(np.unique(out_data["class_id"]), [1,2,-99])).all()
