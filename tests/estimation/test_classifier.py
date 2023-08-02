@@ -1,0 +1,109 @@
+import os
+import numpy as np
+import pytest
+
+from rail.core.utils import RAILDIR, find_rail_file
+from rail.core.stage import RailStage
+from rail.core.data import QPHandle
+from rail.estimation.algos.UniformBinningClassifier import UniformBinningClassifier
+from rail.estimation.algos.EqualCountClassifier import EqualCountClassifier
+
+
+DS = RailStage.data_store
+DS.__class__.allow_overwrite = True
+
+inputdata = os.path.join(RAILDIR, 'rail/examples_data/testdata/output_BPZ_lite.fits')
+
+@pytest.mark.parametrize(
+    "input_param", 
+    [{"zbin_edges": [0.0, 0.3]},
+     {"zmin": 0.0, "zmax": 0.3, "nbins": 1},
+     {"zbin_edges": [0.0, 0.3], "id_name": "CATAID"},
+    ]
+)
+
+def test_UniformBinningClassifier(input_param):
+    DS.clear()    
+    input_data = DS.read_file('input_data', QPHandle, inputdata)
+
+    tomo = UniformBinningClassifier.make_stage(
+        point_estimate='zmode',
+        no_assign=-99,
+        **input_param,
+    )
+    
+    out_data = tomo.classify(input_data)
+    
+
+def test_UniformBinningClassifier_binsize():
+    DS.clear()    
+    input_data = DS.read_file('input_data', QPHandle, inputdata)
+
+    tomo = UniformBinningClassifier.make_stage(
+        point_estimate='zmode',
+        no_assign=-99,
+        "zmin": 0.0, 
+        "zmax": 2.0, 
+        "nbins": 2,
+    )
+    out_data = tomo.classify(input_data)
+    
+    # check that the assignment is as expected:
+    assert (np.in1d(np.unique(out_data["class_id"]),[1,2,-99])).all()
+    
+    zb = input_data.ancil['zmode']
+    if 1 in out_data["class_id"]:
+        assert (zb[out_data["class_id"]==1]>=0.0)&(zb[out_data["class_id"]==1]<1.0)
+    if 2 in out_data["class_id"]:
+        assert (zb[out_data["class_id"]==2]>=1.0)&(zb[out_data["class_id"]==2]<2.0)
+    if -99 in out_data["class_id"]:
+        assert (zb[out_data["class_id"]==-99]<0.0)|(zb[out_data["class_id"]==-99]>=2.0)
+    
+
+@pytest.mark.parametrize(
+    "input_param",   
+    [{"zmin": 0.0, "zmax": 0.3, "nbins": 1},
+     {"zmin": 0.0, "zmax": 0.3, "nbins": 1, "id_name": "CATAID"},
+    ]
+)
+
+def test_EqualCountClassifier(input_param):
+    DS.clear()    
+    input_data = DS.read_file('input_data', QPHandle, inputdata)
+
+    tomo = EqualCountClassifier.make_stage(
+        point_estimate='zmode',
+        no_assign=-99,
+        **input_param,
+    )
+    
+    out_data = tomo.classify(input_data)
+
+
+def test_EqualCountClassifier_nobj():
+    DS.clear()    
+    input_data = DS.read_file('input_data', QPHandle, inputdata)
+
+    tomo = EqualCountClassifier.make_stage(
+        point_estimate='zmode',
+        no_assign=-99,
+        "zmin": 0.0, 
+        "zmax": 2.0, 
+        "nbins": 2,
+    )
+    out_data = tomo.classify(input_data)
+    
+    # check that there are equal number of object in each bin modulo Ngal%Nbins
+    assert (np.in1d(np.unique(out_data["class_id"]), [1,2,-99])).all()
+    
+    Ngal=sum(out_data["class_id"]!=-99)
+    exp_Ngal_perbin=int(Ngal/2)
+    # check that each bin does contain number of objects consistent with expected number
+    # exp_Ngal_perbin + 1 to account for the cases where Ngal%Nbins!=0
+    assert sum(out_data["class_id"]==1) in [exp_Ngal_perbin, exp_Ngal_perbin+1]
+    assert sum(out_data["class_id"]==2) in [exp_Ngal_perbin, exp_Ngal_perbin+1]
+    
+    # check no assignment is correct
+    if Ngal<len(out_data["class_id"]):
+        zb = input_data.ancil['zmode']
+        assert (zb[out_data["class_id"]==-99]<0.0)|(zb[out_data["class_id"]==-99]>=2.0)
