@@ -62,6 +62,21 @@ def test_UniformBinningClassifier_binsize():
         assert ((zb[out_data["class_id"]==2]>=1.0)&(zb[out_data["class_id"]==2]<2.0)).all()
     if -99 in out_data["class_id"]:
         assert ((zb[out_data["class_id"]==-99]<0.0)|(zb[out_data["class_id"]==-99]>=2.0)).all()
+        
+
+def test_UniformBinningClassifier_ancil():
+    DS.clear()    
+    input_data = DS.read_file('input_data', QPHandle, inputdata)
+
+    tomo = UniformBinningClassifier.make_stage(
+        point_estimate='zmedian',
+        no_assign=-99,
+        zmin=0.0, 
+        zmax=2.0, 
+        nbins=2,
+    )
+    with pytest.raises(NameError):
+        out_data = tomo.classify(input_data)
     
 
 @pytest.mark.parametrize(
@@ -112,3 +127,18 @@ def test_EqualCountClassifier_nobj():
     if Ngal<len(out_data["class_id"]):
         zb = input_data.data.ancil['zmode']
         assert ((zb[out_data["class_id"]==-99]<0.0)|(zb[out_data["class_id"]==-99]>=2.0)).all()
+
+
+def test_EqualCountClassifier_ancil():
+    DS.clear()    
+    input_data = DS.read_file('input_data', QPHandle, inputdata)
+
+    tomo = EqualCountClassifier.make_stage(
+        point_estimate='zmedian',
+        no_assign=-99,
+        zmin=0.0, 
+        zmax=2.0, 
+        nbins=2,
+    )
+    with pytest.raises(NameError):
+        out_data = tomo.classify(input_data)
