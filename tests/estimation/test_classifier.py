@@ -12,7 +12,7 @@ from rail.estimation.algos.EqualCountClassifier import EqualCountClassifier
 DS = RailStage.data_store
 DS.__class__.allow_overwrite = True
 
-inputdata = find_rail_file('rail/examples_data/testdata/output_BPZ_lite.fits')
+inputdata = os.path.join(RAILDIR, 'rail/examples_data/testdata/output_BPZ_lite.fits')
 
 @pytest.mark.parametrize(
     "input_param", 
