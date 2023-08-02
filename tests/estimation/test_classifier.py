@@ -48,6 +48,9 @@ def test_UniformBinningClassifier_binsize():
     )
     out_data = tomo.classify(input_data)
     
+    # check length:
+    assert len(out_data["class_id"])==len(out_data["row_index"])
+    
     # check that the assignment is as expected:
     assert (np.in1d(np.unique(out_data["class_id"]),[1,2,-99])).all()
     
