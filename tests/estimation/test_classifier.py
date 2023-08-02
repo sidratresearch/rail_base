@@ -110,5 +110,5 @@ def test_EqualCountClassifier_nobj():
     
     # check no assignment is correct
     if Ngal<len(out_data["class_id"]):
-        zb = input_data.ancil['zmode']
+        zb = input_data.data.ancil['zmode']
         assert (zb[out_data["class_id"]==-99]<0.0)|(zb[out_data["class_id"]==-99]>=2.0)
