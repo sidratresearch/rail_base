@@ -34,7 +34,7 @@ class EqualCountClassifier(PZClassifier):
         try:
             zb = test_data.ancil[self.config.point_estimate]
         except KeyError:
-            print(f"{self.config.point_estimate} is not contained in the data ancil, you will need to compute it explicitly.")
+            raise KeyError(f"{self.config.point_estimate} is not contained in the data ancil, you will need to compute it explicitly.")
 
         # tomographic bins with equal number density
         sortind = np.argsort(zb)
