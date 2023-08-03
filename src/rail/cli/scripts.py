@@ -71,6 +71,27 @@ def clone_source(outdir, git_mode, dry_run, package_file):
         else:
             os.system(com_line)
 
+            
+def update_source(outdir, dry_run, package_file):
+
+    with open(package_file) as pfile:
+        package_dict = yaml.safe_load(pfile)
+
+    currentpath = os.path.abspath('.')    
+    for key, val in package_dict.items():
+        abspath = os.path.abspath(f"{outdir}/{key}")
+
+        if os.path.exists(f"{outdir}/{key}") is not True:
+            print(f"Package {outdir}/{key} does not exist!")
+            continue            
+                
+        com_line = f"cd {abspath} && git pull && cd {currentpath}"
+
+        if dry_run:
+            print(com_line)
+        else:
+            os.system(com_line)
+            
 
 def install(outdir, from_source, dry_run, package_file):
 

@@ -13,6 +13,10 @@ def test_clone_source():
     scripts.clone_source('..', GitMode.https, True, 'rail_packages.yml')
     scripts.clone_source('..', GitMode.cli, True, 'rail_packages.yml')
 
+    
+def test_update_source():
+    scripts.update_source('..', True, 'rail_packages.yml')
+
 
 def test_install():
     scripts.install('..', False, True, 'rail_packages.yml')
