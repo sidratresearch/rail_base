@@ -29,8 +29,18 @@ def clone_source(outdir, git_mode, dry_run, package_file, **kwargs):
     """Install packages from source"""
     scripts.clone_source(outdir, git_mode, dry_run, package_file)
     return 0
+   
     
-
+@cli.command()
+@options.outdir(default='..')
+@options.dry_run()
+@options.package_file()
+def update_source(outdir, dry_run, package_file, **kwargs):
+    """Update packages from source"""
+    scripts.update_source(outdir, dry_run, package_file)
+    return 0
+    
+    
 @cli.command()
 @options.outdir(default='..')
 @options.dry_run()
