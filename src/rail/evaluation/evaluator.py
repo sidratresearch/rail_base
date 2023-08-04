@@ -136,4 +136,6 @@ class Evaluator(RailStage):
             out_table['CDE_stat'] = [value.statistic]
             out_table['CDE_pval'] = [value.p_value]
 
-        self.add_data('output', out_table)
+	# Converting any possible None to NaN to write it
+        out_table_to_write = {key: np.array(val).astype(float) for key, val in out_table.items()}
+        self.add_data('output', out_table_to_write)
