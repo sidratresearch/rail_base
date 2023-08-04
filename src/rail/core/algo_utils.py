@@ -13,7 +13,7 @@ DS = RailStage.data_store
 DS.__class__.allow_overwrite = True
 
 
-def one_algo(key, single_trainer, single_estimator, train_kwargs, estim_kwargs):
+def one_algo(key, single_trainer, single_estimator, train_kwargs, estim_kwargs, is_classifier=False):
     """
     A basic test of running an estimator subclass
     Run inform, write temporary trained model to
@@ -30,7 +30,10 @@ def one_algo(key, single_trainer, single_estimator, train_kwargs, estim_kwargs):
         train_pz.inform(training_data)
 
     pz = single_estimator.make_stage(name=key, **estim_kwargs)
-    estim = pz.estimate(validation_data)
+    if is_classifier==False:
+        estim = pz.estimate(validation_data)
+    elif is_classifier==True:
+        estim = pz.classify(validation_data)
     pz_2 = None
     estim_2 = estim
     pz_3 = None
@@ -42,13 +45,19 @@ def one_algo(key, single_trainer, single_estimator, train_kwargs, estim_kwargs):
     if model_file != 'None':
         copy_estim_kwargs['model'] = model_file
         pz_2 = single_estimator.make_stage(name=f"{pz.name}_copy", **copy_estim_kwargs)
-        estim_2 = pz_2.estimate(validation_data)
+        if is_classifier==False:
+            estim_2 = pz_2.estimate(validation_data)
+        elif is_classifier==True:
+            estim_2 = pz_2.classify(validation_data)
 
     if single_trainer is not None and 'model' in single_trainer.output_tags():
         copy3_estim_kwargs = estim_kwargs.copy()
         copy3_estim_kwargs['model'] = train_pz.get_handle('model')
         pz_3 = single_estimator.make_stage(name=f"{pz.name}_copy3", **copy3_estim_kwargs)
-        estim_3 = pz_3.estimate(validation_data)
+        if is_classifier==False:
+            estim_3 = pz_3.estimate(validation_data)
+        elif is_classifier==True:
+            estim_3 = pz_3.classify(validation_data)
 
     os.remove(pz.get_output(pz.get_aliased_tag('output'), final_name=True))
     if pz_2 is not None:
