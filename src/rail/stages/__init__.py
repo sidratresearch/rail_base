@@ -3,6 +3,7 @@ import rail
 from rail.core import RailEnv
 
 from rail.estimation.estimator import *
+from rail.estimation.classifier import *
 from rail.estimation.summarizer import *
 from rail.estimation.algos.naive_stack import *
 from rail.estimation.algos.random_gauss import *
