@@ -10,6 +10,9 @@ from rail.estimation.algos.random_gauss import *
 from rail.estimation.algos.point_est_hist import *
 from rail.estimation.algos.train_z import *
 from rail.estimation.algos.var_inf import *
+from rail.estimation.algos.uniform_binning import *
+from rail.estimation.algos.equal_count import *
+
 
 from rail.creation.degrader import *
 #from rail.creation.degradation.spectroscopic_degraders import *
