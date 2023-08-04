@@ -9,6 +9,7 @@ import numpy as np
 from ceci.config import StageParameter as Param
 from rail.core.data import Hdf5Handle, QPHandle
 from rail.core.stage import RailStage
+from rail.core.common_params import SHARED_PARAMS
 
 from rail.evaluation.utils import stat_and_pval
 from rail.evaluation.metrics.cdeloss import CDELoss
@@ -26,7 +27,8 @@ class Evaluator(RailStage):
                           nzbins=Param(int, 301, msg="# of bins in zgrid"),
                           pit_metrics=Param(str, 'all', msg='PIT-based metrics to include'),
                           point_metrics=Param(str, 'all', msg='Point-estimate metrics to include'),
-                          do_cde=Param(bool, True, msg='Evaluate CDE Metric'))
+                          do_cde=Param(bool, True, msg='Evaluate CDE Metric'),
+                          redshift_col=SHARED_PARAMS)
     inputs = [('input', QPHandle),
               ('truth', Hdf5Handle)]
     outputs = [('output', Hdf5Handle)]
@@ -79,7 +81,7 @@ class Evaluator(RailStage):
         """
 
         pz_data = self.get_data('input')
-        z_true = self.get_data('truth')['redshift']
+        z_true = self.get_data('truth')[self.config.redshift_col]
         zgrid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins+1)
 
         # Create an instance of the PIT class
