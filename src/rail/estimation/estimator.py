@@ -1,8 +1,6 @@
 """
 Abstract base classes defining Estimators of individual galaxy redshift uncertainties
 """
-from typing import List
-
 import numpy as np
 from numpy.typing import NDArray
 
@@ -136,7 +134,7 @@ class CatEstimator(RailStage):
     def _calculate_point_estimates(self, qp_dist, grid:NDArray=None) -> dict:
         """This function drives the calculation of point estimates for qp.Ensembles.
         It is defined here, and called from the `_process_chunk` method in the
-        CatEstimator child classes.
+        `CatEstimator` child classes.
 
         Parameters
         ----------
@@ -157,11 +155,11 @@ class CatEstimator(RailStage):
         If there are particularly efficient ways to calculate point estimates for
         a given `CatEstimator` subclass, the subclass can implement any of the
         `_calculate_<foo>_point_estimate` for any of the point estimate calculator
-        methods:
+        methods, i.e.:
 
-        - `_calculate_mode_point_estimate`
-        - `_calculate_mean_point_estimate`
-        - `_calculate_median_point_estimate`
+            - `_calculate_mode_point_estimate`
+            - `_calculate_mean_point_estimate`
+            - `_calculate_median_point_estimate`
         """
 
         ancil_dict = dict()
@@ -202,6 +200,10 @@ class CatEstimator(RailStage):
             The mode value for each posterior in the qp.Ensemble
         """
         if grid is None:
+            for key in ['zmin', 'zmax', 'nzbins']:
+                if key not in self.config:
+                    raise KeyError(f"Expected `{key}` to be defined in stage configuration dictionary.")
+
             grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
 
         return qp_dist.mode(grid=self.zgrid)
