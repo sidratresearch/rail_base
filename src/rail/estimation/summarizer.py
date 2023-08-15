@@ -8,7 +8,7 @@ from rail.estimation.informer import PzInformer
 # for backwards compatibility
 
 
-class CatSummarizer(RailStage):  
+class CatSummarizer(RailStage):
     """The base class for classes that go from catalog-like tables
     to ensemble NZ estimates.
 
@@ -107,7 +107,7 @@ class PZSummarizer(RailStage):
         return self.get_handle('output')
 
 
-class SZPZSummarizer(RailStage): 
+class SZPZSummarizer(RailStage):
     """The base class for classes that use two sets of data: a photometry sample with
     spec-z values, and a photometry sample with unknown redshifts, e.g. minisom_som and
     outputs a QP Ensemble with bootstrap realization of the N(z) distribution
@@ -124,9 +124,9 @@ class SZPZSummarizer(RailStage):
         """Initialize Estimator that can sample galaxy data."""
         RailStage.__init__(self, args, comm=comm)
         self.model = None
-        #if not isinstance(args, dict):  #pragma: no cover
-        #    args = vars(args)
-        #self.open_model(**args)
+        # NOTE: open model removed from init, need to put an
+        # `open_model` call explicitly in the run method for
+        # each summarizer.
 
     def open_model(self, **kwargs):
         """Load the mode and/or attach it to this Summarizer
@@ -188,5 +188,3 @@ class SZPZSummarizer(RailStage):
         self.run()
         self.finalize()
         return self.get_handle('output')
-
-
