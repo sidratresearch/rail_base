@@ -13,6 +13,7 @@ import gc
 from rail.estimation.informer import CatInformer
 # for backwards compatibility
 
+
 class CatEstimator(RailStage):
     """The base class for making photo-z posterior estimates from catalog-like inputs
     (i.e., tables with fluxes in photometric bands among the set of columns)
@@ -39,9 +40,6 @@ class CatEstimator(RailStage):
         RailStage.__init__(self, args, comm=comm)
         self._output_handle = None
         self.model = None
-        if not isinstance(args, dict):  #pragma: no cover
-            args = vars(args)
-        self.open_model(**args)
 
     def open_model(self, **kwargs):
         """Load the mode and/or attach it to this Estimator
@@ -102,6 +100,9 @@ class CatEstimator(RailStage):
         return self.get_handle('output')
 
     def run(self):
+
+        self.open_model(**self.config)
+
         iterator = self.input_iterator('input')
         first = True
         self._initialize_run()
@@ -122,12 +123,12 @@ class CatEstimator(RailStage):
         self._output_handle.finalize_write()
 
     def _process_chunk(self, start, end, data, first):
-        raise NotImplementedError(f"{self.name}._process_chunk is not implemented")  #pragma: no cover
+        raise NotImplementedError(f"{self.name}._process_chunk is not implemented")  # pragma: no cover
 
     def _do_chunk_output(self, qp_dstn, start, end, first):
         if first:
-            self._output_handle = self.add_handle('output', data = qp_dstn)
-            self._output_handle.initialize_write(self._input_length, communicator = self.comm)
+            self._output_handle = self.add_handle('output', data=qp_dstn)
+            self._output_handle.initialize_write(self._input_length, communicator=self.comm)
         self._output_handle.set_data(qp_dstn, partial=True)
         self._output_handle.write_chunk(start, end)
 
