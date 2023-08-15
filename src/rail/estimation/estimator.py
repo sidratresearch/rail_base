@@ -37,9 +37,9 @@ class CatEstimator(RailStage):
         RailStage.__init__(self, args, comm=comm)
         self._output_handle = None
         self.model = None
-        if not isinstance(args, dict):  #pragma: no cover
-            args = vars(args)
-        self.open_model(**args)
+        #if not isinstance(args, dict):  #pragma: no cover
+        #    args = vars(args)
+        #self.open_model(**args)
 
     def open_model(self, **kwargs):
         """Load the mode and/or attach it to this Estimator
@@ -100,6 +100,9 @@ class CatEstimator(RailStage):
         return self.get_handle('output')
 
     def run(self):
+
+        self.open_model(**self.config)
+     
         iterator = self.input_iterator('input')
         first = True
         self._initialize_run()

@@ -124,9 +124,9 @@ class SZPZSummarizer(RailStage):
         """Initialize Estimator that can sample galaxy data."""
         RailStage.__init__(self, args, comm=comm)
         self.model = None
-        if not isinstance(args, dict):  #pragma: no cover
-            args = vars(args)
-        self.open_model(**args)
+        #if not isinstance(args, dict):  #pragma: no cover
+        #    args = vars(args)
+        #self.open_model(**args)
 
     def open_model(self, **kwargs):
         """Load the mode and/or attach it to this Summarizer
