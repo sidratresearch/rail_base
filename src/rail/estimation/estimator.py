@@ -132,7 +132,7 @@ class CatEstimator(RailStage):
         self._output_handle.set_data(qp_dstn, partial=True)
         self._output_handle.write_chunk(start, end)
 
-    def _calculate_point_estimates(self, qp_dist, grid:NDArray=None):
+    def _calculate_point_estimates(self, qp_dist, grid=None):
         """This function drives the calculation of point estimates for qp.Ensembles.
         It is defined here, and called from the `_process_chunk` method in the
         `CatEstimator` child classes.
@@ -141,7 +141,7 @@ class CatEstimator(RailStage):
         ----------
         qp_dist : qp.Ensemble
             The qp Ensemble instance that contains posterior estimates.
-        grid : NDArray, optional
+        grid : array-like, optional
             The grid on which to evaluate the point estimate. Note that not all
             point estimates require a grid to be provided, by default None.
 
@@ -185,7 +185,7 @@ class CatEstimator(RailStage):
 
         return qp_dist
 
-    def _calculate_mode_point_estimate(self, qp_dist, grid:NDArray=None) -> NDArray:
+    def _calculate_mode_point_estimate(self, qp_dist, grid=None) -> NDArray:
         """Calculates and returns the mode values for a set of posterior estimates
         in a qp.Ensemble instance.
 
@@ -193,7 +193,7 @@ class CatEstimator(RailStage):
         ----------
         qp_dist : qp.Ensemble
             The qp Ensemble instance that contains posterior estimates.
-        grid : NDArray, optional
+        grid : array-like, optional
             The grid on which to evaluate the `mode` point estimate, if a grid is
             not provided, a default will be created at run time using `zmin`, `zmax`,
             and `nzbins`, by default None
@@ -202,6 +202,13 @@ class CatEstimator(RailStage):
         -------
         NDArray
             The mode value for each posterior in the qp.Ensemble
+
+        Raises
+        ------
+        KeyError
+            If `grid` is not provided, one will be created using the config parameters
+            `zmin`, `zmax`, and `nzbins`. If any of those parameters are missing,
+            we'll raise a KeyError.
         """
         if grid is None:
             for key in ['zmin', 'zmax', 'nzbins']:
