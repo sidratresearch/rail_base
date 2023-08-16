@@ -132,7 +132,7 @@ class CatEstimator(RailStage):
         self._output_handle.set_data(qp_dstn, partial=True)
         self._output_handle.write_chunk(start, end)
 
-    def _calculate_point_estimates(self, qp_dist, grid:NDArray=None) -> dict:
+    def _calculate_point_estimates(self, qp_dist, grid:NDArray=None):
         """This function drives the calculation of point estimates for qp.Ensembles.
         It is defined here, and called from the `_process_chunk` method in the
         `CatEstimator` child classes.
@@ -147,9 +147,9 @@ class CatEstimator(RailStage):
 
         Returns
         -------
-        dict
-            The ancillary dictionary that contains the point estimates. The possible
-            keys are ['mean', 'mode', 'median'].
+        qp.Ensemble
+            The original `qp.Ensemble` with new ancillary point estimate data included.
+            The `Ensemble.ancil` keys are ['mean', 'mode', 'median'].
 
         Notes
         -----
@@ -180,7 +180,10 @@ class CatEstimator(RailStage):
             median_value = self._calculate_median_point_estimate(qp_dist)
             ancil_dict.update(median = median_value)
 
-        return ancil_dict
+        if calculated_point_estimates:
+            qp_dist.set_ancil(ancil_dict)
+
+        return qp_dist
 
     def _calculate_mode_point_estimate(self, qp_dist, grid:NDArray=None) -> NDArray:
         """Calculates and returns the mode values for a set of posterior estimates

@@ -1,6 +1,7 @@
 import pytest
 import numpy as np
-from numpy.typing import NDArray
+
+import qp
 from rail.estimation.estimator import CatEstimator
 
 
@@ -17,15 +18,19 @@ def test_custom_point_estimate():
             CatEstimator.__init__(self, args, comm=comm)
 
         def _calculate_mode_point_estimate(self, qp_dist=None, grid=None):
-            return np.ones(5) * MEANING_OF_LIFE
+            return np.ones(100) * MEANING_OF_LIFE
 
     config_dict = {'calculated_point_estimates': ['mode']}
 
     test_estimator = TestEstimator.make_stage(name='test', **config_dict)
 
-    result = test_estimator._calculate_point_estimates(None, None)
+    locs = 2* (np.random.uniform(size=(100,1))-0.5)
+    scales = 1 + 0.2*(np.random.uniform(size=(100,1))-0.5)
+    test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))
 
-    assert np.all(result['mode'] == MEANING_OF_LIFE)
+    result = test_estimator._calculate_point_estimates(test_ensemble, None)
+
+    assert np.all(result.ancil['mode'] == MEANING_OF_LIFE)
 
 def test_mode_no_grid():
     """This exercises the KeyError logic in `_calculate_mode_point_estimate`.
@@ -38,3 +43,18 @@ def test_mode_no_grid():
         _ = test_estimator._calculate_point_estimates(None, None)
 
     assert "to be defined in stage configuration" in str(excinfo.value)
+
+def test_mode_no_point_estimates():
+    """This exercises the KeyError logic in `_calculate_mode_point_estimate`.
+    """
+    config_dict = {'zmin':0.0, 'nzbins':100}
+
+    test_estimator = CatEstimator.make_stage(name='test', **config_dict)
+
+    locs = 2* (np.random.uniform(size=(100,1))-0.5)
+    scales = 1 + 0.2*(np.random.uniform(size=(100,1))-0.5)
+    test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))
+
+    output_ensemble = test_estimator._calculate_point_estimates(test_ensemble, None)
+
+    assert output_ensemble.ancil is None
