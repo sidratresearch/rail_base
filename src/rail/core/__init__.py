@@ -20,3 +20,4 @@ from .stage import RailPipeline, RailStage
 #from .utilPhotometry import PhotormetryManipulator, HyperbolicSmoothing, HyperbolicMagnitudes
 from .utilStages import ColumnMapper, RowSelector, TableConverter
 from .introspection import RailEnv
+from .point_estimation import PointEstimationMixin
