@@ -217,7 +217,7 @@ class CatEstimator(RailStage):
 
             grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
 
-        return qp_dist.mode(grid=self.zgrid)
+        return qp_dist.mode(grid=grid)
 
     def _calculate_mean_point_estimate(self, qp_dist) -> NDArray:
         """Calculates and returns the mean values for a set of posterior estimates
