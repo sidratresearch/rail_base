@@ -1,14 +1,13 @@
 """
 Abstract base classes defining Estimators of individual galaxy redshift uncertainties
 """
+import gc
 import numpy as np
 from numpy.typing import NDArray
 
 from rail.core.common_params import SHARED_PARAMS
 from rail.core.data import TableHandle, QPHandle, ModelHandle
 from rail.core.stage import RailStage
-
-import gc
 
 from rail.estimation.informer import CatInformer
 # for backwards compatibility
@@ -213,7 +212,8 @@ class CatEstimator(RailStage):
         if grid is None:
             for key in ['zmin', 'zmax', 'nzbins']:
                 if key not in self.config:
-                    raise KeyError(f"Expected `{key}` to be defined in stage configuration dictionary.")
+                    raise KeyError(f"Expected `{key}` to be defined in stage " \
+                                   "configuration dictionary in order to caluclate mode.")
 
             grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
 
