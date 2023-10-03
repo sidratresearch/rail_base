@@ -3,10 +3,27 @@ A summarizer that simple makes a histogram of a point estimate
 """
 
 import numpy as np
+import qp
+
 from ceci.config import StageParameter as Param
 from rail.estimation.summarizer import PZSummarizer
+from rail.estimation.informer import PzInformer
 from rail.core.data import QPHandle
-import qp
+
+
+class NaiveStackInformer(PzInformer):
+    """Placeholder Informer
+    """
+
+    name = 'NaiveStackInformer'
+    config_options = PzInformer.config_options.copy()
+
+    def __init__(self, args, comm=None):
+        PzInformer.__init__(self, args, comm=comm)
+
+    def run(self):
+        #! TODO: Fill this in correctly
+        pass
 
 
 class NaiveStackSummarizer(PZSummarizer):
