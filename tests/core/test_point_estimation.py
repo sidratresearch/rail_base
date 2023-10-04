@@ -28,7 +28,7 @@ def test_custom_point_estimate():
     scales = 1 + 0.2*(np.random.uniform(size=(100,1))-0.5)
     test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))
 
-    result = test_estimator._calculate_point_estimates(test_ensemble, None)
+    result = test_estimator.calculate_point_estimates(test_ensemble)
 
     assert np.all(result.ancil['mode'] == MEANING_OF_LIFE)
 
@@ -47,7 +47,7 @@ def test_basic_point_estimate():
     locs = 2* (np.random.uniform(size=(100,1))-0.5)
     scales = 1 + 0.2*(np.random.uniform(size=(100,1))-0.5)
     test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))
-    result = test_estimator._calculate_point_estimates(test_ensemble, None)
+    result = test_estimator.calculate_point_estimates(test_ensemble, None)
 
     # note: we're not interested in testing the values of point estimates,
     # just that they were added to the ancillary data.
@@ -63,7 +63,7 @@ def test_mode_no_grid():
     test_estimator = CatEstimator.make_stage(name='test', **config_dict)
 
     with pytest.raises(KeyError) as excinfo:
-        _ = test_estimator._calculate_point_estimates(None, None)
+        _ = test_estimator.calculate_point_estimates(None, None)
 
     assert "to be defined in stage configuration" in str(excinfo.value)
 
@@ -78,6 +78,6 @@ def test_mode_no_point_estimates():
     scales = 1 + 0.2*(np.random.uniform(size=(100,1))-0.5)
     test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))
 
-    output_ensemble = test_estimator._calculate_point_estimates(test_ensemble, None)
+    output_ensemble = test_estimator.calculate_point_estimates(test_ensemble, None)
 
     assert output_ensemble.ancil is None
