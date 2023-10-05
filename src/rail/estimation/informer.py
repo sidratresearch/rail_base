@@ -66,7 +66,8 @@ class CatInformer(RailStage):
         return self.get_handle('model')
 
 class PzInformer(RailStage):
-    """The base class for informing models used to make photo-z data products from existing ensembles of p(z) distributions.
+    """The base class for informing models used to make photo-z data products from
+    existing ensembles of p(z) distributions.
 
     PzSummarizers can use a generic "model", the details of which depends on the sub-class.
     Some summaer will have associated PzInformer classes, which can be used to inform
