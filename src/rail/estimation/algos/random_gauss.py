@@ -24,8 +24,7 @@ class RandomGaussInformer(CatInformer):
         CatInformer.__init__(self, args, comm=comm)
 
     def run(self):
-        #! TODO: Fill this in correctly
-        pass
+        self.add_data('model', np.array([None]))
 
 
 class RandomGaussEstimator(CatEstimator):

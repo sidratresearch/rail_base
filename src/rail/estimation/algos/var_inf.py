@@ -25,8 +25,7 @@ class VarInfStackInformer(PzInformer):
         PzInformer.__init__(self, args, comm=comm)
 
     def run(self):
-        #! TODO: Fill this in correctly
-        pass
+        self.add_data('model', np.array([None]))
 
 
 class VarInfStackSummarizer(PZSummarizer):

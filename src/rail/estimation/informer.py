@@ -1,12 +1,13 @@
 """
 Abstract base classes for Informers.
-These superstages ingest prior information, including training sets and explicit priors, and prepare a model that can be used to produce photo-z data products.
-They are distinguished by their input data types, and the models they output can be used for their corresponding Estimator, Summarizer, or Classifier stages.
+These superstages ingest prior information, including training sets and explicit
+priors, and prepare a model that can be used to produce photo-z data products.
+They are distinguished by their input data types, and the models they output can
+be used for their corresponding Estimator, Summarizer, or Classifier stages.
 """
 
 from rail.core.data import TableHandle, QPHandle, ModelHandle
 from rail.core.stage import RailStage
-import gc
 
 class CatInformer(RailStage):
     """The base class for informing models used to make photo-z data products  
@@ -25,9 +26,8 @@ class CatInformer(RailStage):
     They take as "input" catalog-like tabular data, which is used to "inform" the model.
     """
 
-    name = 'Informer'
+    name = 'CatInformer'
     config_options = RailStage.config_options.copy()
-    config_options.update(hdf5_groupname=str, save_train=True)
     inputs = [('input', TableHandle)]
     outputs = [('model', ModelHandle)]
 
@@ -80,7 +80,7 @@ class PzInformer(RailStage):
     They take as "input" a qp.Ensemble of per-galaxy p(z) data, which is used to "inform" the model.
     """
 
-    name = 'Informer'
+    name = 'PzInformer'
     config_options = RailStage.config_options.copy()
     inputs = [('input', QPHandle)]
     outputs = [('model', ModelHandle)]

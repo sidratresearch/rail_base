@@ -1,8 +1,4 @@
-import copy
 import os
-
-import numpy as np
-import pytest
 
 from rail.core.data import QPHandle
 from rail.core.stage import RailStage
@@ -28,18 +24,34 @@ def one_algo(key, summarizer_class, summary_kwargs):
 
 
 def test_naive_stack():
+    """Basic end to end test for the Naive stack informer to estimator stages
+    """
+    naive_stack_informer_stage = naive_stack.NaiveStackInformer.make_stage()
+    naive_stack_informer_stage.inform('')
+
     summary_config_dict = {}
     summarizer_class = naive_stack.NaiveStackSummarizer
-    results = one_algo("NaiveStack", summarizer_class, summary_config_dict)
+    _ = one_algo("NaiveStack", summarizer_class, summary_config_dict)
 
 
 def test_point_estimate_hist():
+    """Basic end to end test for the point estimate histogram informer to estimator
+    stages
+    """
+    point_est_informer_stage = point_est_hist.PointEstHistInformer.make_stage()
+    point_est_informer_stage.inform('')
+
     summary_config_dict = {}
     summarizer_class = point_est_hist.PointEstHistSummarizer
-    results = one_algo("PointEstimateHist", summarizer_class, summary_config_dict)
+    _ = one_algo("PointEstimateHist", summarizer_class, summary_config_dict)
 
 
 def test_var_inference_stack():
+    """Basic end to end test for the var inference informer to estimator stages
+    """
+    var_inf_informer_stage = var_inf.VarInfStackInformer.make_stage()
+    var_inf_informer_stage.inform('')
+
     summary_config_dict = {}
     summarizer_class = var_inf.VarInfStackSummarizer
-    results = one_algo("VariationalInference", summarizer_class, summary_config_dict)
+    _ = one_algo("VariationalInference", summarizer_class, summary_config_dict)

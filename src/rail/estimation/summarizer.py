@@ -69,7 +69,8 @@ class PZSummarizer(RailStage):
     name = 'PZtoNZSummarizer'
     config_options = RailStage.config_options.copy()
     config_options.update(chunk_size=10000)
-    inputs = [('input', QPHandle)]
+    inputs = [('model', ModelHandle),
+              ('input', QPHandle)]
     outputs = [('output', QPHandle)]
 
     def __init__(self, args, comm=None):
