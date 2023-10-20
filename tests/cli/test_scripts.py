@@ -4,8 +4,8 @@ from rail.cli.options import GitMode
 
 def test_render_nb():
     nb_files = glob.glob('../examples/*_examples/*.ipynb')
-    scripts.render_nb('docs', False, True, nb_files)
-    scripts.render_nb('docs', True, True, nb_files)
+    scripts.render_nb('docs', False, True, nb_files, skip=None)
+    scripts.render_nb('docs', True, True, nb_files, skip=None)
 
 
 def test_clone_source():
