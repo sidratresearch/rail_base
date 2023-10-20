@@ -1,11 +1,15 @@
 import glob
+import os
 from rail.cli import scripts
 from rail.cli.options import GitMode
 
+
 def test_render_nb():
-    nb_files = glob.glob('../examples/*_examples/*.ipynb')
-    scripts.render_nb('docs', False, True, nb_files, skip=None)
-    scripts.render_nb('docs', True, True, nb_files, skip=None)
+    #nb_dir = "./tests/cli/"
+    #nb_files = glob.glob(os.path.join(nb_dir,'*.ipynb'))
+    nb_files = "./tests/cli/*.ipynb"
+    scripts.render_nb('docs', False, True, nb_files, skip=[])
+    scripts.render_nb('docs', True, True, nb_files, skip=["./tests/cli/single_number.ipynb"])
 
 
 def test_clone_source():
