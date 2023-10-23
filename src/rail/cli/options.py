@@ -17,6 +17,7 @@ __all__ = [
     "print_tree",
     "print_stages",
     "package_file",
+    "skip",
     "inputs",
     "verbose_download"
 ]
@@ -138,6 +139,14 @@ package_file = PartialOption(
     default=None,
     help="File with package",
 )
+
+skip = PartialOption(
+    "--skip",
+    type=click.Path(),
+    multiple=True,
+    help="Skip files",
+)
+
 
 inputs = PartialArgument(
     "inputs",

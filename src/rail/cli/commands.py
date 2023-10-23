@@ -15,9 +15,10 @@ def cli() -> None:
 @options.clear_output()
 @options.dry_run()
 @options.inputs()
-def render_nb(outdir, clear_output, dry_run, inputs, **kwargs):
+@options.skip()
+def render_nb(outdir, clear_output, dry_run, inputs, skip, **kwargs):
     """Render jupyter notebooks"""
-    return scripts.render_nb(outdir, clear_output, dry_run, inputs)
+    return scripts.render_nb(outdir, clear_output, dry_run, inputs, skip)
 
 
 @cli.command()

@@ -8,7 +8,7 @@ from rail.core import RailEnv
 from rail.cli.options import GitMode
 
 
-def render_nb(outdir, clear_output, dry_run, inputs, **kwargs):
+def render_nb(outdir, clear_output, dry_run, inputs, skip, **kwargs):
 
     command = "jupyter nbconvert"
     options = "--to html"
@@ -16,6 +16,8 @@ def render_nb(outdir, clear_output, dry_run, inputs, **kwargs):
     status = {}
 
     for nb_file in inputs:
+        if nb_file in skip:
+            continue
         subdir = os.path.dirname(nb_file).split('/')[-1]
         basename = os.path.splitext(os.path.basename(nb_file))[0]
         outfile = os.path.join('..', '..', outdir, f"{subdir}/{basename}.html")
