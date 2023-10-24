@@ -27,6 +27,8 @@ class DataHandle:
     def __init__(self, tag, data=None, path=None, creator=None):
         """Constructor """
         self.tag = tag
+        if data is not None:
+            self._validate_data(data)
         self.data = data
         self.path = path
         self.creator = creator
