@@ -6,6 +6,7 @@ import yaml
 import rail.stages
 from rail.core import RailEnv
 from rail.cli.options import GitMode
+from rail.core.utils import RAILDIR
 
 
 def render_nb(outdir, clear_output, dry_run, inputs, skip, **kwargs):
@@ -141,19 +142,32 @@ def info(**kwargs):
         print("======= Printing RAIL stages ==============")
         RailEnv.print_rail_stage_dict()
         print("\n\n")
-    
+
 
 def get_data(verbose, **kwargs):  # pragma: no cover
+    if kwargs.get("bpz_demo_data"):
+        bpz_local_abs_path = os.path.join(
+            RAILDIR, "rail/examples_data/estimation_data/data/nonphysical_dc2_templates.tar"
+        )
+        bpz_remote_path = "https://portal.nersc.gov/cfs/lsst/PZ/nonphysical_dc2_templates.tar"
+        print(f"Check for bpz demo data: {bpz_local_abs_path}")
+        if not os.path.exists(bpz_local_abs_path):
+            os.system(f"curl -o {bpz_local_abs_path} {bpz_remote_path} --create-dirs")
+            print("Downloaded bpz demo data.")
+        else:
+            print("Already have bpz demo data.")
+        print("\n(Note: you can run get-data without the bpz-demo-data flag to download standard data.)")
 
-    data_files = [
-        {
-            "local_path": "src/rail/examples_data/goldenspike_data/data/base_catalog.pq",
-            "remote_path": "https://portal.nersc.gov/cfs/lsst/PZ/base_catalog.pq"
-        }
-    ]
-
-    for data_file in data_files:
-        if verbose:
-            print(f'Check file: {data_file["local_path"]}')
-        if not os.path.exists(data_file["local_path"]):
-            os.system(f'curl -o {data_file["local_path"]} {data_file["remote_path"]} --create-dirs')
+    else:
+        data_files = [
+            {
+                "local_path": "rail/examples_data/goldenspike_data/data/base_catalog.pq",
+                "remote_path": "https://portal.nersc.gov/cfs/lsst/PZ/base_catalog.pq",
+            }
+        ]
+        for data_file in data_files:
+            local_abs_path = os.path.join(RAILDIR, data_file["local_path"])
+            if verbose:
+                print(f"Check file exists: {local_abs_path} ({os.path.exists(local_abs_path)})")
+            if not os.path.exists(local_abs_path):
+                os.system(f'curl -o {local_abs_path} {data_file["remote_path"]} --create-dirs')
