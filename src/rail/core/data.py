@@ -306,7 +306,9 @@ class QPHandle(DataHandle):
 
     @classmethod
     def _validate_data(cls, data):
-        assert isinstance(data, qp.Ensemble)
+        if not isinstance(data, qp.Ensemble):
+            print(f"Expected `data` to be a `qp.Ensemble`, but {type(data)} was provided. Perhaps you meant to use `TableHandle`?")
+            assert isinstance(data, qp.Ensemble)
 
 
 def default_model_read(modelfile):
