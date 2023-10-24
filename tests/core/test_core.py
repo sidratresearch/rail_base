@@ -115,6 +115,9 @@ def test_qp_handle():
     handle.close()
     assert handle.fileObj is None
 
+    with pytest.raises(TypeError) as errInfo:
+        bad_dh = QPHandle(data="this is not an Ensemble")
+
 
 def test_hdf5_handle():
     datapath = os.path.join(RAILDIR, "rail", "examples_data", "testdata", "test_dc2_training_9816.hdf5")

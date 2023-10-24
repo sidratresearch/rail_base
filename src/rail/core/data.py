@@ -27,6 +27,8 @@ class DataHandle:
     def __init__(self, tag, data=None, path=None, creator=None):
         """Constructor """
         self.tag = tag
+        if data is not None:
+            self._validate_data(data)
         self.data = data
         self.path = path
         self.creator = creator
@@ -129,8 +131,14 @@ class DataHandle:
 
     def set_data(self, data, partial=False):
         """Set the data for a chunk, and set the partial flag to true"""
+        self._validate_data(data)
         self.data = data
         self.partial = partial
+
+    @classmethod
+    def _validate_data(cls, data):
+        """Make sure that the right type of data is being passed in"""
+        return
 
     def size(self, **kwargs):
         """Return the size of the data associated to this handle"""
@@ -295,6 +303,11 @@ class QPHandle(DataHandle):
     @classmethod
     def _finalize_write(cls, data, fileObj, **kwargs):
         return data.finalizeHdf5Write(fileObj)
+
+    @classmethod
+    def _validate_data(cls, data):
+        if not isinstance(data, qp.Ensemble):
+            raise TypeError(f"Expected `data` to be a `qp.Ensemble`, but {type(data)} was provided. Perhaps you meant to use `TableHandle`?")
 
 
 def default_model_read(modelfile):
