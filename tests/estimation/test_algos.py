@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 import scipy.special
 
 from rail.core.algo_utils import one_algo
@@ -22,17 +21,15 @@ def test_random_pz():
         "nzbins": 301,
         "hdf5_groupname": "photometry",
         "model": "None",
+        "seed": 42,
     }
-    # zb_expected = np.array([1.359, 0.013, 0.944, 1.831, 2.982, 1.565, 0.308, 0.157, 0.986, 1.679])
-    train_algo = None
+    zb_expected = np.array([2.322, 1.317, 2.576, 2.092, 0.283, 2.927, 2.283, 2.358, 0.384, 1.351])
+    train_algo = random_gauss.RandomGaussInformer
     pz_algo = random_gauss.RandomGaussEstimator
-    results, rerun_results, rerun3_results = one_algo(
+    results, _, _ = one_algo(
         "RandomPZ", train_algo, pz_algo, train_config_dict, estim_config_dict
     )
-    # assert np.isclose(results.ancil['zmode'], zb_expected).all()
-    # assert np.isclose(pz_dict['zmode'], rerun_pz_dict['zmode']).all()
-    # we skip this assert since the random number generator will return
-    # different results the second run!
+    assert np.isclose(results.ancil['zmode'], zb_expected).all()
 
 
 def test_train_pz():
@@ -46,7 +43,7 @@ def test_train_pz():
     pdf_expected[10:16] = [7, 23, 8, 23, 26, 13]
     train_algo = train_z.TrainZInformer
     pz_algo = train_z.TrainZEstimator
-    results, rerun_results, rerun3_results = one_algo(
+    results, rerun_results, _ = one_algo(
         "TrainZ", train_algo, pz_algo, train_config_dict, estim_config_dict
     )
     assert np.isclose(results.ancil["zmode"], zb_expected).all()

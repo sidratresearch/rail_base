@@ -5,11 +5,26 @@ random_width*(1+zmode).
 """
 
 import numpy as np
+import qp
+
 from scipy.stats import norm
 from ceci.config import StageParameter as Param
-from rail.estimation.estimator import CatEstimator
+from rail.estimation.estimator import CatEstimator, CatInformer
 from rail.core.data import TableHandle
-import qp
+
+
+class RandomGaussInformer(CatInformer):
+    """Placeholder Informer
+    """
+
+    name = 'RandomGaussInformer'
+    config_options = CatInformer.config_options.copy()
+
+    def __init__(self, args, comm=None):
+        CatInformer.__init__(self, args, comm=comm)
+
+    def run(self):
+        self.add_data('model', np.array([None]))
 
 
 class RandomGaussEstimator(CatEstimator):
@@ -24,7 +39,9 @@ class RandomGaussEstimator(CatEstimator):
                           rand_zmax=Param(float, 3.0, msg="The maximum redshift of the z grid"),
                           nzbins=Param(int, 301, msg="The number of gridpoints in the z grid"),
                           seed=Param(int, 87, msg="random seed"),
-                          column_name=Param(str, "mag_i_lsst", msg="name of a column that has the correct number of galaxies to find length of"))
+                          column_name=Param(str, "mag_i_lsst",
+                                            msg="name of a column that has the "\
+                                                "correct number of galaxies to find length of"))
 
     def __init__(self, args, comm=None):
         """ Constructor:
