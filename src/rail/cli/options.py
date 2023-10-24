@@ -162,6 +162,6 @@ verbose_download = PartialOption(
 
 bpz_demo_data = PartialOption(
     "--bpz-demo-data",
-    help="Download the data that is explicitly only for use in the bpz demp and nowhere else",
+    help="Download data that is explicitly only for use in the bpz demo and nowhere else (it is dummy data that will not make sense)",
     is_flag=True
 )

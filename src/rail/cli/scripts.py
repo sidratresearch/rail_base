@@ -146,6 +146,9 @@ def info(**kwargs):
 
 def get_data(verbose, **kwargs):  # pragma: no cover
     if kwargs.get("bpz_demo_data"):
+        # The bpz demo data is quarantined into its own flag, as it contains some 
+        # non-physical features that would add systematics if run on any real data.
+        # This data should NOT be used for any science with real data!
         bpz_local_abs_path = os.path.join(
             RAILDIR, "rail/examples_data/estimation_data/data/nonphysical_dc2_templates.tar"
         )
