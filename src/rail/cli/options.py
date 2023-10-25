@@ -6,6 +6,7 @@ import click
 
 __all__ = [
     "clear_output",
+    "bpz_demo_data",
     "dry_run",
     "outdir",
     "from_source",
@@ -54,7 +55,7 @@ class PartialOption:
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         return self._partial(*args, **kwargs)
 
-    
+
 class PartialArgument:
     """Wraps click.argument with partial arguments for convenient reuse"""
 
@@ -147,7 +148,6 @@ skip = PartialOption(
     help="Skip files",
 )
 
-
 inputs = PartialArgument(
     "inputs",
     nargs=-1
@@ -157,5 +157,11 @@ verbose_download = PartialOption(
     "-v",
     "--verbose",
     help="Verbose output when downloading",
+    is_flag=True
+)
+
+bpz_demo_data = PartialOption(
+    "--bpz-demo-data",
+    help="Download data that is explicitly only for use in the bpz demo and nowhere else (it is dummy data that will not make sense)",
     is_flag=True
 )

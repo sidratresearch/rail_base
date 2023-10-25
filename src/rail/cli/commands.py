@@ -68,6 +68,7 @@ def info(**kwargs):
 
 
 @cli.command()
+@options.bpz_demo_data()
 @options.verbose_download()
 def get_data(verbose, **kwargs):
     """Downloads data from NERSC (if not already found)"""
