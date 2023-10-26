@@ -1,6 +1,6 @@
 import numpy as np
 from .base import MetricEvaluator
-from rail.evaluation.utils import stat_and_pval
+from rail.evaluation.stats_groups import stat_and_pval
 
 
 class CDELoss(MetricEvaluator):

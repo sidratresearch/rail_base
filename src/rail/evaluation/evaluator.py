@@ -11,7 +11,6 @@ from rail.core.data import Hdf5Handle, QPHandle
 from rail.core.stage import RailStage
 from rail.core.common_params import SHARED_PARAMS
 
-from rail.evaluation.utils import stat_and_pval
 from rail.evaluation.metrics.cdeloss import CDELoss
 from qp.metrics.pit import PIT
 from rail.evaluation.metrics.pointestimates import PointSigmaIQR, PointBias, PointOutlierRate, PointSigmaMAD
