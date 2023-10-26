@@ -21,7 +21,7 @@ from rail.core.data import (
 )
 from rail.core.stage import RailStage
 from rail.core.utils import RAILDIR
-from rail.core.utilStages import (
+from rail.core.util_stages import (
     ColumnMapper,
     RowSelector,
     TableConverter,

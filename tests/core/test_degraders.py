@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 
 from rail.core.data import DATA_STORE, TableHandle
-from rail.core.utilStages import ColumnMapper
+from rail.core.util_stages import ColumnMapper
 from rail.creation.degradation.quantityCut import QuantityCut
 from rail.creation.degradation.spectroscopic_selections import *
 

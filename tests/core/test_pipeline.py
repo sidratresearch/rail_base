@@ -7,7 +7,7 @@ import rail
 from rail.core.data import TableHandle
 from rail.core.stage import RailPipeline, RailStage
 from rail.core.utils import RAILDIR
-from rail.core.utilStages import ColumnMapper, TableConverter
+from rail.core.util_stages import ColumnMapper, TableConverter
 from rail.creation.degradation.quantityCut import QuantityCut
 
 def test_pipeline():
