@@ -331,9 +331,9 @@ class RailStage(PipelineStage):
             self.config.hdf5_groupname
         except:
             self.config.hdf5_groupname = None
-        self._input_length = handle.size(groupname=self.config.hdf5_groupname)
 
         if handle.path and handle.path!='None':
+            self._input_length = handle.size(groupname=self.config.hdf5_groupname)
             total_chunks_needed = ceil(self._input_length/self.config.chunk_size)
             # If the number of process is larger than we need, we wemove some of them
             if total_chunks_needed < self.size:  #pragma: no cover
@@ -356,6 +356,7 @@ class RailStage(PipelineStage):
                 test_data = self.get_data('input')[self.config.hdf5_groupname]
             else:
                 test_data = self.get_data('input')
+            self._input_length = len(test_data)
             s = 0
             iterator=[[s, self._input_length, test_data]]
             return iterator

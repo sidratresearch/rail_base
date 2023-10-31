@@ -35,6 +35,7 @@ class ColumnMapper(RailStage):
         if self.config.inplace:  #pragma: no cover
             out_data = data
         self.add_data('output', out_data)
+        self.finalize()
 
     def __repr__(self):  # pragma: no cover
         printMsg = "Stage that applies remaps the following column names in a pandas DataFrame:\n"
@@ -83,6 +84,7 @@ class RowSelector(RailStage):
         data = self.get_data('input', allow_missing=True)
         out_data = data.iloc[self.config.start:self.config.stop]
         self.add_data('output', out_data)
+        self.finalize()
 
     def __repr__(self):  # pragma: no cover
         printMsg = "Stage that applies remaps the following column names in a pandas DataFrame:\n"
@@ -127,6 +129,7 @@ class TableConverter(RailStage):
         out_fmt = tables_io.types.TABULAR_FORMAT_NAMES[self.config.output_format]
         out_data = tables_io.convert(data, out_fmt)
         self.add_data('output', out_data)
+        self.finalize()
 
     def __call__(self, data):
         """Return a converted table
