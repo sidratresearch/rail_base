@@ -7,6 +7,7 @@ from rail.core.common_params import SHARED_PARAMS
 from rail.core.data import TableHandle, QPHandle, ModelHandle
 from rail.core.stage import RailStage
 
+from rail.estimation.informer import CatInformer
 from rail.core.point_estimation import PointEstimationMixin
 # for backwards compatibility
 
