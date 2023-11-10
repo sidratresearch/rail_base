@@ -1,5 +1,5 @@
 """
-Abstract base classes defining Estimators of individual galaxy redshift uncertainties
+Abstract base classes defining Estimators of individual galaxy redshift uncertainties.
 """
 import gc
 
@@ -7,7 +7,6 @@ from rail.core.common_params import SHARED_PARAMS
 from rail.core.data import TableHandle, QPHandle, ModelHandle
 from rail.core.stage import RailStage
 
-from rail.estimation.informer import CatInformer
 from rail.core.point_estimation import PointEstimationMixin
 # for backwards compatibility
 
@@ -18,8 +17,8 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
     Estimators use a generic "model", the details of which depends on the sub-class.
 
-    They take as "input" tabular data, apply the photo-z estimation and
-    provide as "output" a QPEnsemble, with per-object p(z).
+    Estimators take as "input" tabular data, apply the photo-z estimation and
+    provide as "output" a ``QPEnsemble``, with per-object p(z).
 
     """
 
@@ -40,18 +39,18 @@ class CatEstimator(RailStage, PointEstimationMixin):
         self.model = None
 
     def open_model(self, **kwargs):
-        """Load the mode and/or attach it to this Estimator
+        """Load the model and attach it to this Estimator
 
         Parameters
         ----------
-        model : `object`, `str` or `ModelHandle`
-            Either an object with a trained model,
-            a path pointing to a file that can be read to obtain the trained model,
-            or a `ModelHandle` providing access to the trained model.
+        model : ``object``, ``str`` or ``ModelHandle``
+            Either an object with a trained model, a path pointing to a file
+            that can be read to obtain the trained model, or a `ModelHandle`
+            providing access to the trained model.
 
         Returns
         -------
-        self.model : `object`
+        self.model : ``object``
             The object encapsulating the trained model.
         """
         model = kwargs.get('model', None)
@@ -71,25 +70,25 @@ class CatEstimator(RailStage, PointEstimationMixin):
     def estimate(self, input_data):
         """The main interface method for the photo-z estimation
 
-        This will attach the input_data to this `Estimator`
-        (for introspection and provenance tracking).
+        This will attach the input data (defined in ``inputs`` as "input") to this
+        ``Estimator`` (for introspection and provenance tracking). Then call the
+        ``run()`` and ``finalize()`` methods.
 
-        Then it will call the run() and finalize() methods, which need to
-        be implemented by the sub-classes.
+        The run method will call ``_process_chunk()``, which needs to be implemented
+        in the subclass, to process input data in batches. See ``RandomGaussEstimator``
+        for a simple example. 
 
-        The run() method will need to register the data that it creates to this Estimator
-        by using `self.add_data('output', output_data)`.
-
-        Finally, this will return a QPHandle providing access to that output data.
+        Finally, this will return a ``QPHandle`` for access to that output data.
 
         Parameters
         ----------
-        input_data : `dict` or `ModelHandle`
-            Either a dictionary of all input data or a `ModelHandle` providing access to the same
+        input_data : ``dict`` or ``ModelHandle``
+            Either a dictionary of all input data or a ``ModelHandle`` providing
+            access to the same
 
         Returns
         -------
-        output: `QPHandle`
+        output: ``QPHandle``
             Handle providing access to QP ensemble with output data
         """
         self.set_data('input', input_data)
