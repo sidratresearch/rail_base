@@ -337,7 +337,7 @@ class RailStage(PipelineStage):
         if handle.path and handle.path!='None':
             self._input_length = handle.size(groupname=self.config.hdf5_groupname)
             total_chunks_needed = ceil(self._input_length/self.config.chunk_size)
-            # If the number of process is larger than we need, we wemove some of them
+            # If the number of process is larger than we need, we remove some of them
             if total_chunks_needed < self.size:  #pragma: no cover
                 color = self.rank+1 <= total_chunks_needed
                 newcomm = self.comm.Split(color=color,key=self.rank)
@@ -358,10 +358,17 @@ class RailStage(PipelineStage):
                 test_data = self.get_data('input')[self.config.hdf5_groupname]
             else:
                 test_data = self.get_data('input')
-            max_l = 0
-            for k, v in test_data.items():
-                max_l = max(max_l, len(v))
-            self._input_length = max_l
+            # max_l = 0
+            # for k, v in test_data.items():
+            #     max_l = max(max_l, len(v))
+            # self._input_length = max_l
+            try:
+                self._input_length = test_data.npdf
+            except:
+                max_l = 0
+                for k, v in test_data.items():
+                    max_l = max(max_l, len(v))
+                self._input_length = max_l
             s = 0
             iterator=[[s, self._input_length, test_data]]
             return iterator
