@@ -145,32 +145,39 @@ def info(**kwargs):
 
 
 def get_data(verbose, **kwargs):  # pragma: no cover
+    standard_data_files = [
+        {
+            "local_path": "rail/examples_data/goldenspike_data/data/base_catalog.pq",
+            "remote_path": "https://portal.nersc.gov/cfs/lsst/PZ/base_catalog.pq",
+        }
+    ]
+    bpz_data_files = [
+        {
+            "local_path": "rail/examples_data/estimation_data/data/nonphysical_dc2_templates.tar",
+            "remote_path": "https://portal.nersc.gov/cfs/lsst/PZ/nonphysical_dc2_templates.tar",
+        },
+        {
+            "local_path": "rail/examples_data/estimation_data/data/test_dc2_training_9816_broadtypes.hdf5",
+            "remote_path": "https://portal.nersc.gov/cfs/lsst/PZ/test_dc2_training_9816_broadtypes.hdf5",
+        },
+        {
+            "local_path": "rail/examples_data/estimation_data/data/test_dc2_train_customtemp_broadttypes.hdf5",
+            "remote_path": "https://portal.nersc.gov/cfs/lsst/PZ/test_dc2_train_customtemp_broadttypes.hdf5",
+        }
+    ]
+
+    data_files = standard_data_files
     if kwargs.get("bpz_demo_data"):
         # The bpz demo data is quarantined into its own flag, as it contains some 
         # non-physical features that would add systematics if run on any real data.
         # This data should NOT be used for any science with real data!
-        bpz_local_abs_path = os.path.join(
-            RAILDIR, "rail/examples_data/estimation_data/data/nonphysical_dc2_templates.tar"
-        )
-        bpz_remote_path = "https://portal.nersc.gov/cfs/lsst/PZ/nonphysical_dc2_templates.tar"
-        print(f"Check for bpz demo data: {bpz_local_abs_path}")
-        if not os.path.exists(bpz_local_abs_path):
-            os.system(f"curl -o {bpz_local_abs_path} {bpz_remote_path} --create-dirs")
-            print("Downloaded bpz demo data.")
-        else:
-            print("Already have bpz demo data.")
-        print("\n(Note: you can run get-data without the bpz-demo-data flag to download standard data.)")
+        data_files = bpz_data_files
+        print("Downloading BPZ demo data...")
+        print("(Note: you can run get-data without the bpz-demo-data flag to download standard data.)")
 
-    else:
-        data_files = [
-            {
-                "local_path": "rail/examples_data/goldenspike_data/data/base_catalog.pq",
-                "remote_path": "https://portal.nersc.gov/cfs/lsst/PZ/base_catalog.pq",
-            }
-        ]
-        for data_file in data_files:
-            local_abs_path = os.path.join(RAILDIR, data_file["local_path"])
-            if verbose:
-                print(f"Check file exists: {local_abs_path} ({os.path.exists(local_abs_path)})")
-            if not os.path.exists(local_abs_path):
-                os.system(f'curl -o {local_abs_path} {data_file["remote_path"]} --create-dirs')
+    for data_file in data_files:
+        local_abs_path = os.path.join(RAILDIR, data_file["local_path"])
+        if verbose:
+            print(f"Check file exists: {local_abs_path} ({os.path.exists(local_abs_path)})")
+        if not os.path.exists(local_abs_path):
+            os.system(f'curl -o {local_abs_path} {data_file["remote_path"]} --create-dirs')
