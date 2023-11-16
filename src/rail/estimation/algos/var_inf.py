@@ -64,11 +64,22 @@ class VarInfStackSummarizer(PZSummarizer):
         self.zgrid = None
 
     def run(self):
+        # Redefining the chunk size so that all of the data is distributed at once in the
+        # nodes. This would fill all the memory if not enough nodes are allocated
+
+        input_data = self.get_handle('input', allow_missing=True)
+        try:
+            self.config.hdf5_groupname
+        except:
+            self.config.hdf5_groupname = None
+        input_length = input_data.size(groupname=self.config.hdf5_groupname)
+        self.config.chunk_size = np.ceil(input_length/self.size)
+
+
         iterator = self.input_iterator('input')
         self.zgrid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
         first = True
         for s, e, test_data in iterator:
-            self.check_number_of_iterations(e,s)
             print(f"Process {self.rank} running estimator on chunk {s} - {e}")
             alpha_trace = self._process_chunk(s, e, test_data, first)
             first = False
@@ -87,7 +98,7 @@ class VarInfStackSummarizer(PZSummarizer):
 
 
     def  _process_chunk(self, start, end, test_data, first):
-        if not first:
+        if not first: #pragma: no cover
             raise ValueError(f"This algorithm needs all data in memory at once, increase nprocess or chunk size.")
 
         # Initiallizing arrays
@@ -109,12 +120,4 @@ class VarInfStackSummarizer(PZSummarizer):
             alpha_trace = nk + init_trace
         return(alpha_trace)
 
-
-
-    def check_number_of_iterations(self,e,s):
-        if self.comm is not None and self.rank == 0:
-            total_chunks_needed = self._input_length/(e-s)
-            if total_chunks_needed > self.size:
-                    iteration_number =  np.ceil(total_chunks_needed/self.size)
-                    raise ValueError(f"This algorithm needs all data in memory at once, currentlly it would need {iteration_number} steps. Increase nprocess or chunk size.")
 
