@@ -25,7 +25,7 @@ class Modeler(RailStage):  # pragma: no cover
         self.model = None
 
     def fit_model(self):
-        """Produce a creation model from which photometry and redshifts can be 
+        """Produce a creation model from which photometry and redshifts can be
         generated.
 
         Parameters
@@ -70,7 +70,7 @@ class Creator(RailStage):  # pragma: no cover
         Keywords
         --------
         model : `object`, `str` or `ModelHandle`
-            Either an object with a trained model, a path pointing to a file 
+            Either an object with a trained model, a path pointing to a file
             that can be read to obtain the trained model, or a `ModelHandle`
             providing access to the trained model
 
@@ -96,7 +96,7 @@ class Creator(RailStage):  # pragma: no cover
     def sample(self, n_samples: int, seed: int = None, **kwargs):
         """Draw samples from the model specified in the configuration.
 
-        This is a method for running a Creator in interactive mode. In pipeline 
+        This is a method for running a Creator in interactive mode. In pipeline
         mode, the subclass `run` method will be called by itself.
 
         Parameters
@@ -158,8 +158,8 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
         Keywords
         --------
         model : `object`, `str` or `ModelHandle`
-            Either an object with a trained model, a path pointing to a file 
-            that can be read to obtain the trained model, or a `ModelHandle` 
+            Either an object with a trained model, a path pointing to a file
+            that can be read to obtain the trained model, or a `ModelHandle`
             providing access to the trained model
 
         Returns

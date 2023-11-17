@@ -529,7 +529,7 @@ class SpecSelection_HSC(SpecSelection):
     name = "specselection_HSC"
 
     def photometryCut(self, data):
-        """HSC galaxies were binned in color magnitude space with i-band mag 
+        """HSC galaxies were binned in color magnitude space with i-band mag
         from -2 to 6 and g-z color from 13 to 26.
         """
         mask = (data[self.config.colnames["i"]] > 13.0) & (
