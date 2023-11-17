@@ -76,7 +76,7 @@ class DataHandle:
         raise NotImplementedError("DataHandle._read")  #pragma: no cover
 
     def write(self, **kwargs):
-        """Write the data to the associatied file """
+        """Write the data to the associated file """
         if self.path is None:
             raise ValueError("TableHandle.write() called but path has not been specified")
         if self.data is None:
@@ -101,7 +101,7 @@ class DataHandle:
         raise NotImplementedError("DataHandle._initialize_write") #pragma: no cover
 
     def write_chunk(self, start, end, **kwargs):
-        """Write the data to the associatied file """
+        """Write the data to the associated file """
         if self.data is None:
             raise ValueError(f"TableHandle.write_chunk() called for path {self.path} with no data")
         if self.fileObj is None:
@@ -215,7 +215,7 @@ class TableHandle(DataHandle):
 
     @classmethod
     def _write(cls, data, path, **kwargs):
-        """Write the data to the associatied file """
+        """Write the data to the associated file """
         return tables_io.write(data, path, **kwargs)
 
     @classmethod
@@ -289,7 +289,7 @@ class QPHandle(DataHandle):
 
     @classmethod
     def _write(cls, data, path, **kwargs):
-        """Write the data to the associatied file """
+        """Write the data to the associated file """
         return data.write_to(path)
 
     @classmethod
@@ -335,10 +335,12 @@ def default_model_write(model, path):
 
 class ModelDict(dict):
     """
-    A specialized dict to keep track of individual estimation models objects: this is just a dict these additional features
+    A specialized dict to keep track of individual estimation models objects.
+    This is just a dict with these additional features:
 
     1. Keys are paths
-    2. There is a read(path, force=False) method that reads a model object and inserts it into the dictionary
+    2. There is a read(path, force=False) method that reads a model object and
+    inserts it into the dictionary
     3. There is a single static instance of this class
     """
     def open(self, path, mode, **kwargs):  #pylint: disable=no-self-use
@@ -427,7 +429,7 @@ class DataStore(dict):
         return s
 
     def __setitem__(self, key, value):
-        """ Override the __setitem__ to work with `TableHandle` """
+        """ Override the __setitem__ to work with ``TableHandle`` """
         if not isinstance(value, DataHandle):
             raise TypeError(f"Can only add objects of type DataHandle to DataStore, not {type(value)}")
         check = self.get(key)

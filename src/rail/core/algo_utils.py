@@ -15,10 +15,10 @@ DS.__class__.allow_overwrite = True
 
 def one_algo(key, single_trainer, single_estimator, train_kwargs, estim_kwargs, is_classifier=False):
     """
-    A basic test of running an estimator subclass
+    A basic test of running an estimator subclass.
     Run inform, write temporary trained model to
     'tempmodelfile.tmp', run photo-z algorithm.
-    Then, load temp modelfile and re-run, return
+    Then, load tempmodelfile.tmp and re-run, return
     both datasets.
     """
     DS.clear()
