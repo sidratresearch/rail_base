@@ -9,7 +9,7 @@ from rail.creation.degrader import Degrader
 class QuantityCut(Degrader):
     """Degrader that applies a cut to the given columns.
 
-    Note if a galaxy fails any of the cuts on any one of its columns, that
+    Note that if a galaxy fails any of the cuts on any one of its columns, that
     galaxy is removed from the sample.
     """
 
@@ -18,33 +18,34 @@ class QuantityCut(Degrader):
     config_options.update(cuts=dict)
 
     def __init__(self, args, comm=None):
-        """
-        Constructor
-
-        Does standard Degrader initialization and also gets defines the cuts to be applied
+        """Constructor.
+        
+        Performs standard Degrader initialization as well as defining the cuts 
+        to be applied.
         """
         Degrader.__init__(self, args, comm=comm)
         self.cuts = None
         self.set_cuts(self.config["cuts"])
 
     def set_cuts(self, cuts: dict):
-        """
+        """Defines the cuts to be applied.
+
         Parameters
         ----------
         cuts : dict
-            A dictionary of cuts to make on the data.
+            A dictionary of cuts to make on the data
 
         Notes
         -----
         The cut keys should be the names of columns you wish to make cuts on.
-        The cut values should be either:
-        - a number, which is the maximum value. I.e. if the dictionary
-        contains "i": 25, then values of i > 25 are cut from the sample.
-        - an iterable, which is the range of acceptable values.
-        I.e. if the dictionary contains "redshift": (1.5, 2.3), then
-        redshifts outside that range are cut from the sample.
-        """
 
+        The cut values should be either:
+        - a number, which is the maximum value. E.g. if the dictionary
+        contains "i": 25, then values of i > 25 are cut from the sample.
+        - an iterable, which is the range of acceptable values. E.g. if the 
+        dictionary contains "redshift": (1.5, 2.3), then redshifts outside that
+        range are cut from the sample.
+        """
         # check that cuts is a dictionary
         if not isinstance(cuts, dict):  # pragma: no cover
             raise TypeError("cuts must be a dictionary.")
@@ -82,14 +83,13 @@ class QuantityCut(Degrader):
                 raise TypeError(bad_cut_msg)
 
     def run(self):
-        """Run method
-
-        Applies cuts
+        """Applies cuts.
 
         Notes
         -----
-        Get the input data from the data store under this stages 'input' tag
-        Puts the data into the data store under this stages 'output' tag
+        Gets the input data from the data store under this stage's 'input' tag.
+
+        Puts the data into the data store under this stage's 'output' tag.
         """
         data = self.get_data("input")
 
@@ -110,7 +110,7 @@ class QuantityCut(Degrader):
             self.add_data("output", out_data)
 
     def __repr__(self):  # pragma: no cover
-        """Pretty print this object"""
+        """Pretty print this object."""
         printMsg = "Degrader that applies the following cuts to a pandas DataFrame:\n"
         printMsg += "{column: (min, max), ...}\n"
         printMsg += self.cuts.__str__()
