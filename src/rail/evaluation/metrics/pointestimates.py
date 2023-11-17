@@ -7,17 +7,21 @@ class PointStatsEz(MetricEvaluator):
     magnitude."""
 
     def __init__(self, pzvec, szvec):
-        """An object that takes in the vectors of the point photo-z
+        """ An object that takes in the vectors of the point photo-z
         the spec-z, and the i-band magnitudes for calculating the
         point statistics
-        Parameters:
-        pzvec: Numpy 1d array of the point photo-z values
-        szvec: Numpy 1d array of the spec-z values
-        magvec: Numpy 1d array of the i-band magnitudes
-        imagcut: float: i-band magnitude cut for the sample
+
         Calculates:
-        ez: (pz-sz)/(1+sz), the quantity will be useful for
-          calculating statistics
+        ez = (pz - sz) / (1 + sz), the quantity will be useful for calculating
+        statistics
+
+
+        Parameters
+        ----------
+        pzvec : ndarray
+            Array of the point photo-z values
+        szvec : ndarray
+            array of the spec-z values
         """
         super().__init__(None)
         self.pzs = pzvec
@@ -36,11 +40,10 @@ class PointSigmaIQR(PointStatsEz):
     def evaluate(self):
         """Calculate the width of the e_z distribution
         using the Interquartile range
-        Parameters:
-        imagcut: float: i-band magnitude cut for the sample
-        Returns:
-        sigma_IQR float: width of ez distribution for full sample
-        sigma_IQR_magcut float: width of ez distribution for magcut sample
+
+        Returns
+        -------
+        ``sigma_IQR`` float. Width of ez distribution for full sample
         """
         x75, x25 = np.percentile(self.ez, [75., 25.])
         iqr = x75 - x25
@@ -55,8 +58,9 @@ class PointBias(PointStatsEz):
     """
     def evaluate(self):
         """
-        Returns:
-        bias: median of the full ez sample
+        Returns
+        -------
+        ``bias`` ndarray. Median of the full ez sample
         """
         return np.median(self.ez)
 
@@ -70,14 +74,15 @@ class PointOutlierRate(PointStatsEz):
 
     def evaluate(self):
         """
-        Returns:
-        frac: fraction of catastrophic outliers for full sample
+        Returns
+        -------
+        ``frac`` float. Fraction of catastrophic outliers for full sample
         """
         num = len(self.ez)
         sig_iqr = PointSigmaIQR(self.pzs, self.szs).evaluate()
         threesig = 3.0 * sig_iqr
         cutcriterion = np.maximum(0.06, threesig)
-        mask = (np.fabs(self.ez) > cutcriterion)
+        mask = np.fabs(self.ez) > cutcriterion
         outlier = np.sum(mask)
         frac = float(outlier) / float(num)
         return frac
@@ -91,8 +96,9 @@ class PointSigmaMAD(PointStatsEz):
 
     def evaluate(self):
         """
-        Returns:
-        sigma_mad: sigma_MAD for full sample
+        Returns
+        -------
+        ``sigma_mad`` float. Sigma median absolute deviation for full sample.
         """
         tmpmed = np.median(self.ez)
         tmpx = np.fabs(self.ez - tmpmed)
