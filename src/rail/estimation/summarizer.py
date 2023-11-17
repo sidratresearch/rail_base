@@ -122,7 +122,7 @@ class PZSummarizer(RailStage):
             bootstrap_matrix = self.comm.bcast(bootstrap_matrix, root = 0)
         return bootstrap_matrix
 
-    def _join_histograms(self, bvals, yvals):
+    def _join_histograms(self, bvals, yvals):#pragma: no cover
         bvals_r = self.comm.reduce(bvals)
         yvals_r = self.comm.reduce(yvals)
         return(bvals_r, yvals_r)
