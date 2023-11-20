@@ -46,23 +46,40 @@ class PointEstHistSummarizer(PZSummarizer):
         self.zgrid = None
         self.bincents = None
 
+
     def run(self):
-        rng = np.random.default_rng(seed=self.config.seed)
-        test_data = self.get_data('input')
-        npdf = test_data.npdf
-        zb = test_data.ancil['zmode']
-        nsamp = self.config.nsamples
+        iterator = self.input_iterator('input')
         self.zgrid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins + 1)
         self.bincents = 0.5 * (self.zgrid[1:] + self.zgrid[:-1])
-        single_hist = np.histogram(test_data.ancil[self.config.point_estimate], bins=self.zgrid)[0]
-        qp_d = qp.Ensemble(qp.hist,
-                           data=dict(bins=self.zgrid, pdfs=np.atleast_2d(single_hist)))
-        hist_vals = np.empty((nsamp, self.config.nzbins))
-        for i in range(nsamp):
-            bootstrap_indeces = rng.integers(low=0, high=npdf, size=npdf)
-            zarr = zb[bootstrap_indeces]
-            hist_vals[i] = np.histogram(zarr, bins=self.zgrid)[0]
-        sample_ens = qp.Ensemble(qp.hist,
+        bootstrap_matrix  = self._broadcast_bootstrap_matrix()
+        # Initiallizing the histograms
+        single_hist = np.zeros(self.config.nzbins)
+        hist_vals = np.zeros((self.config.nsamples, self.config.nzbins))
+
+        first = True
+        for s, e, test_data in iterator:
+            print(f"Process {self.rank} running estimator on chunk {s} - {e}")
+            self._process_chunk(s, e, test_data, first, bootstrap_matrix, single_hist, hist_vals)
+            first = False
+        if self.comm is not None:  # pragma: no cover
+            hist_vals, single_hist = self._join_histograms(hist_vals, single_hist)
+
+        if self.rank == 0:
+            sample_ens = qp.Ensemble(qp.hist,
                                  data=dict(bins=self.zgrid, pdfs=np.atleast_2d(hist_vals)))
-        self.add_data('output', sample_ens)
-        self.add_data('single_NZ', qp_d)
+            qp_d = qp.Ensemble(qp.hist,
+                           data=dict(bins=self.zgrid, pdfs=np.atleast_2d(single_hist)))
+            self.add_data('output', sample_ens)
+            self.add_data('single_NZ', qp_d)
+
+    def  _process_chunk(self, start, end, test_data, first, bootstrap_matrix, single_hist, hist_vals):
+        zb = test_data.ancil[self.config.point_estimate]
+        single_hist += np.histogram(zb, bins=self.zgrid)[0]
+        for i in range(self.config.nsamples):
+            bootstrap_indeces = bootstrap_matrix[:, i]
+            # Neither all of the bootstrap_draws are in this chunk nor the index starts at "start"
+            mask = (bootstrap_indeces>=start) & (bootstrap_indeces<end)
+            bootstrap_indeces = bootstrap_indeces[mask] - start
+            zarr = zb[bootstrap_indeces]
+            hist_vals[i] += np.histogram(zarr, bins=self.zgrid)[0]
+            

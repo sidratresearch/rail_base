@@ -108,6 +108,25 @@ class PZSummarizer(RailStage):
         return self.get_handle('output')
 
 
+    def _broadcast_bootstrap_matrix(self):
+        import numpy as np
+        rng = np.random.default_rng(seed=self.config.seed)
+        # Only one of the nodes needs to produce the bootstrap indices
+        ngal = self._input_length
+        if self.rank == 0:
+            bootstrap_matrix = rng.integers(low=0, high=ngal, size=(ngal,self.config.nsamples))
+        else:  # pragma: no cover
+            bootstrap_matrix = None
+        if self.comm is not None:  # pragma: no cover
+            self.comm.Barrier()
+            bootstrap_matrix = self.comm.bcast(bootstrap_matrix, root = 0)
+        return bootstrap_matrix
+
+    def _join_histograms(self, bvals, yvals):#pragma: no cover
+        bvals_r = self.comm.reduce(bvals)
+        yvals_r = self.comm.reduce(yvals)
+        return(bvals_r, yvals_r)
+
 class SZPZSummarizer(RailStage):
     """The base class for classes that use two sets of data: a photometry sample with
     spec-z values, and a photometry sample with unknown redshifts, e.g. minisom_som and

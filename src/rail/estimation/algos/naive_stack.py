@@ -25,7 +25,7 @@ class NaiveStackInformer(PzInformer):
         self.add_data('model', np.array([None]))
 
 class NaiveStackSummarizer(PZSummarizer):
-    """Summarizer which simply histograms a point estimate
+    """Summarizer which stacks individual P(z)
     """
 
     name = 'NaiveStackSummarizer'
@@ -49,7 +49,7 @@ class NaiveStackSummarizer(PZSummarizer):
         # Initiallizing the stacking pdf's
         yvals = np.zeros((1, len(self.zgrid)))
         bvals = np.zeros((self.config.nsamples, len(self.zgrid)))
-        bootstrap_matrix  = self.broadcast_bootstrap_matrix()
+        bootstrap_matrix  = self._broadcast_bootstrap_matrix()
 
         first = True
         for s, e, test_data in iterator:
@@ -57,7 +57,7 @@ class NaiveStackSummarizer(PZSummarizer):
             self._process_chunk(s, e, test_data, first, bootstrap_matrix, yvals, bvals)
             first = False
         if self.comm is not None:  # pragma: no cover
-            bvals, yvals = self.join_histograms(bvals, yvals)
+            bvals, yvals = self._join_histograms(bvals, yvals)
 
         if self.rank == 0:
             sample_ens = qp.Ensemble(qp.interp, data=dict(xvals=self.zgrid, yvals=bvals))
@@ -77,24 +77,6 @@ class NaiveStackSummarizer(PZSummarizer):
             bootstrap_draws = bootstrap_draws[mask] - start
             bvals[i] += np.sum(pdf_vals[bootstrap_draws], axis=0)
 
-    def broadcast_bootstrap_matrix(self):
-        rng = np.random.default_rng(seed=self.config.seed)
-        # Only one of the nodes needs to produce the bootstrap indices
-        ngal = self._input_length
-        print('i am the rank with number of galaxies',self.rank,ngal)
-        if self.rank == 0:
-            bootstrap_matrix = rng.integers(low=0, high=ngal, size=(ngal,self.config.nsamples))
-        else:  # pragma: no cover
-            bootstrap_matrix = None
-        if self.comm is not None:  # pragma: no cover
-            self.comm.Barrier()
-            bootstrap_matrix = self.comm.bcast(bootstrap_matrix, root = 0)
-        return bootstrap_matrix
-
-    def join_histograms(self, bvals, yvals):
-        bvals_r = self.comm.reduce(bvals)
-        yvals_r = self.comm.reduce(yvals)
-        return(bvals_r, yvals_r)
 
 
 
