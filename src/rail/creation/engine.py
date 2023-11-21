@@ -1,7 +1,8 @@
-"""
-Abstract base classes defining a Creator, which will create synthetic photometric data
-and a PosteriorCalculator, which can calculate posteriors for the data with respect
-to the distribution defined by the creator.
+"""Abstract base classes defining a Creator.
+
+A Creator will create synthetic photometric data and a PosteriorCalculator, 
+which can calculate posteriors for the data with respect to the distribution 
+defined by the Creator.
 """
 
 import qp
@@ -10,10 +11,7 @@ from rail.core.stage import RailStage
 
 
 class Modeler(RailStage):  # pragma: no cover
-    """
-    Base class for creating a model of redshift and photometry.
-
-    """
+    """Base class for creating a model of redshift and photometry."""
 
     name = "Modeler"
     config_options = RailStage.config_options.copy()
@@ -27,8 +25,8 @@ class Modeler(RailStage):  # pragma: no cover
         self.model = None
 
     def fit_model(self):
-        """
-        Produce a creation model from which photometry and redshifts can be generated
+        """Produce a creation model from which photometry and redshifts can be
+        generated.
 
         Parameters
         ----------
@@ -36,7 +34,8 @@ class Modeler(RailStage):  # pragma: no cover
 
         Returns
         -------
-        [This will definitely be a file, but the filetype and format depend entirely on the modeling approach!]
+        [This will definitely be a file, but the filetype and format depend 
+        entirely on the modeling approach!]
         """
         self.run()
         self.finalize()
@@ -44,10 +43,11 @@ class Modeler(RailStage):  # pragma: no cover
 
 
 class Creator(RailStage):  # pragma: no cover
-    """Base class for Creators that generate synthetic photometric data from a model.
+    """Base class for Creators that generate synthetic photometric data from a 
+    model.
 
-    `Creator` will output a table of photometric data.  The details
-    will depend on the particular engine.
+    ``Creator`` will output a table of photometric data. The details will depend
+    on the particular engine.
     """
 
     name = "Creator"
@@ -65,19 +65,19 @@ class Creator(RailStage):  # pragma: no cover
         self.open_model(**args)
 
     def open_model(self, **kwargs):
-        """Load the mode and/or attach it to this Creator
+        """Load the model and/or attach it to this Creator.
 
         Keywords
         --------
-        model : `object`, `str` or `ModelHandle`
-            Either an object with a trained model,
-            a path pointing to a file that can be read to obtain the trained model,
-            or a `ModelHandle` providing access to the trained model.
+        model : object, str or ModelHandle
+            Either an object with a trained model, a path pointing to a file
+            that can be read to obtain the trained model, or a ``ModelHandle``
+            providing access to the trained model
 
         Returns
         -------
-        self.model : `object`
-            The object encapsulating the trained model.
+        self.model : object
+            The object encapsulating the trained model
         """
         model = kwargs.get("model", None)
         if model is None or model == "None":  # pragma: no cover
@@ -96,14 +96,14 @@ class Creator(RailStage):  # pragma: no cover
     def sample(self, n_samples: int, seed: int = None, **kwargs):
         """Draw samples from the model specified in the configuration.
 
-        This is a method for running a Creator in interactive mode.
-        In pipeline mode, the subclass `run` method will be called by itself.
+        This is a method for running a Creator in interactive mode. In pipeline
+        mode, the subclass ``run`` method will be called by itself.
 
         Parameters
         ----------
-        n_samples: int
+        n_samples : int
             The number of samples to draw
-        seed: int
+        seed : int
             The random seed to control sampling
 
         Returns
@@ -113,10 +113,12 @@ class Creator(RailStage):  # pragma: no cover
 
         Notes
         -----
-        This method puts `n_samples` and `seed` into the stage configuration
+        This method puts ``n_samples`` and ``seed`` into the stage configuration
         data, which makes them available to other methods.
-        It then calls the `run` method, which must be defined by a subclass.
-        Finally, the `DataHandle` associated to the `output` tag is returned.
+
+        It then calls the ``run`` method, which must be defined by a subclass.
+
+        Finally, the ``DataHandle`` associated to the ``output`` tag is returned.
         """
         self.config["n_samples"] = n_samples
         self.config["seed"] = seed
@@ -128,7 +130,7 @@ class Creator(RailStage):  # pragma: no cover
 
 class PosteriorCalculator(RailStage):  # pragma: no cover
     """Base class for object that calculates the posterior distribution of a
-    particular field in a table of photometric data  (typically the redshift).
+    particular field in a table of photometric data (typically the redshift).
 
     The posteriors will be contained in a qp Ensemble.
     """
@@ -151,19 +153,19 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
         self.open_model(**args)
 
     def open_model(self, **kwargs):
-        """Load the mode and/or attach it to this PosteriorCalculator
+        """Load the model and/or attach it to this PosteriorCalculator.
 
         Keywords
         --------
-        model : `object`, `str` or `ModelHandle`
-            Either an object with a trained model,
-            a path pointing to a file that can be read to obtain the trained model,
-            or a `ModelHandle` providing access to the trained model.
+        model : object, str or ModelHandle
+            Either an object with a trained model, a path pointing to a file
+            that can be read to obtain the trained model, or a ``ModelHandle``
+            providing access to the trained model
 
         Returns
         -------
-        self.model : `object`
-            The object encapsulating the trained model.
+        self.model : object
+            The object encapsulating the trained model
         """
         model = kwargs.get("model", None)
         if model is None or model == "None":  # pragma: no cover
@@ -182,20 +184,24 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
     def get_posterior(self, input_data, **kwargs) -> qp.Ensemble:
         """Return posteriors for the given column.
 
-        This is a method for running a Creator in interactive mode.
-        In pipeline mode, the subclass `run` method will be called by itself.
+        This is a method for running a Creator in interactive mode. In pipeline
+        mode, the subclass ``run`` method will be called by itself.
 
         Parameters
         ----------
-        data: table-like
+        data : table-like
             A table of the galaxies for which posteriors are calculated
 
         Notes
         -----
-        This will put the `data` argument input this Stages the DataStore using this stages `input` tag.
-        This will put the additional functional arguments into this Stages configuration data.
+        This will put the ``data`` argument input this Stages the DataStore 
+        using this stages ``input`` tag.
 
-        It will then call `self.run()` and return the `DataHandle` associated to the `output` tag
+        This will put the additional functional arguments into this Stages 
+        configuration data.
+
+        It will then call ``self.run()`` and return the ``DataHandle`` 
+        associated to the ``output`` tag.
         """
         self.set_data("input", input_data)
         self.config.update(**kwargs)
