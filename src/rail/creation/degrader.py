@@ -27,7 +27,7 @@ class Degrader(RailStage):
         RailStage.__init__(self, args, comm=comm)
 
     def __call__(self, sample, seed: int = None):
-        """The main interface method for `Degrader`.
+        """The main interface method for ``Degrader``.
 
         Applies degradation.
 
@@ -38,7 +38,7 @@ class Degrader(RailStage):
         implemented by the sub-classes.
 
         The run() method will need to register the data that it creates to this
-        Estimator by using `self.add_data('output', output_data)`.
+        Estimator by using ``self.add_data('output', output_data)``.
 
         Finally, this will return a PqHandle providing access to that output 
         data.
@@ -52,7 +52,7 @@ class Degrader(RailStage):
 
         Returns
         -------
-        output_data : `PqHandle`
+        output_data : PqHandle
             A handle giving access to a table with degraded sample
         """
         if seed is not None:

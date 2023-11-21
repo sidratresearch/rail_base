@@ -46,7 +46,7 @@ class Creator(RailStage):  # pragma: no cover
     """Base class for Creators that generate synthetic photometric data from a 
     model.
 
-    `Creator` will output a table of photometric data. The details will depend
+    ``Creator`` will output a table of photometric data. The details will depend
     on the particular engine.
     """
 
@@ -69,14 +69,14 @@ class Creator(RailStage):  # pragma: no cover
 
         Keywords
         --------
-        model : `object`, `str` or `ModelHandle`
+        model : object, str or ModelHandle
             Either an object with a trained model, a path pointing to a file
-            that can be read to obtain the trained model, or a `ModelHandle`
+            that can be read to obtain the trained model, or a ``ModelHandle``
             providing access to the trained model
 
         Returns
         -------
-        self.model : `object`
+        self.model : object
             The object encapsulating the trained model
         """
         model = kwargs.get("model", None)
@@ -97,7 +97,7 @@ class Creator(RailStage):  # pragma: no cover
         """Draw samples from the model specified in the configuration.
 
         This is a method for running a Creator in interactive mode. In pipeline
-        mode, the subclass `run` method will be called by itself.
+        mode, the subclass ``run`` method will be called by itself.
 
         Parameters
         ----------
@@ -113,12 +113,12 @@ class Creator(RailStage):  # pragma: no cover
 
         Notes
         -----
-        This method puts `n_samples` and `seed` into the stage configuration
+        This method puts ``n_samples`` and ``seed`` into the stage configuration
         data, which makes them available to other methods.
 
-        It then calls the `run` method, which must be defined by a subclass.
+        It then calls the ``run`` method, which must be defined by a subclass.
 
-        Finally, the `DataHandle` associated to the `output` tag is returned.
+        Finally, the ``DataHandle`` associated to the ``output`` tag is returned.
         """
         self.config["n_samples"] = n_samples
         self.config["seed"] = seed
@@ -157,14 +157,14 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
 
         Keywords
         --------
-        model : `object`, `str` or `ModelHandle`
+        model : object, str or ModelHandle
             Either an object with a trained model, a path pointing to a file
-            that can be read to obtain the trained model, or a `ModelHandle`
+            that can be read to obtain the trained model, or a ``ModelHandle``
             providing access to the trained model
 
         Returns
         -------
-        self.model : `object`
+        self.model : object
             The object encapsulating the trained model
         """
         model = kwargs.get("model", None)
@@ -185,7 +185,7 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
         """Return posteriors for the given column.
 
         This is a method for running a Creator in interactive mode. In pipeline
-        mode, the subclass `run` method will be called by itself.
+        mode, the subclass ``run`` method will be called by itself.
 
         Parameters
         ----------
@@ -194,14 +194,14 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
 
         Notes
         -----
-        This will put the `data` argument input this Stages the DataStore using
-        this stages `input` tag.
+        This will put the ``data`` argument input this Stages the DataStore 
+        using this stages ``input`` tag.
 
         This will put the additional functional arguments into this Stages 
         configuration data.
 
-        It will then call `self.run()` and return the `DataHandle` associated to
-        the `output` tag.
+        It will then call ``self.run()`` and return the ``DataHandle`` 
+        associated to the ``output`` tag.
         """
         self.set_data("input", input_data)
         self.config.update(**kwargs)
