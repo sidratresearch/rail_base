@@ -1,5 +1,5 @@
 """
-" Abstract base class defining an Evaluator
+Abstract base class defining an Evaluator
 
 The key feature is that the evaluate method.
 """
@@ -7,12 +7,11 @@ The key feature is that the evaluate method.
 import numpy as np
 
 from ceci.config import StageParameter as Param
+from qp.metrics.pit import PIT
 from rail.core.data import Hdf5Handle, QPHandle
 from rail.core.stage import RailStage
 from rail.core.common_params import SHARED_PARAMS
-
 from rail.evaluation.metrics.cdeloss import CDELoss
-from qp.metrics.pit import PIT
 from rail.evaluation.metrics.pointestimates import PointSigmaIQR, PointBias, PointOutlierRate, PointSigmaMAD
 
 
@@ -112,7 +111,8 @@ class Evaluator(RailStage):
             else:
                 out_table[f'PIT_{pit_metric}_stat'] = [getattr(value, 'statistic', None)]
                 out_table[f'PIT_{pit_metric}_pval'] = [getattr(value, 'p_value', None)]
-                out_table[f'PIT_{pit_metric}_significance_level'] = [getattr(value, 'significance_level', None)]
+                out_table[f'PIT_{pit_metric}_significance_level'] = \
+                    [getattr(value, 'significance_level', None)]
 
         POINT_METRICS = dict(SimgaIQR=PointSigmaIQR,
                              Bias=PointBias,
