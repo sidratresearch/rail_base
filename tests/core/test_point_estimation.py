@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 import pytest
 import numpy as np
 
@@ -81,3 +82,40 @@ def test_mode_no_point_estimates():
     output_ensemble = test_estimator.calculate_point_estimates(test_ensemble, None)
 
     assert output_ensemble.ancil is None
+
+def test_keep_existing_ancil_data():
+    """Make sure that we don't overwrite the ancil data if it already exists.
+    """
+    config_dict = {'zmin':0.0, 'zmax': 3.0, 'nzbins':100, 'calculated_point_estimates': ['mode']}
+
+    test_estimator = CatEstimator.make_stage(name='test', **config_dict)
+
+    locs = 2* (np.random.uniform(size=(100,1))-0.5)
+    scales = 1 + 0.2*(np.random.uniform(size=(100,1))-0.5)
+    test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))
+
+    test_ensemble.set_ancil({'foo': np.zeros(100)})
+
+    output_ensemble = test_estimator.calculate_point_estimates(test_ensemble, None)
+
+    assert 'foo' in output_ensemble.ancil
+    assert np.all(output_ensemble.ancil['foo'] == 0.0)
+    assert len(output_ensemble.ancil['foo']) == 100
+
+def test_write_new_ancil_data():
+    """Make sure that we don't overwrite the ancil data if it already exists.
+    """
+    config_dict = {'zmin':0.0, 'zmax': 3.0, 'nzbins':100, 'calculated_point_estimates': ['mode']}
+
+    test_estimator = CatEstimator.make_stage(name='test', **config_dict)
+
+    locs = 2* (np.random.uniform(size=(100,1))-0.5)
+    scales = 1 + 0.2*(np.random.uniform(size=(100,1))-0.5)
+    test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))
+
+    test_ensemble.set_ancil({'foo': np.zeros(100)})
+
+    output_ensemble = test_estimator.calculate_point_estimates(test_ensemble, None)
+
+    assert 'mode' in output_ensemble.ancil
+    assert len(output_ensemble.ancil['mode']) == 100

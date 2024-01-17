@@ -52,7 +52,10 @@ class PointEstimationMixin():
             ancil_dict.update(median = median_value)
 
         if calculated_point_estimates:
-            qp_dist.set_ancil(ancil_dict)
+            if qp_dist.ancil is None:
+                qp_dist.set_ancil(ancil_dict)
+            else:
+                qp_dist.add_to_ancil(ancil_dict)
 
         return qp_dist
 
