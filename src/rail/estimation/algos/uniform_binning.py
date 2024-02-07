@@ -30,11 +30,7 @@ class UniformBinningClassifier(PZClassifier):
     def __init__(self, args, comm=None):
         PZClassifier.__init__(self, args, comm=comm)
     
-    
-    def _initialize_run(self):
-        self._output_handle = None
 
-        
     def _finalize_run(self):
         self._output_handle.finalize_write()
 
@@ -59,16 +55,15 @@ class UniformBinningClassifier(PZClassifier):
             # assign -99 to objects not in any bin:
             bin_index[bin_index==0]=self.config.no_assign
             bin_index[bin_index==(self.config.nbins+1)]=self.config.no_assign
-
-        npdf = test_data.npdf
+        
         if self.config.id_name != "":
             # below is commented out and replaced by a redundant line
             # because the data doesn't have ID yet
             # obj_id = test_data[self.config.id_name]
-            obj_id = np.arange(npdf)
+            obj_id = np.arange(test_data.npdf)
         elif self.config.id_name == "":
             # ID set to row index
-            obj_id = np.arange(npdf)
+            obj_id = np.arange(test_data.npdf)
             self.config.id_name="row_index"
         
         class_id = {self.config.id_name: obj_id, "class_id": bin_index}
@@ -88,7 +83,6 @@ class UniformBinningClassifier(PZClassifier):
         
         iterator = self.input_iterator('input') # calling RailStage's input_iterator here
         first = True
-        self._initialize_run()
         self._output_handle = None
         
         for s, e, test_data in iterator:
