@@ -3,7 +3,6 @@ A classifier that uses pz point estimate to assign
 tomographic bins with uniform binning. 
 """
 
-import gc
 import numpy as np
 from ceci.config import StageParameter as Param
 from rail.estimation.classifier import PZClassifier
