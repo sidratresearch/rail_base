@@ -111,6 +111,7 @@ class PZClassifier(RailStage):
         """Initialize Classifier"""
         RailStage.__init__(self, args, comm=comm)
         
+
     def classify(self, input_data):
         """The main run method for the classifier, should be implemented
         in the specific subclass.
@@ -126,6 +127,8 @@ class PZClassifier(RailStage):
 
         Finally, this will return a TableHandle providing access to that output data.
 
+        TODO: rewrite for parallelized version
+
         Parameters
         ----------
         input_data : `qp.Ensemble`
@@ -140,3 +143,37 @@ class PZClassifier(RailStage):
         self.run()
         self.finalize()
         return self.get_handle('output')
+    
+
+    # finalize run
+    def _finalize_run(self):
+        self._output_handle.finalize_write()
+    
+    # process chunk
+    def _process_chunk(self, start, end, data, first):
+        raise NotImplementedError(f"{self.name}._process_chunk is not implemented")  # pragma: no cover
+    
+    # do chunk output
+    def _do_chunk_output(self, class_id, start, end, first):
+        if first:
+            self._output_handle = self.add_handle('output', data=class_id)
+            self._output_handle.initialize_write(self._input_length, communicator=self.comm)
+        self._output_handle.set_data(class_id, partial=True)
+        self._output_handle.write_chunk(start, end)
+
+    # run
+    def run(self):
+        test_data = self.get_data('input')
+        
+        iterator = self.input_iterator('input') # calling RailStage's input_iterator here
+        first = True
+        self._output_handle = None
+        
+        for s, e, test_data in iterator:
+            #print(f"Process {self.rank} running estimator on chunk {s} - {e}")
+            self._process_chunk(s, e, test_data, first)
+            first = False
+            # Running garbage collection manually seems to be needed
+            # to avoid memory growth for some estimators
+            gc.collect()
+        self._finalize_run()
