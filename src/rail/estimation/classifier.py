@@ -3,7 +3,7 @@ Abstract base classes defining classifiers.
 """
 
 import gc
-from rail.core.data import QPHandle, TableHandle, ModelHandle
+from rail.core.data import QPHandle, TableHandle, ModelHandle, Hdf5Handle
 from rail.core.stage import RailStage
 
 
@@ -107,7 +107,7 @@ class PZClassifier(RailStage):
     config_options = RailStage.config_options.copy()
     config_options.update(chunk_size=10000)
     inputs = [('input', QPHandle)]
-    outputs = [('output', TableHandle)]
+    outputs = [('output', Hdf5Handle)]
     
     def __init__(self, args, comm=None):
         """Initialize Classifier"""

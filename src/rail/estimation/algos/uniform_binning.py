@@ -65,8 +65,8 @@ class UniformBinningClassifier(PZClassifier):
         self._do_chunk_output(class_id, s, e, first)
 
 
-    # def _finalize_run(self):
-    #     self._output_handle.finalize_write()
+    #def _finalize_run(self):
+    #    self._output_handle.finalize_write()
 
     
     # def _do_chunk_output(self, class_id, start, end, first):
