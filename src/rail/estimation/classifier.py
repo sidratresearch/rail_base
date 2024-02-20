@@ -113,6 +113,8 @@ class PZClassifier(RailStage):
         """Initialize Classifier"""
         RailStage.__init__(self, args, comm=comm)
         
+        self._output_handle = None
+        
 
     def classify(self, input_data):
         """The main run method for the classifier, should be implemented
@@ -169,7 +171,6 @@ class PZClassifier(RailStage):
         
         iterator = self.input_iterator('input') # calling RailStage's input_iterator here
         first = True
-        self._output_handle = None
         
         for s, e, test_data in iterator:
             #print(f"Process {self.rank} running estimator on chunk {s} - {e}")
