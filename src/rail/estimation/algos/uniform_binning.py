@@ -9,9 +9,9 @@ from rail.estimation.classifier import PZClassifier
 from rail.core.data import TableHandle, Hdf5Handle
 
 class UniformBinningClassifier(PZClassifier):
-    """Classifier that simply assign tomographic
-    bins based on point estimate according to SRD"""
-
+    """Classifier that simply assigns tomographic bins based on a point estimate 
+    according to SRD.
+    """
     name = 'UniformBinningClassifier'
     config_options = PZClassifier.config_options.copy()
     config_options.update(
@@ -27,10 +27,32 @@ class UniformBinningClassifier(PZClassifier):
     
     
     def __init__(self, args, comm=None):
+        """Initialize the UniformBinningClassifier.
+
+        Parameters
+        ----------
+        args : dict
+            Configuration arguments for the classifier.
+        comm : MPI.Comm, optional
+            MPI communicator for parallel processing.
+        """
         PZClassifier.__init__(self, args, comm=comm)
     
 
-    def _process_chunk(self, s, e, test_data, first):
+    def _process_chunk(self, start, end, test_data, first):
+        """Process a chunk of data for uniform binning classification.
+
+        Parameters
+        ----------
+        start : int
+            The starting index of the chunk.
+        end : int
+            The ending index of the chunk.
+        test_data : qp.Ensemble
+            The data chunk to be processed.
+        first : bool
+            True if this is the first chunk, False otherwise.
+        """
         try:
             zb = test_data.ancil[self.config.point_estimate]
         except KeyError:
@@ -67,4 +89,4 @@ class UniformBinningClassifier(PZClassifier):
             self.config.id_name="row_index"
         
         class_id = {self.config.id_name: obj_id, "class_id": bin_index}
-        self._do_chunk_output(class_id, s, e, first)
+        self._do_chunk_output(class_id, start, end, first)

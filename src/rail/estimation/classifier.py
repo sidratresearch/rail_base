@@ -97,12 +97,12 @@ class CatClassifier(RailStage):  #pragma: no cover
 
     
 class PZClassifier(RailStage):
-    """The base class for assigning classes (tomographic bins) to per-galaxy PZ estimates
+    """The base class for assigning classes (tomographic bins) to per-galaxy PZ 
+    estimates.
 
-    PZClassifier take as "input" a `qp.Ensemble` with per-galaxy PDFs, and
-    provide as "output" a tabular data which can be appended to the catalogue.
+    PZClassifier takes as "input" a `qp.Ensemble` with per-galaxy PDFs, and
+    provides as "output" tabular data which can be appended to the catalogue.
     """
-    
     name='PZClassifier'
     config_options = RailStage.config_options.copy()
     config_options.update(chunk_size=10000)
@@ -110,9 +110,16 @@ class PZClassifier(RailStage):
     outputs = [('output', Hdf5Handle)]
     
     def __init__(self, args, comm=None):
-        """Initialize Classifier"""
+        """Initialize the PZClassifier.
+
+        Parameters
+        ----------
+        args : dict
+            Configuration arguments for the classifier.
+        comm : MPI.Comm, optional
+            MPI communicator for parallel processing.
+        """
         RailStage.__init__(self, args, comm=comm)
-        
         self._output_handle = None
         
 
@@ -126,12 +133,16 @@ class PZClassifier(RailStage):
         Then it will call the run() and finalize() methods, which need to
         be implemented by the sub-classes.
 
-        The run() method will need to register the data that it creates to this Classifier
-        by using `self.add_data('output', output_data)`.
+        The run() method will need to register the data that it creates to this 
+        Classifier by using `self.add_data('output', output_data)`.
+
+        The run() method relies on the _process_chunk() method, which should be 
+        implemented by subclasses to perform the actual classification on each 
+        chunk of data. The results from each chunk are then combined in the 
+        _finalize_run() method. (Alternatively, override run() in a subclass to 
+        perform the classification without parallelization.)
 
         Finally, this will return a TableHandle providing access to that output data.
-
-        TODO: rewrite for parallelized version
 
         Parameters
         ----------
@@ -141,7 +152,8 @@ class PZClassifier(RailStage):
         Returns
         -------
         output: `dict`
-            Class assignment for each galaxy.
+            Class assignment for each galaxy, typically in the form of a 
+            dictionary with IDs and class labels.
         """
         self.set_data('input', input_data)
         self.run()
@@ -150,12 +162,42 @@ class PZClassifier(RailStage):
     
 
     def _finalize_run(self):
+        """Finalize the classification process after processing all chunks."""
         self._output_handle.finalize_write()
     
     def _process_chunk(self, start, end, data, first):
+        """Process a chunk of data.
+
+        This method should be implemented in subclasses to perform the actual
+        classification on a chunk of data.
+
+        Parameters
+        ----------
+        start : int
+            The starting index of the chunk.
+        end : int
+            The ending index of the chunk.
+        data : qp.Ensemble
+            The data chunk to be processed.
+        first : bool
+            True if this is the first chunk, False otherwise.
+        """
         raise NotImplementedError(f"{self.name}._process_chunk is not implemented")  # pragma: no cover
     
     def _do_chunk_output(self, class_id, start, end, first):
+        """Handle the output of a processed chunk.
+
+        Parameters
+        ----------
+        class_id : dict
+            The classification results for the chunk.
+        start : int
+            The starting index of the chunk.
+        end : int
+            The ending index of the chunk.
+        first : bool
+            True if this is the first chunk, False otherwise.
+        """
         if first:
             self._output_handle = self.add_handle('output', data=class_id)
             self._output_handle.initialize_write(self._input_length, communicator=self.comm)
@@ -163,14 +205,22 @@ class PZClassifier(RailStage):
         self._output_handle.write_chunk(start, end)
 
     def run(self):
+        """Processes the input data in chunks and performs classification.
+
+        This method iterates over chunks of the input data, calling the 
+        _process_chunk method for each chunk to perform the actual classification. 
+
+        The _process_chunk method should be implemented by subclasses to define 
+        the specific classification logic.
+        """
         test_data = self.get_data('input')
         
         iterator = self.input_iterator('input')
         first = True
         
-        for s, e, test_data in iterator:
-            #print(f"Process {self.rank} running estimator on chunk {s} - {e}")
-            self._process_chunk(s, e, test_data, first)
+        for start, end, test_data in iterator:
+            #print(f"Process {self.rank} running estimator on chunk {start} - {end}")
+            self._process_chunk(start, end, test_data, first)
             first = False
             # Running garbage collection manually seems to be needed
             # to avoid memory growth for some estimators
