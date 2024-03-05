@@ -35,6 +35,11 @@ class UniformBinningClassifier(PZClassifier):
             zb = test_data.ancil[self.config.point_estimate]
         except KeyError:
             raise KeyError(f"{self.config.point_estimate} is not contained in the data ancil, you will need to compute it explicitly.")
+        
+        try:
+            npdf = test_data.npdf
+        except KeyError:
+            raise KeyError(f"npdf is not a supported attribute of {type(test_data)}. Are you sure you don't mean to be using a qp ensemble?")
 
         # binning options
         if len(self.config.zbin_edges)>=2:
@@ -63,32 +68,3 @@ class UniformBinningClassifier(PZClassifier):
         
         class_id = {self.config.id_name: obj_id, "class_id": bin_index}
         self._do_chunk_output(class_id, s, e, first)
-
-
-    #def _finalize_run(self):
-    #    self._output_handle.finalize_write()
-
-    
-    # def _do_chunk_output(self, class_id, start, end, first):
-    #     if first:
-    #         self._output_handle = self.add_handle('output', data=class_id)
-    #         self._output_handle.initialize_write(self._input_length, communicator=self.comm)
-    #     self._output_handle.set_data(class_id, partial=True)
-    #     self._output_handle.write_chunk(start, end)
-
-
-    # def run(self):
-    #     test_data = self.get_data('input')
-        
-    #     iterator = self.input_iterator('input') # calling RailStage's input_iterator here
-    #     first = True
-    #     self._output_handle = None
-        
-    #     for s, e, test_data in iterator:
-    #         #print(f"Process {self.rank} running estimator on chunk {s} - {e}")
-    #         self._process_chunk(s, e, test_data, first)
-    #         first = False
-    #         # Running garbage collection manually seems to be needed
-    #         # to avoid memory growth for some estimators
-    #         gc.collect()
-    #     self._finalize_run()

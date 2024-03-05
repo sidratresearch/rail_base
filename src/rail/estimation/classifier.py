@@ -149,15 +149,12 @@ class PZClassifier(RailStage):
         return self.get_handle('output')
     
 
-    # finalize run
     def _finalize_run(self):
         self._output_handle.finalize_write()
     
-    # process chunk
     def _process_chunk(self, start, end, data, first):
         raise NotImplementedError(f"{self.name}._process_chunk is not implemented")  # pragma: no cover
     
-    # do chunk output
     def _do_chunk_output(self, class_id, start, end, first):
         if first:
             self._output_handle = self.add_handle('output', data=class_id)
@@ -165,11 +162,10 @@ class PZClassifier(RailStage):
         self._output_handle.set_data(class_id, partial=True)
         self._output_handle.write_chunk(start, end)
 
-    # run
     def run(self):
         test_data = self.get_data('input')
         
-        iterator = self.input_iterator('input') # calling RailStage's input_iterator here
+        iterator = self.input_iterator('input')
         first = True
         
         for s, e, test_data in iterator:
