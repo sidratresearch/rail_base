@@ -3,16 +3,15 @@ A classifier that uses pz point estimate to assign
 tomographic bins with uniform binning. 
 """
 
-import gc
 import numpy as np
 from ceci.config import StageParameter as Param
 from rail.estimation.classifier import PZClassifier
 from rail.core.data import TableHandle, Hdf5Handle
 
 class UniformBinningClassifier(PZClassifier):
-    """Classifier that simply assign tomographic
-    bins based on point estimate according to SRD"""
-
+    """Classifier that simply assigns tomographic bins based on a point estimate 
+    according to SRD.
+    """
     name = 'UniformBinningClassifier'
     config_options = PZClassifier.config_options.copy()
     config_options.update(
@@ -28,18 +27,41 @@ class UniformBinningClassifier(PZClassifier):
     
     
     def __init__(self, args, comm=None):
+        """Initialize the UniformBinningClassifier.
+
+        Parameters
+        ----------
+        args : dict
+            Configuration arguments for the classifier.
+        comm : MPI.Comm, optional
+            MPI communicator for parallel processing.
+        """
         PZClassifier.__init__(self, args, comm=comm)
     
 
-    def _finalize_run(self):
-        self._output_handle.finalize_write()
+    def _process_chunk(self, start, end, test_data, first):
+        """Process a chunk of data for uniform binning classification.
 
-        
-    def _process_chunk(self, s, e, test_data, first):
+        Parameters
+        ----------
+        start : int
+            The starting index of the chunk.
+        end : int
+            The ending index of the chunk.
+        test_data : qp.Ensemble
+            The data chunk to be processed.
+        first : bool
+            True if this is the first chunk, False otherwise.
+        """
         try:
             zb = test_data.ancil[self.config.point_estimate]
         except KeyError:
             raise KeyError(f"{self.config.point_estimate} is not contained in the data ancil, you will need to compute it explicitly.")
+        
+        try:
+            npdf = test_data.npdf
+        except KeyError:
+            raise KeyError(f"npdf is not a supported attribute of {type(test_data)}. Are you sure you don't mean to be using a qp ensemble?")
 
         # binning options
         if len(self.config.zbin_edges)>=2:
@@ -67,29 +89,4 @@ class UniformBinningClassifier(PZClassifier):
             self.config.id_name="row_index"
         
         class_id = {self.config.id_name: obj_id, "class_id": bin_index}
-        self._do_chunk_output(class_id, s, e, first)
-
-
-    def _do_chunk_output(self, class_id, start, end, first):
-        if first:
-            self._output_handle = self.add_handle('output', data=class_id)
-            self._output_handle.initialize_write(self._input_length, communicator=self.comm)
-        self._output_handle.set_data(class_id, partial=True)
-        self._output_handle.write_chunk(start, end)
-
-
-    def run(self):
-        test_data = self.get_data('input')
-        
-        iterator = self.input_iterator('input') # calling RailStage's input_iterator here
-        first = True
-        self._output_handle = None
-        
-        for s, e, test_data in iterator:
-            #print(f"Process {self.rank} running estimator on chunk {s} - {e}")
-            self._process_chunk(s, e, test_data, first)
-            first = False
-            # Running garbage collection manually seems to be needed
-            # to avoid memory growth for some estimators
-            gc.collect()
-        self._finalize_run()
+        self._do_chunk_output(class_id, start, end, first)
