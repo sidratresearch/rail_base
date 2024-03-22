@@ -16,7 +16,7 @@ from rail.estimation.algos.equal_count import *
 
 from rail.creation.degrader import *
 #from rail.creation.degradation.spectroscopic_degraders import *
-from rail.creation.degradation.spectroscopic_selections import *
+# from rail.creation.degradation.spectroscopic_selections import *
 from rail.creation.degradation.quantityCut import *
 
 from rail.creation.engine import *
