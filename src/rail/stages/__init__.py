@@ -25,7 +25,11 @@ from rail.creation.engine import *
 # from rail.creation.engines.dsps_photometry_creator import *
 # from rail.creation.engines.dsps_sed_modeler import *
 
-# from rail.evaluation.evaluator import Evaluator
+from rail.evaluation.dist_to_dist_evaluator import DistToDistEvaluator
+from rail.evaluation.dist_to_point_evaluator import DistToPointEvaluator
+from rail.evaluation.evaluator import Evaluator, OldEvaluator
+from rail.evaluation.point_to_point_evaluator import PointToPointEvaluator
+from rail.evaluation.single_evaluator import SingleEvaluator
 
 
 def import_and_attach_all():
