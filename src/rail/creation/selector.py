@@ -22,6 +22,7 @@ class Selector(RailStage):
     config_options = RailStage.config_options.copy()
     config_options.update(
         drop_rows=Param(bool, True, msg="Drop selected rows from output table"),
+        seed=Param(int, None, msg="If set, creates reproducible results."),
     )
     inputs = [('input', PqHandle)]
     outputs = [('output', PqHandle)]

@@ -18,7 +18,9 @@ class Noisifier(RailStage):
 
     name = 'Noisifier'
     config_options = RailStage.config_options.copy()
-    config_options.update(seed=1337)
+    config_options.update(
+        seed=Param(int, None, msg="If set, creates reproducible results."),
+    )
     inputs = [('input', PqHandle)]
     outputs = [('output', PqHandle)]
 
