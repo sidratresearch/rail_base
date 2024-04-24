@@ -6,7 +6,7 @@ Intended subclasses are noisifier that adds LSST noise / other telescope noise
 
 from rail.core.stage import RailStage
 from rail.core.data import PqHandle
-
+from ceci.config import StageParameter as Param
 
 class Noisifier(RailStage):
     """Base class Noisifier, which adds noise to the input catalog
@@ -18,7 +18,9 @@ class Noisifier(RailStage):
 
     name = 'Noisifier'
     config_options = RailStage.config_options.copy()
-    config_options.update(seed=1337)
+    config_options.update(
+        seed=Param(default=None, required=False, msg="Set to an `int` to force reproducible results."),
+    )
     inputs = [('input', PqHandle)]
     outputs = [('output', PqHandle)]
 
