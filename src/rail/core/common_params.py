@@ -2,6 +2,7 @@
 
 from ceci.config import StageParameter as Param
 from ceci.config import StageConfig
+import os
 
 RAILDIR = os.path.abspath(os.path.join(os.path.dirname(rail.core.__file__), "..", ".."))
 
