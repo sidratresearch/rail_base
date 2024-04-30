@@ -282,7 +282,7 @@ class TableHandle(DataHandle):
         if path in [None, 'none', 'None']:  # pragma: no cover
             return 0
         try:
-            return tables_io.io.getInputDataLengthHdf5(path, **kwargs)
+            return tables_io.io.getInputDataLength(path, **kwargs)
         except Exception:
             return 0
 
@@ -367,6 +367,9 @@ class PqHandle(TableHandle):
 
     suffix = "pq"
 
+    @classmethod
+    def _size(cls, path, **kwargs):
+        return tables_io.io.getInputDataLengthPq(path, **kwargs)
 
 class QPHandle(DataHandle):
     """DataHandle for qp ensembles"""
