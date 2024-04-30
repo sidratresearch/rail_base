@@ -4,7 +4,7 @@ import ceci
 import numpy as np
 
 from rail.core.stage import RailPipeline, RailStage
-from rail.core.utils import RAILDIR
+from rail.core.common_params import RAILDIR
 from rail.core.util_stages import ColumnMapper, TableConverter
 
 

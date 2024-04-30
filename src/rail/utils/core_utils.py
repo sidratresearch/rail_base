@@ -4,7 +4,6 @@ import os
 import rail
 import rail.core
 
-RAILDIR = os.path.abspath(os.path.join(os.path.dirname(rail.core.__file__), "..", ".."))
 
 
 def find_rail_file(relpath):

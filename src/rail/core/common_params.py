@@ -3,6 +3,8 @@
 from ceci.config import StageParameter as Param
 from ceci.config import StageConfig
 
+RAILDIR = os.path.abspath(os.path.join(os.path.dirname(rail.core.__file__), "..", ".."))
+
 lsst_bands = "ugrizy"
 lsst_mag_cols = [f"mag_{band}_lsst" for band in lsst_bands]
 lsst_mag_err_cols = [f"mag_err_{band}_lsst" for band in lsst_bands]

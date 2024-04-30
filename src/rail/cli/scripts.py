@@ -4,7 +4,7 @@ import yaml
 import rail.stages
 from rail.core import RailEnv
 from rail.cli.options import GitMode
-from rail.core.utils import RAILDIR
+from rail.core.common_params import RAILDIR
 
 
 def render_nb(outdir, clear_output, dry_run, inputs, skip, **_kwargs):
