@@ -249,40 +249,6 @@ def test_model_handle():
         pickle.dump(obj=mh3.data, file=fout, protocol=pickle.HIGHEST_PROTOCOL)
     os.remove(model_path_copy)
 
-
-def test_data_hdf5_iter():
-    DS = RailStage.data_store
-    DS.clear()
-
-    datapath = os.path.join(
-        RAILDIR, "rail", "examples_data", "testdata", "test_dc2_training_9816.hdf5"
-    )
-
-    # data = DS.read_file('data', TableHandle, datapath)
-    th = Hdf5Handle("data", path=datapath)
-    x = th.iterator(groupname="photometry", chunk_size=1000)
-
-    assert isinstance(x, GeneratorType)
-    for i, xx in enumerate(x):
-        assert xx[0] == i * 1000
-        assert xx[1] - xx[0] <= 1000
-
-    _data = DS.read_file("input", TableHandle, datapath)
-    cm = ColumnMapper.make_stage(
-        input=datapath,
-        chunk_size=1000,
-        hdf5_groupname="photometry",
-        columns=dict(id="bob"),
-    )
-    x = cm.input_iterator("input")
-
-    assert isinstance(x, GeneratorType)
-
-    for i, xx in enumerate(x):
-        assert xx[0] == i * 1000
-        assert xx[1] - xx[0] <= 1000
-
-
 def test_data_store():
     DS = RailStage.data_store
     DS.clear()
@@ -361,24 +327,3 @@ def test_common_params():
     assert par.value == 0.1
     assert par.dtype == float
 
-def test_set_data_real_file():
-    """Create an instance of a child class of RailStage. Exercise the `set_data`
-    method and pass in a path to model. The output of set_data should be `None`.
-    """
-    DS = RailStage.data_store
-    DS.clear()
-    model_path = os.path.join(
-        RAILDIR,
-        "rail",
-        "examples_data",
-        "estimation_data",
-        "data",
-        "CWW_HDFN_prior.pkl",
-    )
-    DS.add_data("model", None, ModelHandle, path=model_path)
-
-    col_map = ColumnMapper.make_stage(name="col_map", columns={})
-
-    ret_val = col_map.set_data("model", None, path=model_path, do_read=False)
-
-    assert ret_val is None
