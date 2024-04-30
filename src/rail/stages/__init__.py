@@ -31,6 +31,7 @@ from rail.evaluation.evaluator import Evaluator, OldEvaluator
 from rail.evaluation.point_to_point_evaluator import PointToPointEvaluator
 from rail.evaluation.single_evaluator import SingleEvaluator
 
+from rail.utils.stage_utils import ColumnMapper, RowSelector, TableConverter
 
 def import_and_attach_all():
     """Import all the packages in the rail ecosystem and attach them to this module"""
