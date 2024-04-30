@@ -4,6 +4,17 @@ from types import GeneratorType
 import pytest
 
 from rail.core.stage import RailStage
+from rail.core.data import (
+    DataHandle,
+    DataStore,
+    FitsHandle,
+    Hdf5Handle,
+    ModelHandle,
+    PqHandle,
+    QPHandle,
+    QPOrTableHandle,
+    TableHandle,
+)
 
 from rail.core.common_params import RAILDIR
 from rail.utils.core_utils import find_rail_file
