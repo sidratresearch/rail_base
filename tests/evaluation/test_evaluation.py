@@ -8,7 +8,7 @@ import qp
 import rail.evaluation.metrics.pointestimates as pe
 from rail.core.data import QPHandle, TableHandle,  QPOrTableHandle
 from rail.core.stage import RailStage
-from rail.core.utils import find_rail_file
+from rail.utils.core_utils import find_rail_file
 from rail.evaluation.evaluator import OldEvaluator
 from rail.evaluation.dist_to_dist_evaluator import DistToDistEvaluator
 from rail.evaluation.dist_to_point_evaluator import DistToPointEvaluator
