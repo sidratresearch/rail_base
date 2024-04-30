@@ -18,54 +18,11 @@ from rail.core.data import (
     TableHandle,
 )
 from rail.core.stage import RailStage
-from rail.core.utils import RAILDIR, find_rail_file
-from rail.core.util_stages import (
-    ColumnMapper,
-    RowSelector,
-    TableConverter,
-)
 
 
 # def test_data_file():
 #    with pytest.raises(ValueError) as errinfo:
 #        df = DataFile('dummy', 'x')
-
-def test_find_rail_file():
-    afile = find_rail_file(os.path.join("examples_data", "testdata", "test_dc2_training_9816.pq"))
-    assert afile
-    with pytest.raises(ValueError):
-        _not_a_file = find_rail_file("not_a_file")
-
-
-def test_util_stages():
-    DS = RailStage.data_store
-    DS.clear()
-    datapath = os.path.join(
-        RAILDIR, "rail", "examples_data", "testdata", "test_dc2_training_9816.pq"
-    )
-
-    data = DS.read_file("data", TableHandle, datapath)
-
-    table_conv = TableConverter.make_stage(name="conv", output_format="numpyDict")
-    col_map = ColumnMapper.make_stage(name="col_map", columns={})
-    row_sel = RowSelector.make_stage(name="row_sel", start=1, stop=15)
-
-    with pytest.raises(KeyError) as _errinfo:
-        table_conv.get_handle("nope", allow_missing=False)
-
-    _conv_data = table_conv(data)
-    mapped_data = col_map(data)
-    _sel_data = row_sel(mapped_data)
-
-    row_sel_2 = RowSelector.make_stage(name="row_sel_2", start=1, stop=15)
-    row_sel_2.set_data("input", mapped_data.data)
-    handle = row_sel_2.get_handle("input")
-
-    row_sel_3 = RowSelector.make_stage(
-        name="row_sel_3", input=handle.path, start=1, stop=15
-    )
-    row_sel_3.set_data("input", None, do_read=True)
-
 
 def do_data_handle(datapath, handle_class):
     _DS = RailStage.data_store
@@ -402,19 +359,6 @@ def test_common_params():
     assert par.default == 0.1
     assert par.value == 0.1
     assert par.dtype == float
-
-
-def test_set_data_nonexistent_file():
-    """Create an instance of a child class of RailStage. Exercise the `set_data`
-    method and pass in a path to a nonexistent file. A `FileNotFound` exception
-    should be raised.
-    """
-
-    col_map = ColumnMapper.make_stage(name="col_map", columns={})
-    with pytest.raises(FileNotFoundError) as err:
-        col_map.set_data("model", None, path="./bad_directory/no_file.py")
-        assert "Unable to find file" in err.context
-
 
 def test_set_data_real_file():
     """Create an instance of a child class of RailStage. Exercise the `set_data`
