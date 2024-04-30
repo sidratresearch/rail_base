@@ -18,6 +18,7 @@ from rail.core.data import (
     TableHandle,
 )
 from rail.core.stage import RailStage
+from rail.core.common_params import RAILDIR
 
 
 # def test_data_file():
