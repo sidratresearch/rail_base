@@ -5,7 +5,7 @@ import numpy as np
 
 from rail.core.stage import RailPipeline, RailStage
 from rail.utils.path_utils import RAILDIR
-from rail.utils.stage_utils import ColumnMapper, TableConverter
+from rail.tools.table_tools import ColumnMapper, TableConverter
 
 
 def test_pipeline():

@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 
 from rail.core.data import DATA_STORE, TableHandle
-from rail.utils.stage_utils import ColumnMapper
+from rail.tools.table_tools import ColumnMapper
 from rail.creation.degradation.quantityCut import QuantityCut
 from rail.creation.degradation.addRandom import AddColumnOfRandom
 

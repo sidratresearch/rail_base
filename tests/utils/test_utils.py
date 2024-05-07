@@ -18,7 +18,7 @@ from rail.core.data import (
 
 from rail.utils.path_utils import RAILDIR
 from rail.utils.path_utils import find_rail_file
-from rail.utils.stage_utils import (
+from rail.tools.table_tools import (
     ColumnMapper,
     RowSelector,
     TableConverter,
