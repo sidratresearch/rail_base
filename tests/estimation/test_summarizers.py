@@ -2,7 +2,7 @@ import os
 
 from rail.core.data import QPHandle
 from rail.core.stage import RailStage
-from rail.core.common_params import RAILDIR
+from rail.utils.path_utils import RAILDIR
 from rail.estimation.algos import naive_stack, point_est_hist, var_inf
 
 testdata = os.path.join(RAILDIR, "rail/examples_data/testdata/output_BPZ_lite.hdf5")

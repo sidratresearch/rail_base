@@ -16,7 +16,7 @@ from rail.core.data import (
     TableHandle,
 )
 
-from rail.core.common_params import RAILDIR
+from rail.utils.path_utils import RAILDIR
 from rail.utils.core_utils import find_rail_file
 from rail.utils.stage_utils import (
     ColumnMapper,
