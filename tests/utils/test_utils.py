@@ -17,7 +17,7 @@ from rail.core.data import (
 )
 
 from rail.utils.path_utils import RAILDIR
-from rail.utils.core_utils import find_rail_file
+from rail.utils.path_utils import find_rail_file
 from rail.utils.stage_utils import (
     ColumnMapper,
     RowSelector,
