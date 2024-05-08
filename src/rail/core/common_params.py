@@ -2,8 +2,8 @@
 
 from ceci.config import StageParameter as Param
 from ceci.config import StageConfig
-import rail
-import os
+
+
 
 
 lsst_bands = "ugrizy"
