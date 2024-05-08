@@ -7,8 +7,8 @@ import pytest
 
 from rail.core.data import DATA_STORE, TableHandle
 from rail.tools.table_tools import ColumnMapper
-from rail.creation.degradation.quantityCut import QuantityCut
-from rail.creation.degradation.addRandom import AddColumnOfRandom
+from rail.creation.degraders.quantityCut import QuantityCut
+from rail.creation.degraders.addRandom import AddColumnOfRandom
 
 
 @pytest.fixture
