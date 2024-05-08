@@ -6,9 +6,9 @@ import pandas as pd
 import pytest
 
 from rail.core.data import DATA_STORE, TableHandle
-from rail.core.util_stages import ColumnMapper
-from rail.creation.degradation.quantityCut import QuantityCut
-from rail.creation.degradation.addRandom import AddColumnOfRandom
+from rail.tools.table_tools import ColumnMapper
+from rail.creation.degraders.quantityCut import QuantityCut
+from rail.creation.degraders.addRandom import AddColumnOfRandom
 
 
 @pytest.fixture

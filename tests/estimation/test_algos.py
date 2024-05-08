@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.special
 
-from rail.core.algo_utils import one_algo
+from rail.utils.testing_utils import one_algo
 from rail.core.stage import RailStage
 from rail.estimation.algos import random_gauss, train_z
 

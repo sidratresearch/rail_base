@@ -4,8 +4,8 @@ import ceci
 import numpy as np
 
 from rail.core.stage import RailPipeline, RailStage
-from rail.core.utils import RAILDIR
-from rail.core.util_stages import ColumnMapper, TableConverter
+from rail.utils.path_utils import RAILDIR
+from rail.tools.table_tools import ColumnMapper, TableConverter
 
 
 def test_pipeline():

@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pytest
 
-from rail.core.utils import RAILDIR
+from rail.utils.path_utils import RAILDIR
 from rail.core.stage import RailStage
 from rail.core.data import QPHandle
 from rail.estimation.algos.uniform_binning import UniformBinningClassifier

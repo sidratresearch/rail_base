@@ -1,20 +1,7 @@
-""" Utility functions """
 
-import os
-import rail
-import rail.core
+# This is a deprecative path for importing RAILDIR, it is only for the transition period
+# to move RAILDIR and find_rail_file to utils.path_utils
 
-RAILDIR = os.path.abspath(os.path.join(os.path.dirname(rail.core.__file__), "..", ".."))
+from rail.utils.path_utils import find_rail_file, RAILDIR
 
-
-def find_rail_file(relpath):
-    """Find a file somewhere in rail by searching the namespace path
-
-    This lets us avoid issues that the paths can be different depending
-    on if we have installed things from source or not
-    """
-    for path_ in rail.__path__:
-        fullpath = os.path.abspath(os.path.join(path_, relpath))
-        if os.path.exists(fullpath):
-            return fullpath
-    raise ValueError(f"Could not file {relpath} in {rail.__path__}")
+find_rail_file = find_rail_file

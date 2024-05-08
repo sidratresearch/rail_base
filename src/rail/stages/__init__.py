@@ -14,9 +14,9 @@ from rail.estimation.algos.equal_count import *
 
 
 from rail.creation.degrader import *
-#from rail.creation.degradation.spectroscopic_degraders import *
-# from rail.creation.degradation.spectroscopic_selections import *
-from rail.creation.degradation.quantityCut import *
+#from rail.creation.degraders.spectroscopic_degraders import *
+# from rail.creation.degraders.spectroscopic_selections import *
+from rail.creation.degraders.quantityCut import *
 
 from rail.creation.engine import *
 
@@ -31,6 +31,7 @@ from rail.evaluation.evaluator import Evaluator, OldEvaluator
 from rail.evaluation.point_to_point_evaluator import PointToPointEvaluator
 from rail.evaluation.single_evaluator import SingleEvaluator
 
+from rail.tools.table_tools import ColumnMapper, RowSelector, TableConverter
 
 def import_and_attach_all():
     """Import all the packages in the rail ecosystem and attach them to this module"""

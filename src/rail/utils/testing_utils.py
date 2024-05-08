@@ -2,7 +2,7 @@
 import os
 import scipy.special
 from rail.core.stage import RailStage
-from rail.core.utils import RAILDIR
+from rail.utils.path_utils import RAILDIR
 from rail.core.data import TableHandle
 
 
