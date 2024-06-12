@@ -347,11 +347,11 @@ class Evaluator(RailStage):
                     f"Available metrics are: {sorted(self._metric_dict.keys())}"
                 )
                 continue
-
-            sub_dict = self.config.metric_config.get("general", {}).copy()
-            sub_dict.update(self.config.metric_config.get(metric_name_, {}))
+            sub_dict = {}
             if 'limits' in self.config:
-                sub_dict.update(dict(limits=self.config.limits))
+                sub_dict['limits'] = self.config.limits
+            sub_dict.update(self.config.metric_config.get("general", {}))
+            sub_dict.update(self.config.metric_config.get(metric_name_, {}))
             self._metric_config_dict[metric_name_] = sub_dict
             this_metric_class = self._metric_dict[metric_name_]
             try:
