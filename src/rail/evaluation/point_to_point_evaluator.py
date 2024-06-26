@@ -35,11 +35,14 @@ class PointToPointEvaluator(Evaluator):
         estimate_data = np.squeeze(data_tuple[2].ancil[self.config.point_estimate_key])
         reference_data = data_tuple[3][self.config.reference_dictionary_key]
 
-        self._process_all_chunk_metrics(estimate_data, reference_data, start, end, first)
-
+        self._process_all_chunk_metrics(
+            estimate_data, reference_data, start, end, first
+        )
 
     def _process_all(self, data_tuple):
         estimate_data = np.squeeze(data_tuple[0].ancil[self.config.point_estimate_key])
-        reference_data = data_tuple[1][self.config.hdf5_groupname][self.config.reference_dictionary_key]
+        reference_data = data_tuple[1][self.config.hdf5_groupname][
+            self.config.reference_dictionary_key
+        ]
 
         self._process_all_metrics(estimate_data, reference_data)

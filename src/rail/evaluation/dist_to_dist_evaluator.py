@@ -1,4 +1,3 @@
-import numpy as np
 from ceci.config import StageParameter as Param
 from qp.metrics.concrete_metric_classes import DistToDistMetric
 
@@ -41,8 +40,9 @@ class DistToDistEvaluator(Evaluator):
         estimate_data = data_tuple[2]
         reference_data = data_tuple[3]
 
-        self._process_all_chunk_metrics(estimate_data, reference_data, start, end, first)
-
+        self._process_all_chunk_metrics(
+            estimate_data, reference_data, start, end, first
+        )
 
     def _process_all(self, data_tuple):
         estimate_data = data_tuple[0]

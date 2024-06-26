@@ -73,9 +73,8 @@ class RailEnv:
             cls.NAMESPACE_MODULE_DICT[key] = []
             for vv in val:
                 fullpath = os.path.join(vv, key.replace(".", "/"))
-                modules = list(pkgutil.iter_modules(
-                        [fullpath], rail.__name__ + "." + key + "."
-                    )
+                modules = list(
+                    pkgutil.iter_modules([fullpath], rail.__name__ + "." + key + ".")
                 )
                 for module_ in modules:
                     if module_ in cls.MODULE_DICT:  # pragma: no cover
@@ -203,7 +202,9 @@ Submodules
             else:
                 api_pkg_toc += f"    {vv.name}.rst\n"
 
-        with open(os.path.join(basedir, "api", f"rail.{key}.rst"), "w", encoding="utf-8") as apitocfile:
+        with open(
+            os.path.join(basedir, "api", f"rail.{key}.rst"), "w", encoding="utf-8"
+        ) as apitocfile:
             apitocfile.write(api_pkg_toc)
 
     @classmethod
@@ -247,7 +248,9 @@ Submodules
             sub_packages=sub_packages, sub_modules=sub_modules
         )
 
-        with open(os.path.join(basedir, "api", f"rail.{key}.rst"), "w", encoding="utf-8") as apitocfile:
+        with open(
+            os.path.join(basedir, "api", f"rail.{key}.rst"), "w", encoding="utf-8"
+        ) as apitocfile:
             apitocfile.write(api_pkg_toc)
 
     @classmethod
@@ -283,7 +286,9 @@ Information on specific functions, classes, and methods.
             else:
                 cls.do_namespace_api_rst(basedir, key, val)
 
-        with open(os.path.join(basedir, "api.rst"), "w", encoding="utf-8") as apitocfile:
+        with open(
+            os.path.join(basedir, "api.rst"), "w", encoding="utf-8"
+        ) as apitocfile:
             apitocfile.write(apitoc)
 
     @classmethod

@@ -15,7 +15,6 @@ from rail.core.data import (
     PqHandle,
     QPHandle,
     QPOrTableHandle,
-    TableHandle,
 )
 from rail.core.stage import RailStage
 from rail.utils.path_utils import RAILDIR
@@ -24,6 +23,7 @@ from rail.utils.path_utils import RAILDIR
 # def test_data_file():
 #    with pytest.raises(ValueError) as errinfo:
 #        df = DataFile('dummy', 'x')
+
 
 def do_data_handle(datapath, handle_class):
     _DS = RailStage.data_store
@@ -37,7 +37,7 @@ def do_data_handle(datapath, handle_class):
     check_size = th.size()
     if check_size == 0:
         print(f"Warning, failed to read size from {datapath}")
-    
+
     with pytest.raises(ValueError) as _errinfo:
         th.write_chunk(0, 1)
     assert th.has_path
@@ -52,7 +52,7 @@ def do_data_handle(datapath, handle_class):
     th2 = handle_class("data2", data=data)
     assert th2.has_data
     assert th2.size() > 0
-    
+
     assert not th2.has_path
     assert not th2.is_written
     with pytest.raises(ValueError) as _errinfo:
@@ -105,7 +105,7 @@ def test_qp_or_table_handle_qp():
     assert handle.fileObj is not None
     handle.close()
     assert handle.fileObj is None
-    
+
     x = handle.iterator(chunk_size=100)
 
     assert isinstance(x, GeneratorType)
@@ -113,9 +113,8 @@ def test_qp_or_table_handle_qp():
         assert xx[0] == i * 100
         assert xx[1] - xx[0] <= 100
 
+    handle2 = QPOrTableHandle(tag="qp_or_table_qp_2", path=datapath)
 
-    handle2 = QPOrTableHandle(tag='qp_or_table_qp_2', path=datapath)
-    
     x2 = handle2.iterator(chunk_size=100)
 
     assert isinstance(x2, GeneratorType)
@@ -123,7 +122,6 @@ def test_qp_or_table_handle_qp():
         assert xx2[0] == i2 * 100
         assert xx2[1] - xx2[0] <= 100
 
-        
 
 def test_qp_or_table_handle_table():
     datapath = os.path.join(
@@ -135,17 +133,17 @@ def test_qp_or_table_handle_table():
     assert handle.fileObj is not None
     handle.close()
     assert handle.fileObj is None
-    
+
     x = handle.iterator(chunk_size=100)
 
     assert isinstance(x, GeneratorType)
     for i, xx in enumerate(x):
         assert xx[0] == i * 100
         assert xx[1] - xx[0] <= 100
-        
-    handle2 = QPOrTableHandle(tag='qp_or_table_table_2', path=datapath)
-    
-    x2 = handle2.iterator(groupname='photometry', chunk_size=100)
+
+    handle2 = QPOrTableHandle(tag="qp_or_table_table_2", path=datapath)
+
+    x2 = handle2.iterator(groupname="photometry", chunk_size=100)
 
     assert isinstance(x2, GeneratorType)
     for i2, xx2 in enumerate(x2):
@@ -249,6 +247,7 @@ def test_model_handle():
         pickle.dump(obj=mh3.data, file=fout, protocol=pickle.HIGHEST_PROTOCOL)
     os.remove(model_path_copy)
 
+
 def test_data_store():
     DS = RailStage.data_store
     DS.clear()
@@ -297,7 +296,7 @@ def test_data_store():
 
     a_handle = DS.add_handle("pq_copy_2", PqHandle, path=datapath_pq_copy)
     assert a_handle
-    
+
     assert repr(DS)
 
     DS2 = DataStore(pq=DS.pq)
@@ -307,7 +306,7 @@ def test_data_store():
     DS.pop("pq")
     # pop the 'pq_copy_2' because it is empty
     DS.pop("pq_copy_2")
-    
+
     DS.write_all()
     DS.write_all(force=True)
 
@@ -326,4 +325,3 @@ def test_common_params():
     assert par.default == 0.1
     assert par.value == 0.1
     assert par.dtype == float
-

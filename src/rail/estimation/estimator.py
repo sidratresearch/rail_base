@@ -1,6 +1,7 @@
 """
 Abstract base classes defining Estimators of individual galaxy redshift uncertainties.
 """
+
 import gc
 
 from rail.core.common_params import SHARED_PARAMS
@@ -10,7 +11,6 @@ from rail.core.stage import RailStage
 from rail.core.point_estimation import PointEstimationMixin
 
 # for backwards compatibility, to avoid break stuff that imports it from here
-from rail.estimation.informer import CatInformer  # pylint: disable=unused-import
 
 
 class CatEstimator(RailStage, PointEstimationMixin):
@@ -80,7 +80,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
         The run method will call ``_process_chunk()``, which needs to be implemented
         in the subclass, to process input data in batches. See ``RandomGaussEstimator``
-        for a simple example. 
+        for a simple example.
 
         Finally, this will return a ``QPHandle`` for access to that output data.
 

@@ -1,4 +1,5 @@
 """ Stages that implement utility functions """
+
 import tables_io
 
 from rail.core.stage import RailStage

@@ -1,18 +1,11 @@
 import os
-import pickle
 from types import GeneratorType
 import pytest
 
 from rail.core.stage import RailStage
 from rail.core.data import (
-    DataHandle,
-    DataStore,
-    FitsHandle,
     Hdf5Handle,
     ModelHandle,
-    PqHandle,
-    QPHandle,
-    QPOrTableHandle,
     TableHandle,
 )
 
@@ -26,7 +19,9 @@ from rail.tools.table_tools import (
 
 
 def test_find_rail_file():
-    afile = find_rail_file(os.path.join("examples_data", "testdata", "test_dc2_training_9816.pq"))
+    afile = find_rail_file(
+        os.path.join("examples_data", "testdata", "test_dc2_training_9816.pq")
+    )
     assert afile
     with pytest.raises(ValueError):
         _not_a_file = find_rail_file("not_a_file")
@@ -59,7 +54,8 @@ def test_util_stages():
     row_sel_3 = RowSelector.make_stage(
         name="row_sel_3", input=handle.path, start=1, stop=15
     )
-    row_sel_3.set_data("input", None, do_read=True) 
+    row_sel_3.set_data("input", None, do_read=True)
+
 
 def test_set_data_nonexistent_file():
     """Create an instance of a child class of RailStage. Exercise the `set_data`
@@ -94,7 +90,7 @@ def test_set_data_real_file():
     ret_val = col_map.set_data("model", None, path=model_path, do_read=False)
 
     assert ret_val is None
-    
+
 
 def test_data_hdf5_iter():
     DS = RailStage.data_store
@@ -127,4 +123,3 @@ def test_data_hdf5_iter():
     for i, xx in enumerate(x):
         assert xx[0] == i * 1000
         assert xx[1] - xx[0] <= 1000
-

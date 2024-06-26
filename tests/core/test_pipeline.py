@@ -85,7 +85,9 @@ def test_golden_v2():
     )
 
     pipe.table_conv_test = TableConverter.build(
-        connections=dict(input=pipe.col_remapper_test.io.output),  # pylint: disable=no-member
+        connections=dict(
+            input=pipe.col_remapper_test.io.output  # pylint: disable=no-member
+        ),
         output_format="numpyDict",
         seed=12345,
     )

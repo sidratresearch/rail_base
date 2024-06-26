@@ -34,7 +34,7 @@ class Modeler(RailStage):  # pragma: no cover
 
         Returns
         -------
-        [This will definitely be a file, but the filetype and format depend 
+        [This will definitely be a file, but the filetype and format depend
         entirely on the modeling approach!]
         """
         self.run()
@@ -43,7 +43,7 @@ class Modeler(RailStage):  # pragma: no cover
 
 
 class Creator(RailStage):  # pragma: no cover
-    """Base class for Creators that generate synthetic photometric data from a 
+    """Base class for Creators that generate synthetic photometric data from a
     model.
 
     ``Creator`` will output a table of photometric data. The details will depend
@@ -194,13 +194,13 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
 
         Notes
         -----
-        This will put the ``data`` argument input this Stages the DataStore 
+        This will put the ``data`` argument input this Stages the DataStore
         using this stages ``input`` tag.
 
-        This will put the additional functional arguments into this Stages 
+        This will put the additional functional arguments into this Stages
         configuration data.
 
-        It will then call ``self.run()`` and return the ``DataHandle`` 
+        It will then call ``self.run()`` and return the ``DataHandle``
         associated to the ``output`` tag.
         """
         self.set_data("input", input_data)

@@ -9,8 +9,8 @@ class PointEstimationMixin:
     config_options = dict(
         calculated_point_estimates=SHARED_PARAMS,
         recompute_point_estimates=SHARED_PARAMS,
-    )    
-    
+    )
+
     def calculate_point_estimates(self, qp_dist, grid=None):
         """This function drives the calculation of point estimates for qp.Ensembles.
         It is defined here, and called from the `_process_chunk` method in the
@@ -47,14 +47,14 @@ class PointEstimationMixin:
 
         existing_ancil = qp_dist.ancil
         if existing_ancil and not self.config.recompute_point_estimates:
-            skip_zmode = 'zmode' in existing_ancil
-            skip_zmean = 'zmean' in existing_ancil
-            skip_zmedian = 'zmedian' in existing_ancil
+            skip_zmode = "zmode" in existing_ancil
+            skip_zmean = "zmean" in existing_ancil
+            skip_zmedian = "zmedian" in existing_ancil
         else:
             skip_zmode = False
             skip_zmean = False
-            skip_zmedian = False            
-        
+            skip_zmedian = False
+
         if "calculated_point_estimates" in self.config:
             calculated_point_estimates = self.config["calculated_point_estimates"]
 

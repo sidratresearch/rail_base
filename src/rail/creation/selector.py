@@ -13,19 +13,23 @@ from rail.core.data import PqHandle
 class Selector(RailStage):
     """Base class Selector, which makes selection to the catalog
 
-    Selector take "input" data in the form of pandas dataframes in Parquet 
-    files and provide as "output" another pandas dataframes written to Parquet 
+    Selector take "input" data in the form of pandas dataframes in Parquet
+    files and provide as "output" another pandas dataframes written to Parquet
     files.
     """
 
-    name = 'Selector'
+    name = "Selector"
     config_options = RailStage.config_options.copy()
     config_options.update(
         drop_rows=Param(bool, True, msg="Drop selected rows from output table"),
-        seed=Param(default=None, required=False, msg="Set to an `int` to force reproducible results."),
+        seed=Param(
+            default=None,
+            required=False,
+            msg="Set to an `int` to force reproducible results.",
+        ),
     )
-    inputs = [('input', PqHandle)]
-    outputs = [('output', PqHandle)]
+    inputs = [("input", PqHandle)]
+    outputs = [("output", PqHandle)]
 
     def __init__(self, args, comm=None):
         """Initialize Noisifier that can add noise to photometric data"""
@@ -36,15 +40,15 @@ class Selector(RailStage):
 
         Adds noise to the input catalog
 
-        This will attach the input to this `Selector` 
+        This will attach the input to this `Selector`
 
-        Then it will call the select() which add a flag column to the catalog. flag=1 means 
+        Then it will call the select() which add a flag column to the catalog. flag=1 means
         selected, 0 means dropped.
 
-        If dropRows = True, the dropped rows will not be presented in the output catalog, 
-        otherwise, all rows will be presented. 
+        If dropRows = True, the dropped rows will not be presented in the output catalog,
+        otherwise, all rows will be presented.
 
-        Finally, this will return a PqHandle providing access to that output 
+        Finally, this will return a PqHandle providing access to that output
         data.
 
         Parameters
@@ -57,20 +61,20 @@ class Selector(RailStage):
         output_data : PqHandle
             A handle giving access to a table with selected sample
         """
-        self.set_data('input', sample)        
-        self.run()        
+        self.set_data("input", sample)
+        self.run()
         self.finalize()
-        return self.get_handle('output')
+        return self.get_handle("output")
 
     def run(self):
-        data = self.get_data('input')
+        data = self.get_data("input")
         selection_mask = self._select()
-        if self.config['drop_rows']:
+        if self.config["drop_rows"]:
             out_data = data[selection_mask.astype(bool)]
         else:
             out_data = data.copy()
-            out_data.insert(0, 'flag', selection_mask)
+            out_data.insert(0, "flag", selection_mask)
         self.add_data("output", out_data)
-            
+
     def _select(self):  # pragma: no cover
         raise NotImplementedError("Selector._select()")

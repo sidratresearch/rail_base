@@ -5,7 +5,6 @@ The key feature is that the evaluate method.
 """
 
 import numpy as np
-import qp
 from ceci.config import StageParameter as Param
 from ceci.stage import PipelineStage
 from qp.metrics.pit import PIT
@@ -20,6 +19,7 @@ from rail.evaluation.metrics.pointestimates import (
     PointOutlierRate,
     PointSigmaMAD,
 )
+
 
 def _all_subclasses(a_class):
     return set(a_class.__subclasses__()).union(
@@ -36,7 +36,7 @@ def _build_metric_dict(a_class):
     return the_dict
 
 
-class Evaluator(RailStage):
+class Evaluator(RailStage):  #pylint: disable=too-many-instance-attributes
     """Evaluate the performance of a photo-z estimator against reference point estimate"""
 
     name = "Evaluator"
@@ -71,10 +71,11 @@ class Evaluator(RailStage):
         ),
     )
 
-    outputs = [("output", Hdf5Handle),
-               ('summary', Hdf5Handle),
-               ('single_distribution_summary', QPDictHandle),
-            ]
+    outputs = [
+        ("output", Hdf5Handle),
+        ("summary", Hdf5Handle),
+        ("single_distribution_summary", QPDictHandle),
+    ]
 
     metric_base_class = None
 
@@ -119,9 +120,11 @@ class Evaluator(RailStage):
         self.run()
         self.finalize()
         return {
-            'output':self.get_handle("output"),
-            'summary':self.get_handle("summary"),
-            'single_distribution_summary':self.get_handle("single_distribution_summary"),
+            "output": self.get_handle("output"),
+            "summary": self.get_handle("summary"),
+            "single_distribution_summary": self.get_handle(
+                "single_distribution_summary"
+            ),
         }
 
     def run(self):
@@ -156,28 +159,47 @@ class Evaluator(RailStage):
             summary_data = {}
             single_distribution_summary_data = {}
             for metric, cached_metric in self._cached_metrics.items():
-                if cached_metric.metric_output_type != MetricOutputType.single_value and cached_metric.metric_output_type != MetricOutputType.single_distribution:
+                if cached_metric.metric_output_type not in [
+                    MetricOutputType.single_value,
+                    MetricOutputType.single_distribution
+                ]:
                     continue
                 matching_keys = []
-                for key_ in self._cached_data.keys():
+                for key_ in self._cached_data:
                     if key_.find(metric) == 0:
-                        matching_keys.append(key_)                        
+                        matching_keys.append(key_)
                 if not matching_keys:
-                    print(f"Skipping {metric} which did not cache data {list(self._cached_data.keys())}")
+                    print(
+                        f"Skipping {metric} which did not cache data {list(self._cached_data.keys())}"
+                    )
                     continue
                 for key_ in matching_keys:
                     if self.comm:  # pragma: no cover
-                        self._cached_data[key_] = self.comm.gather(self._cached_data[key_])
+                        self._cached_data[key_] = self.comm.gather(
+                            self._cached_data[key_]
+                        )
 
-                    if cached_metric.metric_output_type == MetricOutputType.single_value:
-                        summary_data[key_] = np.array([cached_metric.finalize(self._cached_data[key_])])
+                    if (
+                        cached_metric.metric_output_type
+                        == MetricOutputType.single_value
+                    ):
+                        summary_data[key_] = np.array(
+                            [cached_metric.finalize(self._cached_data[key_])]
+                        )
 
-                    elif cached_metric.metric_output_type == MetricOutputType.single_distribution:
+                    elif (
+                        cached_metric.metric_output_type
+                        == MetricOutputType.single_distribution
+                    ):
                         # we expect `cached_metric.finalize` to return a qp.Ensemble
-                        single_distribution_summary_data[key_] = cached_metric.finalize(self._cached_data[key_])
+                        single_distribution_summary_data[key_] = cached_metric.finalize(
+                            self._cached_data[key_]
+                        )
 
-            self._summary_handle = self.add_handle('summary', data=summary_data)
-            self._single_distribution_summary_handle = self.add_handle('single_distribution_summary', data=single_distribution_summary_data)
+            self._summary_handle = self.add_handle("summary", data=summary_data)
+            self._single_distribution_summary_handle = self.add_handle(
+                "single_distribution_summary", data=single_distribution_summary_data
+            )
 
         PipelineStage.finalize(self)
 
@@ -185,7 +207,7 @@ class Evaluator(RailStage):
         """Setup the iterator that runs in parallel over the handles"""
 
         if itrs is None:
-            handle_list = [input_[0] for input_ in self.inputs]
+            handle_list = [input_[0] for input_ in self.inputs]  # pylint: disable=no-member
             itrs = [self.input_iterator(tag) for tag in handle_list]
 
         for it in zip(*itrs):
@@ -203,14 +225,16 @@ class Evaluator(RailStage):
 
     def _get_all_data(self):
         """Stuff the data from all the handles into a tuple"""
-        handles = [input_[0] for input_ in self.inputs]
+        handles = [input_[0] for input_ in self.inputs]  # pylint: disable=no-member
         all_data = [self.get_data(handle_) for handle_ in handles]
         return all_data
 
     def _process_chunk(self, data_tuple, first):  # pragma: no cover
         raise NotImplementedError("Evaluator._process_chunk()")
 
-    def _process_all_chunk_metrics(self, estimate_data, reference_data, start, end, first):
+    def _process_all_chunk_metrics(
+        self, estimate_data, reference_data, start, end, first
+    ):
         """This function takes the properly formatted data and loops over all the
         requested metrics. The metric outputs are either cached for later finalization
         or written to output files.
@@ -241,14 +265,19 @@ class Evaluator(RailStage):
         for metric, this_metric in self._cached_metrics.items():
             if metric not in self._metric_dict:  # pragma: no cover
                 raise ValueError(
-                    f"Unsupported metric requested: '{metric}'. Available metrics are: {sorted(self._metric_dict.keys())}"
+                    f"Unsupported metric requested: '{metric}'. "
+                    f"Available metrics are: {sorted(self._metric_dict.keys())}"
                 )
 
-            if this_metric.metric_output_type == MetricOutputType.single_value or \
-                this_metric.metric_output_type == MetricOutputType.single_distribution:
+            if this_metric.metric_output_type in [
+                MetricOutputType.single_value,
+                MetricOutputType.single_distribution,
+            ]:
 
                 if not hasattr(this_metric, "accumulate"):  # pragma: no cover
-                    print(f"The metric `{metric}` does not support parallel processing yet")
+                    print(
+                        f"The metric `{metric}` does not support parallel processing yet"
+                    )
                     continue
 
                 centroids = this_metric.accumulate(estimate_data, reference_data)
@@ -261,10 +290,12 @@ class Evaluator(RailStage):
                         self._cached_data[metric] = [centroids]
 
             else:
-                out_table[metric] = this_metric.evaluate(estimate_data, reference_data,)
+                out_table[metric] = this_metric.evaluate(
+                    estimate_data,
+                    reference_data,
+                )
 
         self._output_table_chunk_data(start, end, out_table, first)
-
 
     def _output_table_chunk_data(self, start, end, out_table, first):
         out_table_to_write = {
@@ -279,10 +310,8 @@ class Evaluator(RailStage):
         self._output_handle.set_data(out_table_to_write, partial=True)
         self._output_handle.write_chunk(start, end)
 
-
     def _process_all(self, data_tuple):  # pragma: no cover
         raise NotImplementedError("Evaluator._process_all()")
-
 
     def _process_all_metrics(self, estimate_data, reference_data):
         """This function writes out metric values when operating in non-parallel mode.
@@ -309,7 +338,8 @@ class Evaluator(RailStage):
         for metric, this_metric in self._cached_metrics.items():
             if metric not in self._metric_dict:  # pragma: no cover
                 raise ValueError(
-                    f"Unsupported metric requested: '{metric}'. Available metrics are: {sorted(self._metric_dict.keys())}"
+                    f"Unsupported metric requested: '{metric}'. "
+                    f"Available metrics are: {sorted(self._metric_dict.keys())}"
                 )
 
             metric_result = this_metric.evaluate(estimate_data, reference_data)
@@ -321,11 +351,14 @@ class Evaluator(RailStage):
             else:
                 out_table[metric] = metric_result
 
-        out_table_to_write = {key: np.array(val).astype(float) for key, val in out_table.items()}
-        self._output_handle = self.add_handle('output', data=out_table_to_write)
-        self._summary_handle = self.add_handle('summary', data=summary_table)
-        self._single_distribution_summary_handle = self.add_handle('single_distribution_summary', data=single_distribution_summary)
-
+        out_table_to_write = {
+            key: np.array(val).astype(float) for key, val in out_table.items()
+        }
+        self._output_handle = self.add_handle("output", data=out_table_to_write)
+        self._summary_handle = self.add_handle("summary", data=summary_table)
+        self._single_distribution_summary_handle = self.add_handle(
+            "single_distribution_summary", data=single_distribution_summary
+        )
 
     def _build_config_dict(self):
         """Build the configuration dict for each of the metrics"""
@@ -348,8 +381,8 @@ class Evaluator(RailStage):
                 )
                 continue
             sub_dict = {}
-            if 'limits' in self.config:
-                sub_dict['limits'] = self.config.limits
+            if "limits" in self.config:
+                sub_dict["limits"] = self.config.limits
             sub_dict.update(self.config.metric_config.get("general", {}))
             sub_dict.update(self.config.metric_config.get(metric_name_, {}))
             self._metric_config_dict[metric_name_] = sub_dict
@@ -357,7 +390,7 @@ class Evaluator(RailStage):
             try:
                 this_metric = this_metric_class(**sub_dict)
             except (TypeError, KeyError):
-                sub_dict.pop('limits')
+                sub_dict.pop("limits")
                 this_metric = this_metric_class(**sub_dict)
             self._cached_metrics[metric_name_] = this_metric
 
@@ -368,17 +401,18 @@ class OldEvaluator(RailStage):
     name = "OldEvaluator"
     config_options = RailStage.config_options.copy()
     config_options.update(
-        zmin=Param(float, 0., msg="min z for grid"),
+        zmin=Param(float, 0.0, msg="min z for grid"),
         zmax=Param(float, 3.0, msg="max z for grid"),
         nzbins=Param(int, 301, msg="# of bins in zgrid"),
-        pit_metrics=Param(str, 'all', msg='PIT-based metrics to include'),
-        point_metrics=Param(str, 'all', msg='Point-estimate metrics to include'),
-        hdf5_groupname=Param(str, '', msg='Name of group in hdf5 where redshift data is located'),
-        do_cde=Param(bool, True, msg='Evaluate CDE Metric'),
+        pit_metrics=Param(str, "all", msg="PIT-based metrics to include"),
+        point_metrics=Param(str, "all", msg="Point-estimate metrics to include"),
+        hdf5_groupname=Param(
+            str, "", msg="Name of group in hdf5 where redshift data is located"
+        ),
+        do_cde=Param(bool, True, msg="Evaluate CDE Metric"),
         redshift_col=SHARED_PARAMS,
     )
-    inputs = [('input', QPHandle),
-              ('truth', Hdf5Handle)]
+    inputs = [("input", QPHandle), ("truth", Hdf5Handle)]
     outputs = [("output", Hdf5Handle)]
 
     def __init__(self, args, comm=None):
@@ -421,14 +455,14 @@ class OldEvaluator(RailStage):
         Puts the data into the data store under this stages 'output' tag
         """
 
-        pz_data = self.get_data('input')
+        pz_data = self.get_data("input")
         if self.config.hdf5_groupname:  # pragma: no cover
-            specz_data = self.get_data('truth')[self.config.hdf5_groupname]
-        else: 
-            specz_data = self.get_data('truth')
-        z_true = specz_data[self.config['redshift_col']]
+            specz_data = self.get_data("truth")[self.config.hdf5_groupname]
+        else:
+            specz_data = self.get_data("truth")
+        z_true = specz_data[self.config["redshift_col"]]
 
-        zgrid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins+1)
+        zgrid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins + 1)
 
         # Create an instance of the PIT class
         pitobj = PIT(pz_data, z_true)

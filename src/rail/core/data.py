@@ -279,7 +279,7 @@ class TableHandle(DataHandle):
         return tables_io.write(data, path, **kwargs)
 
     def _size(self, path, **kwargs):
-        if path in [None, 'none', 'None']:  # pragma: no cover
+        if path in [None, "none", "None"]:  # pragma: no cover
             return 0
         try:
             return tables_io.io.getInputDataLength(path, **kwargs)
@@ -287,7 +287,7 @@ class TableHandle(DataHandle):
             return 0
 
     def _data_size(self, data, **kwargs):
-        group_name = kwargs.get('groupname', None)
+        group_name = kwargs.get("groupname", None)
         if group_name:
             try:
                 data = data[group_name]
@@ -300,19 +300,21 @@ class TableHandle(DataHandle):
 
     def _in_memory_iterator(self, **kwargs):
         nrows = self.data_size(**kwargs)
-        groupname = kwargs.get('groupname', None)
+        groupname = kwargs.get("groupname", None)
         if isinstance(self.data, dict) and groupname:
             try:
                 table = self.data[groupname]
-            except KeyError:   # pragma: no cover
+            except KeyError:  # pragma: no cover
                 table = self.data
         else:
             table = self.data
         for start, end in tables_io.ioUtils.data_ranges_by_rank(
-                nrows, kwargs.get('chunk_size', 100000), 1, 0
-            ):
+            nrows, kwargs.get("chunk_size", 100000), 1, 0
+        ):
             if isinstance(self.data, dict):
-                yield start, end, tables_io.arrayUtils.sliceDict(table, slice(start, end))
+                yield start, end, tables_io.arrayUtils.sliceDict(
+                    table, slice(start, end)
+                )
             else:  # pragma: no cover
                 yield start, end, table[start:end]
 
@@ -367,9 +369,9 @@ class PqHandle(TableHandle):
 
     suffix = "pq"
 
-    @classmethod
-    def _size(cls, path, **kwargs):
+    def _size(self, path, **kwargs):
         return tables_io.io.getInputDataLengthPq(path, **kwargs)
+
 
 class QPHandle(DataHandle):
     """DataHandle for qp ensembles"""
@@ -421,7 +423,7 @@ class QPHandle(DataHandle):
     def _size(self, path, **kwargs):
         if self.data is not None and not self.partial:  # pragma: no cover
             return self._data_size(self.data)
-        if path in [None, 'none', "None"]:  # pragma: no cover
+        if path in [None, "none", "None"]:  # pragma: no cover
             return 0
         return tables_io.io.getInputDataLengthHdf5(path, groupname="data")
 
@@ -431,8 +433,8 @@ class QPHandle(DataHandle):
     def _in_memory_iterator(self, **kwargs):
         nrows = self.data.npdf
         for start, end in tables_io.ioUtils.data_ranges_by_rank(
-                nrows, kwargs.get('chunk_size', 100000), 1, 0
-            ):
+            nrows, kwargs.get("chunk_size", 100000), 1, 0
+        ):
             yield start, end, self.data[start:end]
 
     @classmethod
@@ -470,9 +472,9 @@ class QPDictHandle(DataHandle):
 
 
 class QPOrTableHandle(QPHandle, Hdf5Handle):
-    """DataHandle that should work with either qp.ensembles or tables
-    """
-    suffix = 'hdf5'
+    """DataHandle that should work with either qp.ensembles or tables"""
+
+    suffix = "hdf5"
 
     class PdfOrValue(enum.Enum):
         unknown = -1
@@ -487,8 +489,8 @@ class QPOrTableHandle(QPHandle, Hdf5Handle):
             return self.value in [1, 2]
 
     def is_qp(self):
-        """ Check if the associated data or file is a QP ensemble"""
-        if self.path in [None, 'None', 'none']:
+        """Check if the associated data or file is a QP ensemble"""
+        if self.path in [None, "None", "none"]:
             return isinstance(self.data, qp.Ensemble)
         return qp.is_qp_file(self.path)
 
@@ -511,27 +513,35 @@ class QPOrTableHandle(QPHandle, Hdf5Handle):
 
     @classmethod
     def _read(cls, path, **kwargs):
-        """Read and return the data from the associated file """
+        """Read and return the data from the associated file"""
         if qp.is_qp_file(path):
             return qp.read(path, **kwargs)
         return tables_io.read(path, **kwargs)
 
     @classmethod
     def _write(cls, data, path, **kwargs):
-        """Write the data to the associated file """
-        raise RuntimeError("QPOrTableHandle should be used for input, not output")  # pragma: no cover
+        """Write the data to the associated file"""
+        raise RuntimeError(
+            "QPOrTableHandle should be used for input, not output"
+        )  # pragma: no cover
 
     @classmethod
     def _initialize_write(cls, data, path, data_length, **kwargs):
-        raise RuntimeError("QPOrTableHandle should be used for input, not output")  # pragma: no cover
+        raise RuntimeError(
+            "QPOrTableHandle should be used for input, not output"
+        )  # pragma: no cover
 
     @classmethod
     def _write_chunk(cls, data, fileObj, groups, start, end, **kwargs):
-        raise RuntimeError("QPOrTableHandle should be used for input, not output")  # pragma: no cover
+        raise RuntimeError(
+            "QPOrTableHandle should be used for input, not output"
+        )  # pragma: no cover
 
     @classmethod
     def _finalize_write(cls, data, fileObj, **kwargs):
-        raise RuntimeError("QPOrTableHandle should be used for input, not output")  # pragma: no cover
+        raise RuntimeError(
+            "QPOrTableHandle should be used for input, not output"
+        )  # pragma: no cover
 
     @classmethod
     def _validate_data(cls, data):
@@ -545,7 +555,7 @@ class QPOrTableHandle(QPHandle, Hdf5Handle):
     def _data_size(self, data, **kwargs):
         if self.is_qp():
             return self.data.npdf
-        return TableHandle._data_size(self, data, **kwargs)
+        return Hdf5Handle._data_size(self, data, **kwargs)
 
     def _in_memory_iterator(self, **kwargs):
         if self.is_qp():
@@ -671,7 +681,7 @@ class DataStore(dict):
         return s
 
     def __setitem__(self, key, value):
-        """ Override the __setitem__ to work with ``TableHandle`` """
+        """Override the __setitem__ to work with ``TableHandle``"""
         if not isinstance(value, DataHandle):
             raise TypeError(
                 f"Can only add objects of type DataHandle to DataStore, not {type(value)}"

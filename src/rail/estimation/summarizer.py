@@ -1,6 +1,7 @@
 """
 Abstract base classes defining Summarizers of the redshift distribution of an ensemble of galaxies
 """
+
 import numpy as np
 
 from rail.core.data import QPHandle, TableHandle, ModelHandle

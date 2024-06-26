@@ -155,7 +155,7 @@ def get_data(verbose, **kwargs):  # pragma: no cover
         {
             "local_path": "rail/examples_data/estimation_data/data/test_dc2_train_customtemp_broadttypes.hdf5",  # pylint: disable=line-too-long
             "remote_path": "https://portal.nersc.gov/cfs/lsst/PZ/test_dc2_train_customtemp_broadttypes.hdf5",
-        }
+        },
     ]
 
     data_files = standard_data_files
@@ -165,11 +165,17 @@ def get_data(verbose, **kwargs):  # pragma: no cover
         # This data should NOT be used for any science with real data!
         data_files = bpz_data_files
         print("Downloading BPZ demo data...")
-        print("(Note: you can run get-data without the bpz-demo-data flag to download standard data.)")
+        print(
+            "(Note: you can run get-data without the bpz-demo-data flag to download standard data.)"
+        )
 
     for data_file in data_files:
         local_abs_path = os.path.join(RAILDIR, data_file["local_path"])
         if verbose:
-            print(f"Check file exists: {local_abs_path} ({os.path.exists(local_abs_path)})")
+            print(
+                f"Check file exists: {local_abs_path} ({os.path.exists(local_abs_path)})"
+            )
         if not os.path.exists(local_abs_path):
-            os.system(f'curl -o {local_abs_path} {data_file["remote_path"]} --create-dirs')
+            os.system(
+                f'curl -o {local_abs_path} {data_file["remote_path"]} --create-dirs'
+            )

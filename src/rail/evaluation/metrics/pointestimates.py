@@ -8,7 +8,7 @@ class PointStatsEz(MetricEvaluator):
     magnitude."""
 
     def __init__(self, pzvec, szvec):
-        """ An object that takes in the vectors of the point photo-z
+        """An object that takes in the vectors of the point photo-z
         the spec-z, and the i-band magnitudes for calculating the
         point statistics
 

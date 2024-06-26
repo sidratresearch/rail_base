@@ -1,6 +1,7 @@
 """ Base class for PipelineStages in Rail """
 
 import os
+import sys
 from math import ceil
 
 from ceci import PipelineStage, MiniPipeline
@@ -339,11 +340,11 @@ class RailStage(PipelineStage):
         handle = self.get_handle(tag, allow_missing=True)
 
         try:
-            groupname = kwargs.get('groupname', self.config.hdf5_groupname)
+            groupname = kwargs.get("groupname", self.config.hdf5_groupname)
         except Exception:
             groupname = None
 
-        if handle.path and handle.path != "None":   # pylint: disable=no-else-return
+        if handle.path and handle.path != "None":  # pylint: disable=no-else-return
             self._input_length = handle.size(groupname=groupname)
             total_chunks_needed = ceil(self._input_length / self.config.chunk_size)
             # If the number of process is larger than we need, we wemove some of them
@@ -357,7 +358,7 @@ class RailStage(PipelineStage):
                 if color:
                     self.setup_mpi(newcomm)
                 else:
-                    quit()
+                    sys.exit()
             kwcopy = dict(
                 groupname=groupname,
                 chunk_size=self.config.chunk_size,
@@ -367,13 +368,14 @@ class RailStage(PipelineStage):
             kwcopy.update(**kwargs)
             return handle.iterator(**kwcopy)
 
-
         # If data is in memory and not in a file, it means is small enough to process it
         # in a single chunk.
         else:  # pragma: no cover
             if self.config.hdf5_groupname:
                 test_data = self.get_data(tag)[self.config.hdf5_groupname]
-                self._input_length = self.get_handle(tag).data_size(groupname=self.config.hdf5_groupname)
+                self._input_length = self.get_handle(tag).data_size(
+                    groupname=self.config.hdf5_groupname
+                )
             else:
                 test_data = self.get_data(tag)
                 self._input_length = self.get_handle(tag).data_size()
@@ -410,9 +412,9 @@ class RailStage(PipelineStage):
         This can be overridden by sub-classes for more complicated behavior
         """
         handle = self.get_handle(tag, allow_missing=True)
-        if self.config.output_mode == 'default':
+        if self.config.output_mode == "default":
             if not os.path.exists(handle.path) or not handle.partial:
-                handle.write()            
+                handle.write()
         final_name = PipelineStage._finalize_tag(self, tag)
         handle.path = final_name
         return final_name

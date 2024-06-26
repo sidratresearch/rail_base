@@ -9,11 +9,11 @@ from rail.core.data import PqHandle
 
 
 class Degrader(RailStage):  # pragma: no cover
-    """Base class Degraders, which apply various degradations to synthetic 
+    """Base class Degraders, which apply various degradations to synthetic
     photometric data.
 
-    Degraders take "input" data in the form of pandas dataframes in Parquet 
-    files and provide as "output" another pandas dataframes written to Parquet 
+    Degraders take "input" data in the form of pandas dataframes in Parquet
+    files and provide as "output" another pandas dataframes written to Parquet
     files.
     """
 
@@ -41,7 +41,7 @@ class Degrader(RailStage):  # pragma: no cover
         The run() method will need to register the data that it creates to this
         Estimator by using ``self.add_data('output', output_data)``.
 
-        Finally, this will return a PqHandle providing access to that output 
+        Finally, this will return a PqHandle providing access to that output
         data.
 
         Parameters

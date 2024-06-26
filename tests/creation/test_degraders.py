@@ -1,12 +1,10 @@
 import os
-from typing import Type
 
 import numpy as np
 import pandas as pd
 import pytest
 
 from rail.core.data import DATA_STORE, TableHandle
-from rail.tools.table_tools import ColumnMapper
 from rail.creation.degraders.quantityCut import QuantityCut
 from rail.creation.degraders.addRandom import AddColumnOfRandom
 
@@ -67,7 +65,7 @@ def test_QuantityCut_bad_params(cuts, error):
         QuantityCut.make_stage(cuts=cuts)
 
 
-def test_QuantityCut_returns_correct_shape(data):
+def test_QuantityCut_returns_correct_shape(data):  # pylint: disable=redefined-outer-name
     """Make sure QuantityCut is returning the correct shape"""
 
     cuts = {
@@ -78,24 +76,31 @@ def test_QuantityCut_returns_correct_shape(data):
 
     degraded_data = degrader(data).data
 
-    assert degraded_data.shape == data.data.query("u < 30 & redshift > 1 & redshift < 2").shape
+    assert (
+        degraded_data.shape
+        == data.data.query("u < 30 & redshift > 1 & redshift < 2").shape
+    )
     os.remove(degrader.get_output(degrader.get_aliased_tag("output"), final_name=True))
 
-    
-    degrader_w_flag = QuantityCut.make_stage(name="degrader_w_flag", cuts=cuts, drop_rows=False)
+    degrader_w_flag = QuantityCut.make_stage(
+        name="degrader_w_flag", cuts=cuts, drop_rows=False
+    )
 
     degraded_data_w_flag = degrader_w_flag(data).data
 
     test_mask = np.zeros(len(data.data), dtype=int)
     out_indices = data.data.query("u < 30 & redshift > 1 & redshift < 2").index.values
     test_mask[out_indices] = 1
-    
-    assert (degraded_data_w_flag['flag'] == test_mask).all()
-    os.remove(degrader_w_flag.get_output(degrader_w_flag.get_aliased_tag("output"), final_name=True))
+
+    assert (degraded_data_w_flag["flag"] == test_mask).all()
+    os.remove(
+        degrader_w_flag.get_output(
+            degrader_w_flag.get_aliased_tag("output"), final_name=True
+        )
+    )
 
 
-
-def test_add_random(data):
+def test_add_random(data):  # pylint: disable=redefined-outer-name
 
     add_random = AddColumnOfRandom.make_stage()
 

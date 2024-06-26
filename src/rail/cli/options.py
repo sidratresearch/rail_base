@@ -40,7 +40,9 @@ class EnumChoice(click.Choice):
 
     def __init__(self, the_enum: EnumType_co, case_sensitive: bool = True) -> None:
         self._enum = the_enum
-        super().__init__(list(the_enum.__members__.keys()), case_sensitive=case_sensitive)
+        super().__init__(
+            list(the_enum.__members__.keys()), case_sensitive=case_sensitive
+        )
 
     def convert(self, value: Any, param, ctx) -> EnumType_co:  # pragma: no cover
         converted_str = super().convert(value, param, ctx)

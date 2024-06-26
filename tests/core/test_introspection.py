@@ -34,4 +34,4 @@ def test_api_rst():
 
 def test_data_handle_dict():
     DataHandle.print_sub_classes()
-    assert DataHandle.get_sub_class('TableHandle') == TableHandle
+    assert DataHandle.get_sub_class("TableHandle") == TableHandle

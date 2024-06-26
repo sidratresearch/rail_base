@@ -19,8 +19,8 @@ class QuantityCut(Selector):
 
     def __init__(self, args, comm=None):
         """Constructor.
-        
-        Performs standard Degrader initialization as well as defining the cuts 
+
+        Performs standard Degrader initialization as well as defining the cuts
         to be applied.
         """
         Selector.__init__(self, args, comm=comm)
@@ -42,7 +42,7 @@ class QuantityCut(Selector):
         The cut values should be either:
         - a number, which is the maximum value. E.g. if the dictionary
         contains "i": 25, then values of i > 25 are cut from the sample.
-        - an iterable, which is the range of acceptable values. E.g. if the 
+        - an iterable, which is the range of acceptable values. E.g. if the
         dictionary contains "redshift": (1.5, 2.3), then redshifts outside that
         range are cut from the sample.
         """
@@ -98,17 +98,16 @@ class QuantityCut(Selector):
 
         if len(columns) == 0:  # pragma: no cover
             return np.ones(len(data), dtype=int)
-        else:
-            # generate a pandas query from the cuts
-            query = [
-                f"{col} > {self.cuts[col][0]} & {col} < {self.cuts[col][1]}"
-                for col in columns
-            ]
-            query = " & ".join(query)
-            out_indices = data.query(query).index.values
-            out_mask = np.zeros(len(data), dtype=int)
-            out_mask[out_indices] = 1
-            return out_mask
+        # generate a pandas query from the cuts
+        query = [
+            f"{col} > {self.cuts[col][0]} & {col} < {self.cuts[col][1]}"
+            for col in columns
+        ]
+        query = " & ".join(query)
+        out_indices = data.query(query).index.values
+        out_mask = np.zeros(len(data), dtype=int)
+        out_mask[out_indices] = 1
+        return out_mask
 
     def __repr__(self):  # pragma: no cover
         """Pretty print this object."""

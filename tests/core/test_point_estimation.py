@@ -28,7 +28,9 @@ def test_custom_point_estimate():
 
     locs = 2 * (np.random.uniform(size=(100, 1)) - 0.5)
     scales = 1 + 0.2 * (np.random.uniform(size=(100, 1)) - 0.5)
-    test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))  # pylint: disable=no-member
+    test_ensemble = qp.Ensemble(
+        qp.stats.norm, data=dict(loc=locs, scale=scales)
+    )  # pylint: disable=no-member
 
     result = test_estimator.calculate_point_estimates(test_ensemble)
 
@@ -51,7 +53,9 @@ def test_basic_point_estimate():
 
     locs = 2 * (np.random.uniform(size=(100, 1)) - 0.5)
     scales = 1 + 0.2 * (np.random.uniform(size=(100, 1)) - 0.5)
-    test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))  # pylint: disable=no-member
+    test_ensemble = qp.Ensemble(
+        qp.stats.norm, data=dict(loc=locs, scale=scales)
+    )  # pylint: disable=no-member
     result = test_estimator.calculate_point_estimates(test_ensemble, None)
 
     # note: we're not interested in testing the values of point estimates,
@@ -81,45 +85,57 @@ def test_mode_no_point_estimates():
 
     locs = 2 * (np.random.uniform(size=(100, 1)) - 0.5)
     scales = 1 + 0.2 * (np.random.uniform(size=(100, 1)) - 0.5)
-    test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))  # pylint: disable=no-member
+    test_ensemble = qp.Ensemble(
+        qp.stats.norm, data=dict(loc=locs, scale=scales)
+    )  # pylint: disable=no-member
 
     output_ensemble = test_estimator.calculate_point_estimates(test_ensemble, None)
 
     assert output_ensemble.ancil is None
 
+
 def test_keep_existing_ancil_data():
-    """Make sure that we don't overwrite the ancil data if it already exists.
-    """
-    config_dict = {'zmin':0.0, 'zmax': 3.0, 'nzbins':100, 'calculated_point_estimates': ['zmode']}
+    """Make sure that we don't overwrite the ancil data if it already exists."""
+    config_dict = {
+        "zmin": 0.0,
+        "zmax": 3.0,
+        "nzbins": 100,
+        "calculated_point_estimates": ["zmode"],
+    }
 
-    test_estimator = CatEstimator.make_stage(name='test', **config_dict)
+    test_estimator = CatEstimator.make_stage(name="test", **config_dict)
 
-    locs = 2* (np.random.uniform(size=(100,1))-0.5)
-    scales = 1 + 0.2*(np.random.uniform(size=(100,1))-0.5)
+    locs = 2 * (np.random.uniform(size=(100, 1)) - 0.5)
+    scales = 1 + 0.2 * (np.random.uniform(size=(100, 1)) - 0.5)
     test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))
 
-    test_ensemble.set_ancil({'foo': np.zeros(100)})
+    test_ensemble.set_ancil({"foo": np.zeros(100)})
 
     output_ensemble = test_estimator.calculate_point_estimates(test_ensemble, None)
 
-    assert 'foo' in output_ensemble.ancil
-    assert np.all(output_ensemble.ancil['foo'] == 0.0)
-    assert len(output_ensemble.ancil['foo']) == 100
+    assert "foo" in output_ensemble.ancil
+    assert np.all(output_ensemble.ancil["foo"] == 0.0)
+    assert len(output_ensemble.ancil["foo"]) == 100
+
 
 def test_write_new_ancil_data():
-    """Make sure that we don't overwrite the ancil data if it already exists.
-    """
-    config_dict = {'zmin':0.0, 'zmax': 3.0, 'nzbins':100, 'calculated_point_estimates': ['zmode']}
+    """Make sure that we don't overwrite the ancil data if it already exists."""
+    config_dict = {
+        "zmin": 0.0,
+        "zmax": 3.0,
+        "nzbins": 100,
+        "calculated_point_estimates": ["zmode"],
+    }
 
-    test_estimator = CatEstimator.make_stage(name='test', **config_dict)
+    test_estimator = CatEstimator.make_stage(name="test", **config_dict)
 
-    locs = 2* (np.random.uniform(size=(100,1))-0.5)
-    scales = 1 + 0.2*(np.random.uniform(size=(100,1))-0.5)
+    locs = 2 * (np.random.uniform(size=(100, 1)) - 0.5)
+    scales = 1 + 0.2 * (np.random.uniform(size=(100, 1)) - 0.5)
     test_ensemble = qp.Ensemble(qp.stats.norm, data=dict(loc=locs, scale=scales))
 
-    test_ensemble.set_ancil({'foo': np.zeros(100)})
+    test_ensemble.set_ancil({"foo": np.zeros(100)})
 
     output_ensemble = test_estimator.calculate_point_estimates(test_ensemble, None)
 
-    assert 'zmode' in output_ensemble.ancil
-    assert len(output_ensemble.ancil['zmode']) == 100
+    assert "zmode" in output_ensemble.ancil
+    assert len(output_ensemble.ancil["zmode"]) == 100
