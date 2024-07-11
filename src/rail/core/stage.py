@@ -139,7 +139,7 @@ class RailStage(PipelineStage):
     def __init__(self, args, **kwargs):
         """Constructor:
         Do RailStage specific initialization"""
-        PipelineStage.__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self._input_length = None
         self.io = StageIO(self)
 
