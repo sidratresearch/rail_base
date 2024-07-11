@@ -36,9 +36,9 @@ class CatEstimator(RailStage, PointEstimationMixin):
     inputs = [("model", ModelHandle), ("input", TableHandle)]
     outputs = [("output", QPHandle)]
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """Initialize Estimator"""
-        RailStage.__init__(self, args, comm=comm)
+        super().__init__(self, args, **kwargs)
         self._output_handle = None
         self.model = None
 

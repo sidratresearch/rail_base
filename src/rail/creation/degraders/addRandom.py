@@ -17,13 +17,13 @@ class AddColumnOfRandom(Noisifier):
         ),
     )
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """
         Constructor
 
         Does standard Noisifier initialization
         """
-        Noisifier.__init__(self, args, comm=comm)
+        super().__init__(self, args, **kwargs)
 
     def _initNoiseModel(self):  # pragma: no cover
         np.random.seed(self.config.seed)

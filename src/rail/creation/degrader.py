@@ -23,10 +23,6 @@ class Degrader(RailStage):  # pragma: no cover
     inputs = [("input", PqHandle)]
     outputs = [("output", PqHandle)]
 
-    def __init__(self, args, comm=None):
-        """Initialize Degrader that can degrade photometric data"""
-        RailStage.__init__(self, args, comm=comm)
-
     def __call__(self, sample, seed: int = None):
         """The main interface method for ``Degrader``.
 

@@ -26,10 +26,6 @@ class CatSummarizer(RailStage):
     inputs = [("input", TableHandle)]
     outputs = [("output", QPHandle)]
 
-    def __init__(self, args, comm=None):
-        """Initialize Summarizer"""
-        RailStage.__init__(self, args, comm=comm)
-
     def summarize(self, input_data):
         """The main run method for the summarization, should be implemented
         in the specific subclass.
@@ -73,10 +69,6 @@ class PZSummarizer(RailStage):
     config_options.update(chunk_size=10000)
     inputs = [("model", ModelHandle), ("input", QPHandle)]
     outputs = [("output", QPHandle)]
-
-    def __init__(self, args, comm=None):
-        """Initialize Estimator that can sample galaxy data."""
-        RailStage.__init__(self, args, comm=comm)
 
     def summarize(self, input_data):
         """The main run method for the summarization, should be implemented
@@ -145,9 +137,9 @@ class SZPZSummarizer(RailStage):
     ]
     outputs = [("output", QPHandle)]
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """Initialize Estimator that can sample galaxy data."""
-        RailStage.__init__(self, args, comm=comm)
+        super().__init__(self, args, **kwargs)
         self.model = None
         # NOTE: open model removed from init, need to put an
         # `open_model` call explicitly in the run method for

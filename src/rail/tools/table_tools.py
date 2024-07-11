@@ -25,9 +25,6 @@ class ColumnMapper(RailStage):
     inputs = [("input", PqHandle)]
     outputs = [("output", PqHandle)]
 
-    def __init__(self, args, comm=None):
-        RailStage.__init__(self, args, comm=comm)
-
     def run(self):
         data = self.get_data("input", allow_missing=True)
         out_data = data.rename(columns=self.config.columns, inplace=self.config.inplace)
@@ -77,9 +74,6 @@ class RowSelector(RailStage):
     inputs = [("input", PqHandle)]
     outputs = [("output", PqHandle)]
 
-    def __init__(self, args, comm=None):
-        RailStage.__init__(self, args, comm=comm)
-
     def run(self):
         data = self.get_data("input", allow_missing=True)
         out_data = data.iloc[self.config.start : self.config.stop]
@@ -121,9 +115,6 @@ class TableConverter(RailStage):
     config_options.update(output_format=str)
     inputs = [("input", PqHandle)]
     outputs = [("output", Hdf5Handle)]
-
-    def __init__(self, args, comm=None):
-        RailStage.__init__(self, args, comm=comm)
 
     def run(self):
         data = self.get_data("input", allow_missing=True)

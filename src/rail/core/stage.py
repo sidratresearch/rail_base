@@ -136,10 +136,10 @@ class RailStage(PipelineStage):
 
     data_store = DATA_STORE()
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """Constructor:
         Do RailStage specific initialization"""
-        PipelineStage.__init__(self, args, comm=comm)
+        PipelineStage.__init__(self, args, **kwargs)
         self._input_length = None
         self.io = StageIO(self)
 

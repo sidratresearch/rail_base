@@ -17,9 +17,6 @@ class PointEstHistInformer(PzInformer):
     name = "PointEstHistInformer"
     config_options = PzInformer.config_options.copy()
 
-    def __init__(self, args, comm=None):
-        PzInformer.__init__(self, args, comm=comm)
-
     def run(self):
         self.add_data("model", np.array([None]))
 
@@ -40,8 +37,8 @@ class PointEstHistSummarizer(PZSummarizer):
     inputs = [("input", QPHandle)]
     outputs = [("output", QPHandle), ("single_NZ", QPHandle)]
 
-    def __init__(self, args, comm=None):
-        PZSummarizer.__init__(self, args, comm=comm)
+    def __init__(self, args, **kwargs):
+        super().__init__(self, args, **kwargs)
         self.zgrid = None
         self.bincents = None
 

@@ -16,9 +16,6 @@ def test_custom_point_estimate():
     class TestEstimator(CatEstimator):
         name = "TestEstimator"
 
-        def __init__(self, args, comm=None):
-            CatEstimator.__init__(self, args, comm=comm)
-
         def _calculate_mode_point_estimate(self, qp_dist=None, grid=None):
             return np.ones(100) * MEANING_OF_LIFE
 

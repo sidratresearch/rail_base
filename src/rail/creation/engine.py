@@ -19,9 +19,9 @@ class Modeler(RailStage):  # pragma: no cover
     inputs = [("input", DataHandle)]
     outputs = [("model", ModelHandle)]
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """Initialize Modeler"""
-        RailStage.__init__(self, args, comm=comm)
+        super().__init__(self, args, **kwargs)
         self.model = None
 
     def fit_model(self):
@@ -56,9 +56,9 @@ class Creator(RailStage):  # pragma: no cover
     inputs = [("model", ModelHandle)]
     outputs = [("output", TableHandle)]
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """Initialize Creator"""
-        RailStage.__init__(self, args, comm=comm)
+        super().__init__(self, args, **kwargs)
         self.model = None
         if not isinstance(args, dict):  # pragma: no cover
             args = vars(args)
@@ -144,9 +144,9 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
     ]
     outputs = [("output", QPHandle)]
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """Initialize PosteriorCalculator"""
-        RailStage.__init__(self, args, comm=comm)
+        super().__init__(self, args, **kwargs)
         self.model = None
         if not isinstance(args, dict):  # pragma: no cover
             args = vars(args)

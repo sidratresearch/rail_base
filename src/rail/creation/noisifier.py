@@ -29,10 +29,6 @@ class Noisifier(RailStage):
     inputs = [("input", PqHandle)]
     outputs = [("output", PqHandle)]
 
-    def __init__(self, args, comm=None):
-        """Initialize Noisifier that can add noise to photometric data"""
-        RailStage.__init__(self, args, comm=comm)
-
     def _initNoiseModel(self):  # pragma: no cover
         raise NotImplementedError("Noisifier._initNoiseModel()")
 

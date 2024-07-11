@@ -36,18 +36,6 @@ class UniformBinningClassifier(PZClassifier):
     )
     outputs = [("output", Hdf5Handle)]
 
-    def __init__(self, args, comm=None):
-        """Initialize the UniformBinningClassifier.
-
-        Parameters
-        ----------
-        args : dict
-            Configuration arguments for the classifier.
-        comm : MPI.Comm, optional
-            MPI communicator for parallel processing.
-        """
-        PZClassifier.__init__(self, args, comm=comm)
-
     def _process_chunk(self, start, end, data, first):
         """Process a chunk of data for uniform binning classification.
 
