@@ -21,7 +21,7 @@ class Modeler(RailStage):  # pragma: no cover
 
     def __init__(self, args, **kwargs):
         """Initialize Modeler"""
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self.model = None
 
     def fit_model(self):
@@ -58,7 +58,7 @@ class Creator(RailStage):  # pragma: no cover
 
     def __init__(self, args, **kwargs):
         """Initialize Creator"""
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self.model = None
         if not isinstance(args, dict):  # pragma: no cover
             args = vars(args)
@@ -146,7 +146,7 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
 
     def __init__(self, args, **kwargs):
         """Initialize PosteriorCalculator"""
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self.model = None
         if not isinstance(args, dict):  # pragma: no cover
             args = vars(args)

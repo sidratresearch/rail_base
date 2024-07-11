@@ -25,7 +25,7 @@ class CatClassifier(RailStage):  # pragma: no cover
 
     def __init__(self, args, **kwargs):
         """Initialize Classifier"""
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self._output_handle = None
         self.model = None
         if not isinstance(args, dict):  # pragma: no cover
@@ -116,7 +116,7 @@ class PZClassifier(RailStage):
         comm : MPI.Comm, optional
             MPI communicator for parallel processing.
         """
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self._output_handle = None
 
     def classify(self, input_data):

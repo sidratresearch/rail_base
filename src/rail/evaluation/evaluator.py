@@ -80,7 +80,7 @@ class Evaluator(RailStage):  #pylint: disable=too-many-instance-attributes
     metric_base_class = None
 
     def __init__(self, args, **kwargs):
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self._output_handle = None
         self._summary_handle = None
         self._single_distribution_summary_handle = None

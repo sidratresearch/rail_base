@@ -47,7 +47,7 @@ class RandomGaussEstimator(CatEstimator):
     def __init__(self, args, **kwargs):
         """Constructor:
         Do CatEstimator specific initialization"""
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self.zgrid = None
 
     def _process_chunk(self, start, end, data, first):

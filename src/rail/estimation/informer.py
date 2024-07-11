@@ -34,7 +34,7 @@ class CatInformer(RailStage):
 
     def __init__(self, args, **kwargs):
         """Initialize Informer that can inform models for redshift estimation"""
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self.model = None
 
     def inform(self, training_data):
@@ -90,7 +90,7 @@ class PzInformer(RailStage):
 
     def __init__(self, args, **kwargs):
         """Initialize Informer that can inform models for redshift estimation"""
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self.model = None
 
     def inform(self, training_data):

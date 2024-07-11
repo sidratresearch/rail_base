@@ -23,7 +23,7 @@ class QuantityCut(Selector):
         Performs standard Degrader initialization as well as defining the cuts
         to be applied.
         """
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self.cuts = None
         self.set_cuts(self.config["cuts"])
 

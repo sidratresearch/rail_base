@@ -29,7 +29,7 @@ class TrueNZHistogrammer(RailStage):
     outputs = [("true_NZ", QPHandle)]
 
     def __init__(self, args, **kwargs):
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self.zgrid = None
         self.bincents = None
 

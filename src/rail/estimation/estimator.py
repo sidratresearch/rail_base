@@ -38,7 +38,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
     def __init__(self, args, **kwargs):
         """Initialize Estimator"""
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self._output_handle = None
         self.model = None
 

@@ -139,7 +139,7 @@ class SZPZSummarizer(RailStage):
 
     def __init__(self, args, **kwargs):
         """Initialize Estimator that can sample galaxy data."""
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self.model = None
         # NOTE: open model removed from init, need to put an
         # `open_model` call explicitly in the run method for

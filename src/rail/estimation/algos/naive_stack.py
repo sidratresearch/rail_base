@@ -37,7 +37,7 @@ class NaiveStackSummarizer(PZSummarizer):
     outputs = [("output", QPHandle), ("single_NZ", QPHandle)]
 
     def __init__(self, args, **kwargs):
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self.zgrid = None
 
     def run(self):

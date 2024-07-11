@@ -288,7 +288,7 @@ class RailStage(PipelineStage):
         if isinstance(data, DataHandle):
             aliased_tag = data.tag
             if tag in self.input_tags():
-                self.config.aliases[tag] = aliased_tag
+                self._aliases[tag] = aliased_tag
                 if data.has_path:
                     self._inputs[tag] = data.path
             arg_data = data.data

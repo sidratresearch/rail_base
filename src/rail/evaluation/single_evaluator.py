@@ -34,7 +34,7 @@ class SingleEvaluator(Evaluator):  # pylint: disable=too-many-instance-attribute
 
     def __init__(self, args, **kwargs):
         """Initialize Evaluator"""
-        super().__init__(self, args, **kwargs)
+        super().__init__(args, **kwargs)
         self._input_data_type = QPOrTableHandle.PdfOrValue.unknown
         self._truth_data_type = QPOrTableHandle.PdfOrValue.unknown
         self._out_table = {}
