@@ -31,10 +31,6 @@ class Selector(RailStage):
     inputs = [("input", PqHandle)]
     outputs = [("output", PqHandle)]
 
-    def __init__(self, args, comm=None):
-        """Initialize Noisifier that can add noise to photometric data"""
-        RailStage.__init__(self, args, comm=comm)
-
     def __call__(self, sample):
         """The main interface method for ``Selector``.
 

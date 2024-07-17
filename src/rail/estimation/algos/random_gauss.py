@@ -20,9 +20,6 @@ class RandomGaussInformer(CatInformer):
     name = "RandomGaussInformer"
     config_options = CatInformer.config_options.copy()
 
-    def __init__(self, args, comm=None):
-        CatInformer.__init__(self, args, comm=comm)
-
     def run(self):
         self.add_data("model", np.array([None]))
 
@@ -47,10 +44,10 @@ class RandomGaussEstimator(CatEstimator):
         ),
     )
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """Constructor:
         Do CatEstimator specific initialization"""
-        CatEstimator.__init__(self, args, comm=comm)
+        super().__init__(args, **kwargs)
         self.zgrid = None
 
     def _process_chunk(self, start, end, data, first):

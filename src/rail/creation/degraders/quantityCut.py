@@ -17,13 +17,13 @@ class QuantityCut(Selector):
     config_options = Selector.config_options.copy()
     config_options.update(cuts=dict)
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """Constructor.
 
         Performs standard Degrader initialization as well as defining the cuts
         to be applied.
         """
-        Selector.__init__(self, args, comm=comm)
+        super().__init__(args, **kwargs)
         self.cuts = None
         self.set_cuts(self.config["cuts"])
 

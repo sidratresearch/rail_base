@@ -32,9 +32,9 @@ class CatInformer(RailStage):
     inputs = [("input", TableHandle)]
     outputs = [("model", ModelHandle)]
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """Initialize Informer that can inform models for redshift estimation"""
-        RailStage.__init__(self, args, comm=comm)
+        super().__init__(args, **kwargs)
         self.model = None
 
     def inform(self, training_data):
@@ -88,9 +88,9 @@ class PzInformer(RailStage):
     inputs = [("input", QPHandle)]
     outputs = [("model", ModelHandle)]
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """Initialize Informer that can inform models for redshift estimation"""
-        RailStage.__init__(self, args, comm=comm)
+        super().__init__(args, **kwargs)
         self.model = None
 
     def inform(self, training_data):

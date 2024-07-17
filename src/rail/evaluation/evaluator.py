@@ -79,8 +79,8 @@ class Evaluator(RailStage):  #pylint: disable=too-many-instance-attributes
 
     metric_base_class = None
 
-    def __init__(self, args, comm=None):
-        RailStage.__init__(self, args, comm=comm)
+    def __init__(self, args, **kwargs):
+        super().__init__(args, **kwargs)
         self._output_handle = None
         self._summary_handle = None
         self._single_distribution_summary_handle = None
@@ -414,10 +414,6 @@ class OldEvaluator(RailStage):
     )
     inputs = [("input", QPHandle), ("truth", Hdf5Handle)]
     outputs = [("output", Hdf5Handle)]
-
-    def __init__(self, args, comm=None):
-        """Initialize Evaluator"""
-        RailStage.__init__(self, args, comm=comm)
 
     def evaluate(self, data, truth):
         """Evaluate the performance of an estimator

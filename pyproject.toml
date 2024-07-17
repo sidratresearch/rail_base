@@ -20,7 +20,7 @@ dependencies = [
     "pyyaml",
     "numpy",
     "click",
-    "ceci>=1.10.1",
+    "ceci>=2.0.1",
     "qp-prob>=0.8.3",
     "scipy>=1.9.0",
 ]

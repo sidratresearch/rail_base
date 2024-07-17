@@ -28,8 +28,8 @@ class TrueNZHistogrammer(RailStage):
     inputs = [("input", TableHandle), ("tomography_bins", TableHandle)]
     outputs = [("true_NZ", QPHandle)]
 
-    def __init__(self, args, comm=None):
-        RailStage.__init__(self, args, comm=comm)
+    def __init__(self, args, **kwargs):
+        super().__init__(args, **kwargs)
         self.zgrid = None
         self.bincents = None
 

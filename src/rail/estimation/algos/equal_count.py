@@ -29,9 +29,6 @@ class EqualCountClassifier(PZClassifier):
     )
     outputs = [("output", TableHandle)]
 
-    def __init__(self, args, comm=None):
-        PZClassifier.__init__(self, args, comm=comm)
-
     def run(self):
         test_data = self.get_data("input")
         npdf = test_data.npdf

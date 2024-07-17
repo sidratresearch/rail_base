@@ -36,9 +36,6 @@ class TrainZInformer(CatInformer):
         redshift_col=SHARED_PARAMS,
     )
 
-    def __init__(self, args, comm=None):
-        CatInformer.__init__(self, args, comm=comm)
-
     def run(self):
         if self.config.hdf5_groupname:
             training_data = self.get_data("input")[self.config.hdf5_groupname]
@@ -65,11 +62,11 @@ class TrainZEstimator(CatEstimator):
     config_options = CatEstimator.config_options.copy()
     config_options.update(zmin=SHARED_PARAMS, zmax=SHARED_PARAMS, nzbins=SHARED_PARAMS)
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         self.zgrid = None
         self.train_pdf = None
         self.zmode = None
-        CatEstimator.__init__(self, args, comm=comm)
+        CatEstimator.__init__(self, args, **kwargs)
 
     def open_model(self, **kwargs):
         CatEstimator.open_model(self, **kwargs)

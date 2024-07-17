@@ -136,10 +136,10 @@ class RailStage(PipelineStage):
 
     data_store = DATA_STORE()
 
-    def __init__(self, args, comm=None):
+    def __init__(self, args, **kwargs):
         """Constructor:
         Do RailStage specific initialization"""
-        PipelineStage.__init__(self, args, comm=comm)
+        super().__init__(args, **kwargs)
         self._input_length = None
         self.io = StageIO(self)
 
@@ -288,7 +288,7 @@ class RailStage(PipelineStage):
         if isinstance(data, DataHandle):
             aliased_tag = data.tag
             if tag in self.input_tags():
-                self.config.aliases[tag] = aliased_tag
+                self._aliases[tag] = aliased_tag
                 if data.has_path:
                     self._inputs[tag] = data.path
             arg_data = data.data
