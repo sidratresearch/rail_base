@@ -1,5 +1,7 @@
 import rail
+
 from rail.core import RailEnv
+from rail.core.stage import RailStage
 
 from rail.estimation.estimator import CatEstimator
 from rail.estimation.classifier import CatClassifier, PZClassifier
@@ -33,13 +35,6 @@ from rail.evaluation.point_to_point_evaluator import PointToPointEvaluator
 from rail.evaluation.single_evaluator import SingleEvaluator
 
 from rail.tools.table_tools import ColumnMapper, RowSelector, TableConverter
-
-
-def import_and_attach_all():
-    """Import all the packages in the rail ecosystem and attach them to this module"""
-    RailEnv.import_all_packages()
-    RailEnv.attach_stages(rail.stages)
-
 
 __all__ = [
     "CatEstimator",
@@ -79,3 +74,12 @@ __all__ = [
     "RowSelector",
     "TableConverter",
 ]
+
+
+def import_and_attach_all():
+    """Import all the packages in the rail ecosystem and attach them to this module"""
+    RailEnv.import_all_packages()
+    RailEnv.attach_stages(rail.stages)
+    for xx in RailStage.pipeline_stages:
+        rail.stages.__all__.append(xx)
+    
