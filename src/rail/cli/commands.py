@@ -1,3 +1,4 @@
+import os
 import click
 
 from rail.core import __version__
@@ -99,4 +100,42 @@ def estimate(stage_name, stage_class, stage_module, model_file, dry_run, input_f
         stage,
         data_path=input_file,
     )
+
+
+@options.pipeline_class()
+@options.output_yaml()
+@options.catalog_tag()
+@options.stages_config()
+@options.outdir()
+@options.inputs()
+def build_pipe(pipeline_class, output_yaml, catalog_tag, stages_config, outdir, inputs):
+    """Build a pipeline yaml file"""
+    input_dict = {}
+    for input_ in inputs:
+        tokens = input_.split('=')
+        assert len(tokens) == 2
+        input_dict[tokens[0]] = tokens[1]    
+    scripts.build_pipeline(pipeline_class,  output_yaml, catalog_tag, input_dict, stages_config, outdir)
+    return 0
+
+
+@cli.command()
+@options.pipeline_yaml()
+@options.stage_name()
+@options.dry_run()
+@options.inputs()
+def run_stage(pipeline_yaml, stage_name, dry_run, inputs):
+    """Run a pipeline stage"""
+    pipe = ceci.Pipeline.read(pipeline_yaml)
+    input_dict = {}
+    for input_ in inputs:
+        tokens = input_.split('=')
+        assert len(tokens) == 2
+        input_dict[tokens[0]] = tokens[1]
+    com = pipe.generate_stage_command(stage_name, **input_dict)
+    if dry_run:
+        print(com)
+    else:
+        os.system(com)
+    return 0
 

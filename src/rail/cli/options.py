@@ -7,11 +7,15 @@ import click
 __all__ = [
     "clear_output",
     "bpz_demo_data",
+    "catalog_tag",
     "dry_run",
     "outdir",
+    "output_yaml",
     "from_source",
     "model_file",
     "git_mode",
+    "pipeline_class",
+    "pipeline_yaml",
     "print_all",
     "print_packages",
     "print_namespaces",
@@ -89,6 +93,14 @@ dry_run = PartialOption(
     help="Dry run only",
     is_flag=True,
 )
+
+
+catalog_tag = PartialOption(
+    "--catalog_tag",
+    default=None,
+    help="Type of input catalog, used to determine column names",
+)
+
 
 from_source = PartialOption(
     "--from-source",
@@ -177,6 +189,13 @@ print_stages = PartialOption(
     is_flag=True,
 )
 
+project_yaml = PartialOption(
+    "--project_yaml",
+    type=click.Path(),
+    default=None,
+    help="File with project description",
+)
+
 package_file = PartialOption(
     "--package-file",
     type=click.Path(),
@@ -215,8 +234,6 @@ stages_config = PartialOption(
     help="Stage config file",
     default=None,
 )
-
-
 
 inputs = PartialArgument("inputs", nargs=-1)
 

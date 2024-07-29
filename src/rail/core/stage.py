@@ -2,9 +2,11 @@
 
 import os
 import sys
+import yaml
 from math import ceil
 
-from ceci import PipelineStage, MiniPipeline
+from ceci.stage import PipelineStage
+from ceci.pipeline import MiniPipeline
 from ceci.config import StageParameter as Param
 from rail.core.data import DATA_STORE, DataHandle
 
@@ -48,6 +50,13 @@ class RailStageBuild:
     def __init__(self, stage_class, **kwargs):
         self.stage_class = stage_class
         self._kwargs = kwargs
+        self._stage = None
+
+    @property
+    def io(self):  # pragma: no cover
+        if self._stage:
+            return self._stage.io
+        return None
 
     def build(self, name):
         """Actually build the stage, this is called by the pipeline the stage
@@ -63,8 +72,8 @@ class RailStageBuild:
         stage : `RailStage`
             The newly built stage
         """
-        stage = self.stage_class.make_and_connect(name=name, **self._kwargs)
-        return stage
+        self._stage = self.stage_class.make_and_connect(name=name, **self._kwargs)
+        return self._stage
 
 
 class RailPipeline(MiniPipeline):
@@ -77,6 +86,58 @@ class RailPipeline(MiniPipeline):
 
     And end up with a fully specified pipeline.
     """
+    pipeline_classes = {}    
+
+    def __init_subclass__(cls):
+        cls.pipeline_classes[cls.__name__] = cls
+
+    @classmethod
+    def print_classes(cls):
+        for key, val in cls.pipeline_classes.items():
+            print(f"{key} {val}")
+
+    @classmethod
+    def get_pipeline_class(cls, name):
+        try:
+            return cls.pipeline_classes[name]
+        except KeyError as msg:
+            raise KeyError(f"Could not find pipeline class {name} in {list(cls.pipeline_classes.keys())}") from msg
+
+    @staticmethod
+    def load_pipeline_class(class_name):        
+        tokens = class_name.split('.')
+        module = '.'.join(tokens[:-1])
+        class_name = tokens[-1]
+        __import__(module)
+        pipe_class = RailPipeline.get_pipeline_class(class_name)
+        return pipe_class
+
+    @staticmethod
+    def build_and_write(
+        class_name,
+        output_yaml,
+        input_dict=None,
+        stages_config=None,
+        output_dir='.',
+        log_dir='.',
+        **kwargs,
+    ):
+        pipe_class = RailPipeline.get_pipeline_class(class_name)
+        pipe = pipe_class(**kwargs)
+        
+        full_input_dict = pipe_class.default_input_dict.copy()
+        if input_dict is not None:
+            full_input_dict.update(**input_dict)
+        pipe.initialize(
+            full_input_dict,
+            dict(
+                output_dir=output_dir,
+                log_dir=log_dir,
+                resume=False,
+            ),
+            stages_config,
+        )
+        pipe.save(output_yaml)
 
     def __init__(self):
         MiniPipeline.__init__(self, [], dict(name="mini"))
