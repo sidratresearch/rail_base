@@ -5,6 +5,7 @@ from rail.core import __version__
 from rail.cli import options, scripts
 from rail.interfaces.pz_factory import PZFactory
 from rail.interfaces.tool_factory import ToolFactory
+from rail.utils import catalog_utils
 import ceci
 
 
@@ -85,10 +86,13 @@ def get_data(verbose, **kwargs):
 @options.stage_class()
 @options.stage_module()
 @options.model_file()
+@options.catalog_tag()
 @options.dry_run()
 @options.input_file()
-def estimate(stage_name, stage_class, stage_module, model_file, dry_run, input_file):
+def estimate(stage_name, stage_class, stage_module, model_file, catalog_tag, dry_run, input_file):
     """Run a pz estimation stage"""
+    if catalog_tag:
+        catalog_utils.apply_defaults(catalog_tag)
     stage = PZFactory.build_cat_estimator_stage(
         stage_name=stage_name,
         class_name=stage_class,
@@ -103,6 +107,7 @@ def estimate(stage_name, stage_class, stage_module, model_file, dry_run, input_f
     )
 
 
+@cli.command()
 @options.pipeline_class()
 @options.output_yaml()
 @options.catalog_tag()
@@ -115,8 +120,8 @@ def build_pipe(pipeline_class, output_yaml, catalog_tag, stages_config, outdir, 
     for input_ in inputs:
         tokens = input_.split('=')
         assert len(tokens) == 2
-        input_dict[tokens[0]] = tokens[1]    
-    scripts.build_pipeline(pipeline_class,  output_yaml, catalog_tag, input_dict, stages_config, outdir)
+        input_dict[tokens[0]] = tokens[1]
+    scripts.build_pipeline(pipeline_class, output_yaml, catalog_tag, input_dict, stages_config, outdir)
     return 0
 
 
@@ -160,4 +165,3 @@ def run_tool(stage_name, stage_class, stage_module, dry_run, input_file):
         stage,
         data_path=input_file,
     )
-
