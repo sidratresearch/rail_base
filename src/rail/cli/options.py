@@ -5,6 +5,7 @@ from typing import Any, Type, TypeVar
 import click
 
 __all__ = [
+    "args_to_dict",
     "clear_output",
     "bpz_demo_data",
     "catalog_tag",
@@ -14,6 +15,7 @@ __all__ = [
     "from_source",
     "model_file",
     "git_mode",
+    "params",
     "pipeline_class",
     "pipeline_yaml",
     "print_all",
@@ -57,6 +59,18 @@ class EnumChoice(click.Choice):
         converted_str = super().convert(value, param, ctx)
         return self._enum.__members__[converted_str]
 
+
+def args_to_dict(args):
+    """Convert a series of command line key=value statements
+    to a dict"""    
+    out_dict = {}
+    for arg_ in args:
+        tokens = arg_.split('=')
+        if len(tokens) != 2:
+            raise ValueError(f"Poorly formed argument {arg_}.  Should by key=value")
+        out_dict[tokens[0]] = tokens[1]
+    return out_dict
+        
 
 class PartialOption:
     """Wraps click.option with partial arguments for convenient reuse"""
@@ -236,6 +250,8 @@ stages_config = PartialOption(
 )
 
 inputs = PartialArgument("inputs", nargs=-1)
+
+params = PartialArgument("params", nargs=-1)
 
 verbose_download = PartialOption(
     "-v", "--verbose", help="Verbose output when downloading", is_flag=True

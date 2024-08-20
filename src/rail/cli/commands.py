@@ -1,5 +1,7 @@
 import os
 import click
+import pprint
+import yaml
 
 from rail.core import __version__
 from rail.cli import options, scripts
@@ -85,22 +87,47 @@ def get_data(verbose, **kwargs):
 @options.stage_name()
 @options.stage_class()
 @options.stage_module()
+@options.stages_config()
 @options.model_file()
 @options.catalog_tag()
 @options.dry_run()
 @options.input_file()
-def estimate(stage_name, stage_class, stage_module, model_file, catalog_tag, dry_run, input_file):
+@options.params()
+def estimate(stage_name, stage_class, stage_module, stages_config, model_file, catalog_tag, dry_run, input_file, params):
     """Run a pz estimation stage"""
     if catalog_tag:
         catalog_utils.apply_defaults(catalog_tag)
+
+    if stages_config not in [None, 'none', 'None']:
+        with open(stages_config) as fin:
+            config_data = yaml.safe_load(fin)
+            if stage_name in config_data:
+                kwargs = config_data[stage_name]
+            elif isinstance(config_data, dict):
+                kwargs = config_data
+            else:
+                raise ValueError(f"Config file {stages_config} is not properly constructed")                
+    else:
+        kwargs = {}
+        
+    kwargs.update(**options.args_to_dict(params))
+    
     stage = PZFactory.build_cat_estimator_stage(
         stage_name=stage_name,
         class_name=stage_class,
         module_name=stage_module,
         model_path=model_file,
         data_path='dummy.in',
+        **kwargs,
     )
 
+    if dry_run:
+        print(f"Running stage {stage.name} of type {type(stage)} on {input_file}")
+        print("Stage config:   ")
+        print_dict = stage.config.to_dict().copy()
+        pprint.pprint(print_dict)
+        return 0
+        
     output = PZFactory.run_cat_estimator_stage(
         stage,
         data_path=input_file,

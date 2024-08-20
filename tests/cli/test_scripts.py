@@ -1,7 +1,21 @@
 import glob
 import os
+import pytest
 from rail.cli import scripts
-from rail.cli.options import GitMode
+from rail.cli.options import args_to_dict, GitMode
+
+
+
+def test_args_to_dict():
+    args = ['x=3', 'y=2']
+    as_dict = args_to_dict(args)
+    assert as_dict['x'] == '3'
+    assert as_dict['y'] == '2'
+
+    with pytest.raises(ValueError):
+        args_to_dict(['x'])
+    with pytest.raises(ValueError):
+        args_to_dict(['x=3=3'])
 
 
 def test_render_nb():
