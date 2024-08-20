@@ -125,8 +125,6 @@ def estimate(stage_name, stage_class, stage_module, stages_config, model_file, c
         print(f"Running stage {stage.name} of type {type(stage)} on {input_file}")
         print("Stage config:   ")
         print_dict = stage.config.to_dict().copy()
-        for rm_key in ['config', 'inputs', 'stages']:
-            print_dict.pop(rm_key, None)
         pprint.pprint(print_dict)
         return 0
         
