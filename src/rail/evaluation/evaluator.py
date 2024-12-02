@@ -481,19 +481,22 @@ class OldEvaluator(RailStage):
         out_table = {}
         for pit_metric in pit_metrics:
             value = PIT_METRICS[pit_metric]()
-
             # The result objects of some meta-metrics are bespoke scipy objects with inconsistent fields.
             # Here we do our best to store the relevant fields in `out_table`.
             if isinstance(value, list):  # pragma: no cover
                 out_table[f"PIT_{pit_metric}"] = value
+            elif pit_metric== 'OutRate':
+                out_table[f"PIT_{pit_metric}_stat"] = [value]
             else:
                 out_table[f"PIT_{pit_metric}_stat"] = [
                     getattr(value, "statistic", None)
                 ]
-                out_table[f"PIT_{pit_metric}_pval"] = [getattr(value, "p_value", None)]
-                out_table[f"PIT_{pit_metric}_significance_level"] = [
-                    getattr(value, "significance_level", None)
-                ]
+                if getattr(value, "pvalue", None) is not None:
+                    out_table[f"PIT_{pit_metric}_pval"] = [getattr(value, "p_value", None)]
+                if getattr(value, "significance_level", None) is not None:
+                    out_table[f"PIT_{pit_metric}_significance_level"] = [
+                        getattr(value, "significance_level", None)
+                    ]
 
         POINT_METRICS = dict(
             SimgaIQR=PointSigmaIQR,
@@ -516,7 +519,7 @@ class OldEvaluator(RailStage):
         if self.config.do_cde:
             value = CDELoss(pz_data, zgrid, z_true).evaluate()
             out_table["CDE_stat"] = [value.statistic]
-            out_table["CDE_pval"] = [value.p_value]
+            # out_table["CDE_pval"] = [value.p_value]
 
         # Converting any possible None to NaN to write it
         out_table_to_write = {
