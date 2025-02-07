@@ -144,6 +144,18 @@ class RomanRubinCatalogConfig(CatalogConfigBase):
     hdf5_groupname = ''
 
 
+class ComCamCatalogConfig(CatalogConfigBase):
+
+    tag = 'com_cam'
+    bandlist = 'ugrizy'
+    maglims = [26.4, 27.8, 27.1, 26.7, 25.8, 24.6]
+    a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
+    band_template = "{band}_cModelMag"
+    band_err_template ="{band}_cModelMagErr"
+    ref_band = 'i'
+    redshift_col='redshift'
+    hdf5_groupname = ''
+
 
 class RomanPlusRubinCatalogConfig(CatalogConfigBase):
 
