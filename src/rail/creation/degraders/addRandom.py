@@ -1,8 +1,8 @@
 """Add a column of random numbers to a dataframe."""
 
 import numpy as np
-
 from ceci.config import StageParameter as Param
+
 from rail.creation.noisifier import Noisifier
 
 
@@ -23,7 +23,7 @@ class AddColumnOfRandom(Noisifier):
 
         Does standard Noisifier initialization
         """
-        super().__init__(args, **kwargs)
+        Noisifier.__init__(self, args, **kwargs)
 
     def _initNoiseModel(self):  # pragma: no cover
         np.random.seed(self.config.seed)

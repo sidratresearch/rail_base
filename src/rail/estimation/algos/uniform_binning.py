@@ -5,8 +5,9 @@ tomographic bins with uniform binning.
 
 import numpy as np
 from ceci.config import StageParameter as Param
-from rail.estimation.classifier import PZClassifier
+
 from rail.core.data import Hdf5Handle
+from rail.estimation.classifier import PZClassifier
 
 
 class UniformBinningClassifier(PZClassifier):
@@ -52,7 +53,7 @@ class UniformBinningClassifier(PZClassifier):
         """
         try:
             zb = data.ancil[self.config.point_estimate]
-        except KeyError as msg:
+        except KeyError as msg:  # pragma: no cover
             raise KeyError(
                 f"{self.config.point_estimate} is not contained "
                 "in the data ancil, you will need to compute it explicitly."
