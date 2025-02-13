@@ -309,8 +309,7 @@ Information on specific functions, classes, and methods.
 
         This allow you to do 'from rail.stages import *'
         """
-        from rail.core.stage import \
-            RailStage  # pylint: disable=import-outside-toplevel
+        from rail.core.stage import RailStage  # pylint: disable=import-outside-toplevel
 
         cls.STAGE_DICT.clear()
         cls.STAGE_DICT["none"] = []

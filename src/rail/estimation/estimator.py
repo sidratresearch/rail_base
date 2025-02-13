@@ -8,9 +8,9 @@ from rail.core.common_params import SHARED_PARAMS
 from rail.core.data import ModelHandle, QPHandle, TableHandle
 from rail.core.point_estimation import PointEstimationMixin
 from rail.core.stage import RailStage
+
 # for backwards compatibility, to avoid break stuff that imports it from here
-from rail.estimation.informer import \
-    CatInformer  # pylint: disable=unused-import
+from rail.estimation.informer import CatInformer  # pylint: disable=unused-import
 
 
 class CatEstimator(RailStage, PointEstimationMixin):
