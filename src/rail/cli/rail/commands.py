@@ -110,7 +110,7 @@ def estimate(
         catalog_utils.apply_defaults(catalog_tag)
 
     if stages_config not in [None, "none", "None"]:
-        with open(stages_config, 'r', encoding='utf-8') as fin:
+        with open(stages_config, "r", encoding="utf-8") as fin:
             config_data = yaml.safe_load(fin)
             if stage_name in config_data:
                 kwargs = config_data[stage_name]

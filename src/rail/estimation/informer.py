@@ -61,7 +61,7 @@ class CatInformer(RailStage):
         model : ModelHandle
             Handle providing access to trained model
         """
-            
+
         self.set_data("input", training_data)
         self.validate()
         self.run()
@@ -119,7 +119,7 @@ class PzInformer(RailStage):
         model : ModelHandle
             Handle providing access to trained model
         """
-        
+
         self.set_data("input", training_data)
         self.validate()
         self.run()
