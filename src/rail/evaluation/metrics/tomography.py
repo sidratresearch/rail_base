@@ -19,6 +19,9 @@ class KDEBinOverlap(RailStage):
             str, "", required=False, msg="HDF5 Groupname for truth table."
         ),
         redshift_col=SHARED_PARAMS
+        bin_name=Param(
+            str, "class_id", required=False, msg="Groupname for the tomographic bin index in the hdf5 handle"
+        ),
     )
     # metric_base_class = Evaluator
     
@@ -38,9 +41,10 @@ class KDEBinOverlap(RailStage):
     
     def run(self):
         true_redshifts = self.get_handle("truth").data[self.config.hdf5_groupname][self.config.redshift_col]  # 1D array of redshifts
-        bin_indices = self.get_handle("bin_index").data['class_id']  # 1D array of bin indices
+        bin_indices = self.get_handle("bin_index").data[self.config.bin_name]  # 1D array of bin indices
 
         unique_bins = np.unique(bin_indices)
+        unique_bins = unique_bins[unique_bins>=0] # to exclude the -99
         N = len(unique_bins)
         overlap_matrix = np.zeros((N, N))
 
