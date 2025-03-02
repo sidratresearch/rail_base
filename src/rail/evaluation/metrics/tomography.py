@@ -18,7 +18,7 @@ class KDEBinOverlap(RailStage):
         hdf5_groupname=Param(
             str, "", required=False, msg="HDF5 Groupname for truth table."
         ),
-        redshift_col=SHARED_PARAMS
+        redshift_col=SHARED_PARAMS,
         bin_name=Param(
             str, "class_id", required=False, msg="Groupname for the tomographic bin index in the hdf5 handle"
         ),
