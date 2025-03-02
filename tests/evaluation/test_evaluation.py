@@ -240,6 +240,6 @@ def test_kde_overlap_evaluator(get_evaluation_files: tuple[str, str]) -> None:
     binner = EqualCountClassifier.make_stage()
     binindex = binner.classify(ensemble)
     
-    kde_overlap = KDEBinOverlap.make_stage(hdf5_groupname = 'photometry')
+    kde_overlap = KDEBinOverlap.make_stage(hdf5_groupname = 'photometry', redshift_col = 'redshift')
     
     output = kde_overlap.evaluate(binindex, ztrue_data)
