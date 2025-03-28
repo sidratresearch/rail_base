@@ -126,7 +126,7 @@ class CatalogConfigBase:
     def _build_err_dict(cls) -> dict[str, str]:
         """Construct the mapping from magnitude columns to associated uncertainties"""
         the_dict = {cls.band_template.format(band=band):cls.band_err_template.format(band=band) for band in cls.bandlist}
-        the_dict['redshift'] = None
+        the_dict[cls.redshift_col] = None
         return the_dict
 
     @classmethod
@@ -168,7 +168,7 @@ class HscCatalogConfig(CatalogConfigBase):
     maglims = [27.66, 27.25, 26.6, 26.24, 25.35]
     a_env = [3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "HSC{band}_cmodel_dered"
-    band_err_template = "HSC{band}_cmodel_magerr"
+    band_err_template = "{band}_cmodel_magerr"
     filter_file_template = "DC2LSST_{band}"
     ref_band = "i"
     redshift_col = "specz_redshift"
