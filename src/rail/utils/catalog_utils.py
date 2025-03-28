@@ -25,9 +25,12 @@ class CatalogConfigBase:
     hdf5_groupname: str = ""
     band_template: str = ""
     band_err_template: str = ""
+    filter_file_template: str = ""
     ref_band: str = ""
     redshift_col: str = ""
-
+    object_id_col: str = ""
+    lsst_err_band_replace: list[float] = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+    zp_errors: list[float] = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
     _active_tag: str | None = None
     _active_class: type | None = None
 
@@ -80,7 +83,7 @@ class CatalogConfigBase:
 
     @classmethod
     def _apply(cls) -> None:
-        base_dict = cls._build_base_dict()
+        base_dict = cls.build_base_dict()
         common_params.set_param_defaults(**base_dict)
         cls._apply_hook()
 
@@ -120,23 +123,39 @@ class CatalogConfigBase:
         return [cls.band_err_template.format(band=band) for band in cls.bandlist]
 
     @classmethod
+    def _build_err_dict(cls) -> dict[str, str]:
+        """Construct the mapping from magnitude columns to associated uncertainties"""
+        the_dict = {cls.band_template.format(band=band):cls.band_err_template.format(band=band) for band in cls.bandlist}
+        the_dict[cls.redshift_col] = None
+        return the_dict
+
+    @classmethod
     def _build_ref_band(cls, ref_band: str = "i") -> str:
         """Contruct the name of the reference band"""
         return cls.band_template.format(band=ref_band)
 
     @classmethod
-    def _build_base_dict(cls) -> dict:
+    def _build_filter_file_bandlist(cls) -> list[str]:
+        """Contruct the list names used to find the filter files"""
+        return [cls.filter_file_template.format(band=band) for band in cls.bandlist]
+
+    @classmethod
+    def build_base_dict(cls) -> dict:
         """Construct the dict of overrides for the shared paramters"""
         base_dict: dict = {}
         base_dict.update(
             bands=cls._build_band_names(),
             err_bands=cls._build_band_err_names(),
+            err_dict=cls._build_err_dict(),
             mag_limits=cls._build_maglim_dict(),
             band_a_env=cls._build_a_env_dict(),
             ref_band=cls._build_ref_band(cls.ref_band),
             redshift_col=cls.redshift_col,
             nondetect_val=np.nan,
             hdf5_groupname=cls.hdf5_groupname,
+            replace_error_vals=cls.replace_error_vals,
+            filter_list=cls._build_filter_file_bandlist(),
+            zp_errors=cls.zp_errors,
         )
         return base_dict
 
@@ -150,9 +169,13 @@ class HscCatalogConfig(CatalogConfigBase):
     a_env = [3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "HSC{band}_cmodel_dered"
     band_err_template = "{band}_cmodel_magerr"
+    filter_file_template = "DC2LSST_{band}"
     ref_band = "i"
     redshift_col = "specz_redshift"
+    object_id_col = "object_id"
     hdf5_groupname = ""
+    replace_error_vals = [0.1, 0.1, 0.1, 0.1, 0.1]
+    zp_errors = [0.1, 0.1, 0.1, 0.1, 0.1]
 
 
 class Dc2CatalogConfig(CatalogConfigBase):
@@ -162,11 +185,14 @@ class Dc2CatalogConfig(CatalogConfigBase):
     bandlist = "ugrizy"
     maglims = [24.0, 27.66, 27.25, 26.6, 26.24, 25.35]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
-    band_template = "mag_{band}_lsst"
-    band_err_template = "mag_err_{band}_lsst"
+    band_template = "mag_{band}_cModel_obj_dered"
+    band_err_template = "magerr_{band}_cModel_obj"
+    filter_file_template = "DC2LSST_{band}"
     ref_band = "i"
-    redshift_col = "true_redshift"
+    redshift_col = "redshift_true"
+    object_id_col = "objectId_obj"
     hdf5_groupname = ""
+    replace_error_vals = [0.1, 0.1, 0.1, 0.1, 0.1 ,0.1]
 
 
 class RubinCatalogConfig(CatalogConfigBase):
@@ -178,9 +204,12 @@ class RubinCatalogConfig(CatalogConfigBase):
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "LSST_obs_{band}"
     band_err_template = "LSST_obs_{band}_err"
+    filter_file_template = "DC2LSST_{band}"
     ref_band = "i"
     redshift_col = "true_redshift"
+    object_id_col = "objectId"
     hdf5_groupname = ""
+    replace_error_vals = [0.1, 0.1, 0.1, 0.1, 0.1 ,0.1]
 
 
 class RomanRubinCatalogConfig(CatalogConfigBase):
@@ -192,9 +221,12 @@ class RomanRubinCatalogConfig(CatalogConfigBase):
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "LSST_obs_{band}"
     band_err_template = "LSST_obs_{band}_err"
+    filter_file_template = "DC2LSST_{band}"
     ref_band = "i"
     redshift_col = "redshift"
+    object_id_col = "objectId"
     hdf5_groupname = ""
+    replace_error_vals = [0.1, 0.1, 0.1, 0.1, 0.1 ,0.1]
 
 
 class ComCamCatalogConfig(CatalogConfigBase):
@@ -206,9 +238,12 @@ class ComCamCatalogConfig(CatalogConfigBase):
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "{band}_cModelMag"
     band_err_template = "{band}_cModelMagErr"
+    filter_file_template = "DC2LSST_{band}"
     ref_band = "i"
     redshift_col = "redshift"
+    object_id_col = "objectId"
     hdf5_groupname = ""
+    replace_error_vals = [0.1, 0.1, 0.1, 0.1, 0.1 ,0.1]
 
 
 class RomanPlusRubinCatalogConfig(CatalogConfigBase):
@@ -220,9 +255,12 @@ class RomanPlusRubinCatalogConfig(CatalogConfigBase):
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "LSST_obs_{band}"
     band_err_template = "LSST_obs_{band}_err"
+    filter_file_template = "DC2LSST_{band}"
     ref_band = "i"
     redshift_col = "redshift"
+    object_id_col = "objectId"
     hdf5_groupname = ""
+    replace_error_vals = [0.1, 0.1, 0.1, 0.1, 0.1 ,0.1, 0.1, 0.1, 0.1 ,0.1]
 
     @classmethod
     def band_name_dict(cls) -> dict[str, str]:
@@ -277,5 +315,16 @@ class RomanPlusRubinCatalogConfig(CatalogConfigBase):
     def _build_ref_band(cls, ref_band: str = "i") -> str:
         return cls.band_template.format(band=ref_band)
 
+    @classmethod
+    def _build_filter_file_bandlist(cls) -> list[str]:
+        """Contruct the name of the reference band"""
+        filter_list = [cls.filter_file_template.format(band=band) for band in cls.bandlist]
+        filter_list += [
+            'ROMAN_obs_F184',
+            'ROMAN_obs_H158',
+            'ROMAN_obs_J129',
+            'ROMAN_obs_Y106',
+        ]
+        return filter_list
 
 apply_defaults = CatalogConfigBase.apply

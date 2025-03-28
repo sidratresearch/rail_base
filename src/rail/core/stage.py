@@ -565,6 +565,9 @@ class RailStage(PipelineStage):
         except Exception:  # pragma: no cover
             groupname = None
 
+        if not groupname:
+            groupname = None
+
         if isinstance(data, DataHandle) and not data.has_data:
             if data.has_path:
                 # data handle only has a path, read the columns from the path
