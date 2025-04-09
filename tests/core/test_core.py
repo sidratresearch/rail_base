@@ -26,7 +26,6 @@ from rail.utils.path_utils import RAILDIR
 #        df = DataFile('dummy', 'x')
 
 
-
 def do_data_handle(datapath: str, handle_class: type[DataHandle]) -> DataHandle:
     _DS = RailStage.data_store
 
@@ -35,9 +34,8 @@ def do_data_handle(datapath: str, handle_class: type[DataHandle]) -> DataHandle:
     with pytest.raises(ValueError) as _errinfo:
         th.write()
 
-
     assert handle_class.__name__ in DataHandle.get_sub_classes()
-        
+
     assert not th.has_data
     try:
         _check_size = th.size()
@@ -174,9 +172,9 @@ def test_hdf5_handle() -> None:
         "test_dc2_training_9816_chunked.hdf5",
     )
     handle_chunked = Hdf5Handle("chunked", handle.data, path=datapath_chunked)
-    from tables_io.arrayUtils import (  # pylint: disable=import-outside-toplevel
-        getInitializationForODict,
-        sliceDict,
+    from tables_io.array_utils import (  # pylint: disable=import-outside-toplevel
+        get_initialization_for_ODict,
+        slice_dict,
     )
 
     num_rows = len(handle.data["photometry"]["id"])
@@ -184,7 +182,7 @@ def test_hdf5_handle() -> None:
     assert num_rows == check_num_rows
     chunk_size = 1000
     data = handle.data["photometry"]
-    init_dict = getInitializationForODict(data)
+    init_dict = get_initialization_for_ODict(data)
     with handle_chunked.open(mode="w") as fout:
         for k, v in init_dict.items():
             fout.create_dataset(k, v[0], v[1])
@@ -193,7 +191,7 @@ def test_hdf5_handle() -> None:
             end = i + chunk_size
             end = min(end, num_rows)
             handle_chunked.set_data(
-                sliceDict(handle.data["photometry"], slice(start, end)), partial=True
+                slice_dict(handle.data["photometry"], slice(start, end)), partial=True
             )
             handle_chunked.write_chunk(start, end)
     write_size = handle_chunked.size()
@@ -361,9 +359,11 @@ def test_catalog_utils() -> None:
     CatalogConfigBase.apply("dc2")
     set_param_default("redshift_col", "redshift")
 
-    a_class = CatalogConfigBase.get_class('RomanPlusRubinCatalogConfig', 'rail.utils.catalog_utils')
+    a_class = CatalogConfigBase.get_class(
+        "RomanPlusRubinCatalogConfig", "rail.utils.catalog_utils"
+    )
     CatalogConfigBase.apply_class(a_class.__name__)
-    
-    assert 'rubin' in CatalogConfigBase.subclasses()
 
-    assert 'RomanPlusRubinCatalogConfig' in CatalogConfigBase.subclasses_by_class()
+    assert "rubin" in CatalogConfigBase.subclasses()
+
+    assert "RomanPlusRubinCatalogConfig" in CatalogConfigBase.subclasses_by_class()
