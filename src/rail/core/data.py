@@ -464,7 +464,7 @@ class Hdf5Handle(TableHandle):  # pragma: no cover
     ) -> tuple[GroupLike, FileLike]:
         initial_dict = cls._get_allocation_kwds(data, data_length)
         comm = kwargs.get("communicator", None)
-        group, fout = tab_hdf5.initializeHdf5WriteSingle(
+        group, fout = tab_hdf5.initialize_HDF5_write_single(
             path, groupname=None, comm=comm, **initial_dict
         )
         return group, fout
@@ -490,11 +490,11 @@ class Hdf5Handle(TableHandle):  # pragma: no cover
         end: int,
         **kwargs: Any,
     ) -> None:
-        tab_hdf5.writeDictToHdf5ChunkSingle(fileObj, data, start, end, **kwargs)
+        tab_hdf5.write_dict_to_HDF5_chunk_single(fileObj, data, start, end, **kwargs)
 
     @classmethod
     def _finalize_write(cls, data: TableLike, fileObj: FileLike, **kwargs: Any) -> None:
-        return tab_hdf5.finalizeHdf5Write(fileObj, **kwargs)
+        return tab_hdf5.finalize_HDF5_write(fileObj, **kwargs)
 
 
 class FitsHandle(TableHandle):
