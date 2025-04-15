@@ -172,7 +172,7 @@ def test_hdf5_handle() -> None:
         "test_dc2_training_9816_chunked.hdf5",
     )
     handle_chunked = Hdf5Handle("chunked", handle.data, path=datapath_chunked)
-    from tables_io.array_utils import (  # pylint: disable=import-outside-toplevel
+    from tables_io.utils.array_utils import (  # pylint: disable=import-outside-toplevel
         get_initialization_for_ODict,
         slice_dict,
     )
