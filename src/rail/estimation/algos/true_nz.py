@@ -69,7 +69,7 @@ class TrueNZHistogrammer(RailStage):
 
         first = True
         for s, e, data, mask in iterator:
-            print(f"Process {self.rank} running estimator on chunk {s} - {e}")
+            print(f"Process {self.rank} running estimator on chunk {s:,} - {e:,}")
             self._process_chunk(s, e, data, mask, first, single_hist)
             first = False
         if self.comm is not None:  # pragma: no cover
