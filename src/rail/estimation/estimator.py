@@ -3,24 +3,19 @@ Abstract base classes defining Estimators of individual galaxy redshift uncertai
 """
 
 import gc
-from typing import Any
+from typing import Any, Optional
 
+import numpy as np
 import qp
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import (
-    DataHandle,
-    ModelHandle,
-    ModelLike,
-    QPHandle,
-    TableHandle,
-    TableLike,
-)
+from rail.core.data import (DataHandle, ModelHandle, ModelLike, QPHandle,
+                            TableHandle, TableLike)
 from rail.core.point_estimation import PointEstimationMixin
 from rail.core.stage import RailStage
 
 # for backwards compatibility, to avoid break stuff that imports it from here
-from .informer import CatInformer
+from .informer import CatInformer  # pylint: disable=unused-import
 
 
 class CatEstimator(RailStage, PointEstimationMixin):
@@ -42,6 +37,8 @@ class CatEstimator(RailStage, PointEstimationMixin):
         zmin=SHARED_PARAMS,
         zmax=SHARED_PARAMS,
         nzbins=SHARED_PARAMS,
+        id_col=SHARED_PARAMS,
+        redshift_col=SHARED_PARAMS,
     )
     config_options.update(
         **PointEstimationMixin.config_options.copy(),
@@ -152,9 +149,28 @@ class CatEstimator(RailStage, PointEstimationMixin):
         )  # pragma: no cover
 
     def _do_chunk_output(
-        self, qp_dstn: qp.Ensemble, start: int, end: int, first: bool
+        self,
+        qp_dstn: qp.Ensemble,
+        start: int,
+        end: int,
+        first: bool,
+        data: Optional[TableLike] = None,
     ) -> None:
         qp_dstn = self.calculate_point_estimates(qp_dstn)
+
+        # if there is no ancil set by the calculate_point_estimate, initiate one
+        if data is not None:
+            if qp_dstn.ancil is None:  # pragma: no cover
+                ancil_dict: dict[str, np.ndarray] = dict()
+                qp_dstn.set_ancil(ancil_dict)
+            assert qp_dstn.ancil is not None
+            # if there is ID column in the input dataset, attach it to the ancil
+            if self.config.id_col in data.keys():  # pragma: no cover
+                qp_dstn.ancil.update(id=data[self.config.id_col])
+            # if there is redshift column in the input dataset, attach it to the ancil
+            if self.config.redshift_col in data.keys():  # pragma: no cover
+                qp_dstn.ancil.update(redshift=data[self.config.redshift_col])
+
         if first:
             the_handle = self.add_handle("output", data=qp_dstn)
             assert isinstance(the_handle, QPHandle)
