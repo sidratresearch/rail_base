@@ -322,6 +322,22 @@ class ComCamGaapCatalogConfig(CatalogConfigBase):
     object_id_col = "objectId"
     hdf5_groupname = ""
     replace_error_vals = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+    
+class ComCamGaap4BandCatalogConfig(CatalogConfigBase):
+    """Configuration for ComCam data"""
+
+    tag = "com_cam_gaap_4band"
+    bandlist = ['g', 'r', 'i', 'z']
+    maglims = [27.8, 27.1, 26.7, 25.8]
+    a_env = [3.64, 2.70, 2.06, 1.58]
+    band_template = "{band}_gaap1p0Mag"
+    band_err_template = "{band}_gaap1p0MagErr"
+    filter_file_template = "comcam_{band}"
+    ref_band = "i"
+    redshift_col = "redshift"
+    object_id_col = "objectId"
+    hdf5_groupname = ""
+    replace_error_vals = [ 0.1, 0.1, 0.1, 0.1]
 
 
 class ComCamKronCatalogConfig(CatalogConfigBase):
