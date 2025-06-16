@@ -286,7 +286,7 @@ class ComCamCatalogConfig(CatalogConfigBase):
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "{band}_cModelMag"
     band_err_template = "{band}_cModelMagErr"
-    filter_file_template = "DC2LSST_{band}"
+    filter_file_template = "comcam_{band}"
     ref_band = "i"
     redshift_col = "redshift"
 
@@ -316,12 +316,28 @@ class ComCamGaapCatalogConfig(CatalogConfigBase):
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "{band}_gaap1p0Mag"
     band_err_template = "{band}_gaap1p0MagErr"
-    filter_file_template = "DC2LSST_{band}"
+    filter_file_template = "comcam_{band}"
     ref_band = "i"
     redshift_col = "redshift"
     object_id_col = "objectId"
     hdf5_groupname = ""
     replace_error_vals = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+    
+class ComCamGaap4BandCatalogConfig(CatalogConfigBase):
+    """Configuration for ComCam data"""
+
+    tag = "com_cam_gaap_4band"
+    bandlist = ['g', 'r', 'i', 'z']
+    maglims = [27.8, 27.1, 26.7, 25.8]
+    a_env = [3.64, 2.70, 2.06, 1.58]
+    band_template = "{band}_gaap1p0Mag"
+    band_err_template = "{band}_gaap1p0MagErr"
+    filter_file_template = "comcam_{band}"
+    ref_band = "i"
+    redshift_col = "redshift"
+    object_id_col = "objectId"
+    hdf5_groupname = ""
+    replace_error_vals = [ 0.1, 0.1, 0.1, 0.1]
 
 
 class ComCamKronCatalogConfig(CatalogConfigBase):
@@ -333,7 +349,7 @@ class ComCamKronCatalogConfig(CatalogConfigBase):
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "{band}_kronMag"
     band_err_template = "{band}_kronMagErr"
-    filter_file_template = "DC2LSST_{band}"
+    filter_file_template = "comcam_{band}"
     ref_band = "i"
     redshift_col = "redshift"
     object_id_col = "objectId"
@@ -351,7 +367,7 @@ class ComCamEuclidCatalogConfig(CatalogConfigBase):
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "{band}_gaap1p0Mag"
     band_err_template = "{band}_gaap1p0MagErr"
-    filter_file_template = "DC2LSST_{band}"
+    filter_file_template = "comcam_{band}"
     ref_band = "i"
     redshift_col = "redshift"
     object_id_col = "objectId"
