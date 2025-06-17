@@ -39,6 +39,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
         nzbins=SHARED_PARAMS,
         id_col=SHARED_PARAMS,
         redshift_col=SHARED_PARAMS,
+        calc_summary_stats=SHARED_PARAMS,
     )
     config_options.update(
         **PointEstimationMixin.config_options.copy(),
@@ -91,7 +92,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
         self._initialize_run()
         self._output_handle = None
         for s, e, test_data in iterator:
-            print(f"Process {self.rank} running estimator on chunk {s:,} - {e:,}")
+            # print(f"Process {self.rank} running estimator on chunk {s:,} - {e:,}")
             self._process_chunk(s, e, test_data, first)
             first = False
             # Running garbage collection manually seems to be needed
@@ -113,6 +114,33 @@ class CatEstimator(RailStage, PointEstimationMixin):
             f"{self.name}._process_chunk is not implemented"
         )  # pragma: no cover
 
+    def _calculate_summary_stats(
+        self,
+        qp_dstn: qp.Ensemble,
+    ) -> qp.Ensemble:
+
+        quantiles = [0.025, 0.16, 0.5, 0.85, 0.975]
+        quant_names = ['q2p5', 'q16', 'median', 'q84', '97p5']
+
+        locs = qp_dstn.ppf(quantiles)
+
+        grid = np.linspace(self.config.zmin. self.config.zmax, self.config.nzbins)
+        pdfs = qp_dst.pdf(grid)
+        norms = pdfs.sum(axis=1)
+        means = np.sum(pdfs * grid, axis=1) / norms
+        diffs = (np.expand_dims(grid, -1) - means).T
+        wt_diffs = diffs * pdfs
+        stds = np.sqrt((wt_diffs*wt_diffs).sum(axis=1)/norms)
+
+        qp_dst.ancil['z_mode'] = qp_dst.mode(grid)
+        qp_dst.ancil['z_mean'] = np.expand_dims(means, -1)
+        qp_dst.ancil['z_std'] = np.expand_dims(stds, -1)
+
+        for name_, vals_ in zip(quant_names, locs.T):
+            qp_dst.ancil[f"z_{name_}"] = np.expand_dims(vals_, -1)
+
+        return qp_dst
+
     def _do_chunk_output(
         self,
         qp_dstn: qp.Ensemble,
@@ -122,6 +150,9 @@ class CatEstimator(RailStage, PointEstimationMixin):
         data: Optional[TableLike] = None,
     ) -> None:
         qp_dstn = self.calculate_point_estimates(qp_dstn)
+
+        if self.config.calc_summary_stats:
+            qp_dstn = self._calculate_summary_stats(qp_dstn)
 
         # if there is no ancil set by the calculate_point_estimate, initiate one
         if data is not None:
@@ -218,7 +249,7 @@ class PzEstimator(RailStage, PointEstimationMixin):
         self._initialize_run()
         self._output_handle = None
         for s, e, test_data in iterator:
-            print(f"Process {self.rank} running estimator on chunk {s:,} - {e:,}")
+            # print(f"Process {self.rank} running estimator on chunk {s:,} - {e:,}")
             self._process_chunk(s, e, test_data, first)
             first = False
             # Running garbage collection manually seems to be needed

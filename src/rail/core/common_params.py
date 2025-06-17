@@ -80,6 +80,11 @@ SHARED_PARAMS = StageConfig(
         default=lsst_zp_errors,
         msg="BPZ adds these values in quadrature to the photometric errors",
     ),
+    calc_summary_stats=Param(
+        dtype=bool,
+        default=False,
+        msg="Compute summary statistics",
+    ),
     calculated_point_estimates=Param(
         dtype=list,
         default=[],
