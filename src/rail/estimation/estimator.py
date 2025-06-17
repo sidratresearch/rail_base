@@ -119,27 +119,31 @@ class CatEstimator(RailStage, PointEstimationMixin):
         qp_dstn: qp.Ensemble,
     ) -> qp.Ensemble:
 
+        if qp_dstn.ancil is None:  # pragma: no cover
+            ancil_dict: dict[str, np.ndarray] = dict()
+            qp_dstn.set_ancil(ancil_dict)
+
         quantiles = [0.025, 0.16, 0.5, 0.85, 0.975]
         quant_names = ['q2p5', 'q16', 'median', 'q84', '97p5']
 
         locs = qp_dstn.ppf(quantiles)
 
-        grid = np.linspace(self.config.zmin. self.config.zmax, self.config.nzbins)
-        pdfs = qp_dst.pdf(grid)
+        grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
+        pdfs = qp_dstn.pdf(grid)
         norms = pdfs.sum(axis=1)
         means = np.sum(pdfs * grid, axis=1) / norms
         diffs = (np.expand_dims(grid, -1) - means).T
         wt_diffs = diffs * pdfs
         stds = np.sqrt((wt_diffs*wt_diffs).sum(axis=1)/norms)
 
-        qp_dst.ancil['z_mode'] = qp_dst.mode(grid)
-        qp_dst.ancil['z_mean'] = np.expand_dims(means, -1)
-        qp_dst.ancil['z_std'] = np.expand_dims(stds, -1)
+        qp_dstn.ancil['z_mode'] = qp_dstn.mode(grid)
+        qp_dstn.ancil['z_mean'] = np.expand_dims(means, -1)
+        qp_dstn.ancil['z_std'] = np.expand_dims(stds, -1)
 
         for name_, vals_ in zip(quant_names, locs.T):
-            qp_dst.ancil[f"z_{name_}"] = np.expand_dims(vals_, -1)
+            qp_dstn.ancil[f"z_{name_}"] = np.expand_dims(vals_, -1)
 
-        return qp_dst
+        return qp_dstn
 
     def _do_chunk_output(
         self,
