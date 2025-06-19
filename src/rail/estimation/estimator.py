@@ -127,21 +127,30 @@ class CatEstimator(RailStage, PointEstimationMixin):
         quant_names = ['q2p5', 'q16', 'median', 'q84', '97p5']
 
         locs = qp_dstn.ppf(quantiles)
-
-        grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
-        pdfs = qp_dstn.pdf(grid)
-        norms = pdfs.sum(axis=1)
-        means = np.sum(pdfs * grid, axis=1) / norms
-        diffs = (np.expand_dims(grid, -1) - means).T
-        wt_diffs = diffs * pdfs
-        stds = np.sqrt((wt_diffs*wt_diffs).sum(axis=1)/norms)
-
-        qp_dstn.ancil['z_mode'] = qp_dstn.mode(grid)
-        qp_dstn.ancil['z_mean'] = np.expand_dims(means, -1)
-        qp_dstn.ancil['z_std'] = np.expand_dims(stds, -1)
-
         for name_, vals_ in zip(quant_names, locs.T):
             qp_dstn.ancil[f"z_{name_}"] = np.expand_dims(vals_, -1)
+
+        grid: np.ndarray | None = None
+
+        if 'z_mode' not in qp_dstn.ancil:
+            grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
+            qp_dstn.ancil['z_mode'] = qp_dstn.mode(grid)
+
+        try:
+            qp_dstn.ancil['z_mean'] = qp_dstn.mean()
+            qp_dstn.ancil['z_std'] = qp_dstn.std()
+        except IndexError:  # pragma: no cover
+            # this is needed b/c qp.MixMod pdf sometimes fails to compute moments
+            grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
+            pdfs = qp_dstn.pdf(grid)
+            norms = pdfs.sum(axis=1)
+            means = np.sum(pdfs * grid, axis=1) / norms
+            diffs = (np.expand_dims(grid, -1) - means).T
+            wt_diffs = diffs * diffs * pdfs
+            stds = np.sqrt((wt_diffs).sum(axis=1)/norms)
+            qp_dstn.ancil['z_mean'] = np.expand_dims(means, -1)
+            qp_dstn.ancil['z_std'] = np.expand_dims(stds, -1)
+
 
         return qp_dstn
 
