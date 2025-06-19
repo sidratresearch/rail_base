@@ -23,6 +23,7 @@ def test_random_pz() -> None:
         "rand_width": 0.025,
         "rand_zmin": 0.0,
         "rand_zmax": 3.0,
+        "calc_summary_stats": True,
         "nzbins": 301,
         "hdf5_groupname": "photometry",
         "model": "None",
