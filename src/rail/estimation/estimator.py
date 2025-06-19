@@ -39,6 +39,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
         nzbins=SHARED_PARAMS,
         id_col=SHARED_PARAMS,
         redshift_col=SHARED_PARAMS,
+        calc_summary_stats=SHARED_PARAMS,
     )
     config_options.update(
         **PointEstimationMixin.config_options.copy(),
@@ -113,6 +114,46 @@ class CatEstimator(RailStage, PointEstimationMixin):
             f"{self.name}._process_chunk is not implemented"
         )  # pragma: no cover
 
+    def _calculate_summary_stats(
+        self,
+        qp_dstn: qp.Ensemble,
+    ) -> qp.Ensemble:
+
+        if qp_dstn.ancil is None:  # pragma: no cover
+            ancil_dict: dict[str, np.ndarray] = dict()
+            qp_dstn.set_ancil(ancil_dict)
+
+        quantiles = [0.025, 0.16, 0.5, 0.85, 0.975]
+        quant_names = ['q2p5', 'q16', 'median', 'q84', '97p5']
+
+        locs = qp_dstn.ppf(quantiles)
+        for name_, vals_ in zip(quant_names, locs.T):
+            qp_dstn.ancil[f"z_{name_}"] = np.expand_dims(vals_, -1)
+
+        grid: np.ndarray | None = None
+
+        if 'z_mode' not in qp_dstn.ancil:
+            grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
+            qp_dstn.ancil['z_mode'] = qp_dstn.mode(grid)
+
+        try:
+            qp_dstn.ancil['z_mean'] = qp_dstn.mean()
+            qp_dstn.ancil['z_std'] = qp_dstn.std()
+        except IndexError:  # pragma: no cover
+            # this is needed b/c qp.MixMod pdf sometimes fails to compute moments
+            grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
+            pdfs = qp_dstn.pdf(grid)
+            norms = pdfs.sum(axis=1)
+            means = np.sum(pdfs * grid, axis=1) / norms
+            diffs = (np.expand_dims(grid, -1) - means).T
+            wt_diffs = diffs * diffs * pdfs
+            stds = np.sqrt((wt_diffs).sum(axis=1)/norms)
+            qp_dstn.ancil['z_mean'] = np.expand_dims(means, -1)
+            qp_dstn.ancil['z_std'] = np.expand_dims(stds, -1)
+
+
+        return qp_dstn
+
     def _do_chunk_output(
         self,
         qp_dstn: qp.Ensemble,
@@ -122,6 +163,9 @@ class CatEstimator(RailStage, PointEstimationMixin):
         data: Optional[TableLike] = None,
     ) -> None:
         qp_dstn = self.calculate_point_estimates(qp_dstn)
+
+        if self.config.calc_summary_stats:
+            qp_dstn = self._calculate_summary_stats(qp_dstn)
 
         # if there is no ancil set by the calculate_point_estimate, initiate one
         if data is not None:
