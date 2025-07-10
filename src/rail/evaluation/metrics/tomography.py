@@ -35,9 +35,14 @@ class KDEBinOverlap(RailStage):
         return self.get_handle("output")
 
     def run(self) -> None:
-        true_redshifts = self.get_handle("truth").data[self.config.hdf5_groupname][
-            self.config.redshift_col
-        ]  # 1D array of redshifts
+        if self.config.hdf5_groupname is None: # pragma: no cover
+            true_redshifts = self.get_handle("truth").data[
+                self.config.redshift_col
+            ]  # 1D array of redshifts
+        else: 
+            true_redshifts = self.get_handle("truth").data[self.config.hdf5_groupname][
+                self.config.redshift_col
+            ]  # 1D array of redshifts
         bin_indices = self.get_handle("bin_index").data[
             self.config.bin_name
         ]  # 1D array of bin indices
