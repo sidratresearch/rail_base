@@ -3,6 +3,7 @@ Abstract base classes defining Estimators of individual galaxy redshift uncertai
 """
 
 import gc
+import sys
 from typing import Any, Optional
 
 import numpy as np
@@ -263,6 +264,7 @@ class PzEstimator(RailStage, PointEstimationMixin):
         self._output_handle = None
         for s, e, test_data in iterator:
             print(f"Process {self.rank} running estimator on chunk {s:,} - {e:,}")
+            sys.stdout.flush()
             self._process_chunk(s, e, test_data, first)
             first = False
             # Running garbage collection manually seems to be needed
