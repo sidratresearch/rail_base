@@ -452,6 +452,92 @@ class ComCamEuclidCatalogConfig(CatalogConfigBase):
         return filter_list
 
 
+class ComCamEuclidNIRCatalogConfig(CatalogConfigBase):
+    """Configuration for ComCam data"""
+
+    tag = "com_cam_euclid_nir"
+    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    maglims = [26.4, 27.8, 27.1, 26.7, 25.8, 24.6]
+    a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
+    band_template = "{band}_gaap1p0Mag"
+    band_err_template = "{band}_gaap1p0MagErr"
+    filter_file_template = "comcam_{band}"
+    ref_band = "i"
+    redshift_col = "redshift"
+    object_id_col = "objectId"
+    hdf5_groupname = ""
+    replace_error_vals = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+    zp_errors = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+    @classmethod
+    def band_name_dict(cls) -> dict[str, str]:
+        bands = super().band_name_dict()
+        bands["Y"] = "euclid_y_unifMag"
+        bands["J"] = "euclid_j_unifMag"
+        bands["H"] = "euclid_h_unifMag"
+        return bands
+
+    @classmethod
+    def _build_maglim_dict(cls) -> dict[str, float]:
+        maglim_dict = super()._build_maglim_dict()
+        maglim_dict["euclid_y_unifMag"] = 23.8
+        maglim_dict["euclid_j_unifMag"] = 24.0
+        maglim_dict["euclid_h_unifMag"] = 24.0
+        return maglim_dict
+
+    @classmethod
+    def _build_a_env_dict(cls) -> dict[str, float]:
+        a_env_dict = super()._build_a_env_dict()
+        a_env_dict["euclid_y_unifMag"] = 0.0
+        a_env_dict["euclid_j_unifMag"] = 0.0
+        a_env_dict["euclid_h_unifMag"] = 0.0
+        return a_env_dict
+
+    @classmethod
+    def _build_band_names(cls) -> list[str]:
+        bands = [cls.band_template.format(band=band) for band in cls.bandlist]
+        bands += [
+            "euclid_y_unifMag",
+            "euclid_j_unifMag",
+            "euclid_h_unifMag",
+        ]
+        return bands
+
+    @classmethod
+    def _build_band_err_names(cls) -> list[str]:
+        band_errs = [cls.band_err_template.format(band=band) for band in cls.bandlist]
+        band_errs += [
+            "euclid_y_unifMagErr",
+            "euclid_j_unifMagErr",
+            "euclid_h_unifMagErr",
+        ]
+        return band_errs
+
+    @classmethod
+    def _build_err_dict(cls) -> dict[str, str | None]:
+        the_dict = super()._build_err_dict()
+        the_dict["euclid_y_unifMag"] = "euclid_y_unifMagErr"
+        the_dict["euclid_j_unifMag"] = "euclid_j_unifMagErr"
+        the_dict["euclid_h_unifMag"] = "euclid_h_unifMagErr"
+        return the_dict
+
+    @classmethod
+    def _build_ref_band(cls, ref_band: str = "i") -> str:
+        return cls.band_template.format(band=ref_band)
+
+    @classmethod
+    def _build_filter_file_bandlist(cls) -> list[str]:
+        """Contruct the name of the reference band"""
+        filter_list = [
+            cls.filter_file_template.format(band=band) for band in cls.bandlist
+        ]
+        filter_list += [
+            "euclid_y",
+            "euclid_j",
+            "euclid_h",
+        ]
+        return filter_list
+
 class RomanPlusRubinCatalogConfig(CatalogConfigBase):
     """Configuration for Roman + Rubin bands in Roman / Rubin simulations"""
 
