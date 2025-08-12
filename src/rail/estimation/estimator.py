@@ -14,6 +14,7 @@ from rail.core.data import (DataHandle, ModelHandle, ModelLike, QPHandle,
                             TableHandle, TableLike)
 from rail.core.point_estimation import PointEstimationMixin
 from rail.core.stage import RailStage
+from rail.core.enums import DistributionType
 
 # for backwards compatibility, to avoid break stuff that imports it from here
 from .informer import CatInformer  # pylint: disable=unused-import
@@ -115,6 +116,16 @@ class CatEstimator(RailStage, PointEstimationMixin):
             f"{self.name}._process_chunk is not implemented"
         )  # pragma: no cover
 
+    @classmethod
+    def default_distribution_type(cls) -> DistributionType:
+        """Return the type of distribtuion that this estimator creates
+
+        By default this is DistributionType.ad_hoc
+        But this can be overrided by sub-classes to return
+        DistributionType.posetrior or DistributionType.likelihood if appropriate
+        """
+        return DistributionType.ad_hoc
+
     def _calculate_summary_stats(
         self,
         qp_dstn: qp.Ensemble,
@@ -152,7 +163,6 @@ class CatEstimator(RailStage, PointEstimationMixin):
             qp_dstn.ancil['z_mean'] = np.expand_dims(means, -1)
             qp_dstn.ancil['z_std'] = np.expand_dims(stds, -1)
 
-
         return qp_dstn
 
     def _do_chunk_output(
@@ -180,6 +190,9 @@ class CatEstimator(RailStage, PointEstimationMixin):
             # if there is redshift column in the input dataset, attach it to the ancil
             if self.config.redshift_col in data.keys():  # pragma: no cover
                 qp_dstn.ancil.update(redshift=data[self.config.redshift_col])
+
+            if 'distribution_type' not in qp_dstn.ancil:
+                qp_dstn.ancil.update(distribution_type=np.repeat(self.default_distribution_type().value, end-start))
 
         if first:
             the_handle = self.add_handle("output", data=qp_dstn)
