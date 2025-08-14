@@ -209,6 +209,18 @@ class CatEstimator(RailStage, PointEstimationMixin):
         return qp_dstn
 
 
+    def _convert_table_to_numpyDict(data: TableLike) -> TableLike:
+        """
+        Utility function to convert existing Tabular data to a numpy dictionary,
+        ingestable for most informer and estimators.
+        """
+        # required format for informer/estimator
+        out_fmt = tables_io.types.TABULAR_FORMAT_NAMES["numpyDict"] 
+        out_data = tables_io.convert(data, out_fmt)
+        # overwrite set_data
+        return out_data
+
+
 class PzEstimator(RailStage, PointEstimationMixin):
     """The base class for making photo-z posterior estimates from other pz inputs
 
