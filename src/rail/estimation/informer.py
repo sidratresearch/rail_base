@@ -83,6 +83,7 @@ class CatInformer(RailStage):
         """
         Utility function to convert existing Tabular data to a numpy dictionary,
         ingestable for most informer and estimators.
+        To be called in run().
         """
         # required format for informer/estimator
         out_fmt = tables_io.types.TABULAR_FORMAT_NAMES["numpyDict"] 
