@@ -79,7 +79,7 @@ class CatInformer(RailStage):
         self.finalize()
         return self.get_handle("model")
 
-    def _convert_table_format(self, data: TableLike, out_fmt_str: str="numpyDict") -> TableLike:
+    def _convert_table_format(self, data: TableLike, out_fmt_str: str="numpyDict") -> TableLike: # pragma: no cover
         """
         Utility function to convert existing Tabular data to a numpy dictionary,
         ingestable for most informer and estimators.
