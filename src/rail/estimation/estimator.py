@@ -210,7 +210,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
         return qp_dstn
 
 
-    def _convert_table_table_format(self, data: TableLike, out_fmt_str: str="numpyDict") -> TableLike: # pragma: no cover
+    def _convert_table_format(self, data: TableLike, out_fmt_str: str="numpyDict") -> TableLike: # pragma: no cover
         """
         Utility function to convert existing Tabular data to a numpy dictionary,
         ingestable for most informer and estimators.
