@@ -1,4 +1,4 @@
-""" Base class for PipelineStages in Rail """
+"""Base class for PipelineStages in Rail"""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from ceci.config import StageParameter as Param
 from ceci.pipeline import MiniPipeline
 from ceci.stage import PipelineStage
 
-from .data import DATA_STORE, DataHandle, DataLike, ModelHandle
+from .data import DataStore, DataHandle, DataLike, ModelHandle
 
 T = TypeVar("T", bound="RailPipeline")
 S = TypeVar("S", bound="RailStage")
@@ -243,8 +243,6 @@ class RailStage(PipelineStage):
         output_mode=Param(str, "default", msg="What to do with the outputs")
     )
 
-    data_store = DATA_STORE()
-
     def __init__(self, args: Any, **kwargs: Any) -> None:
         """Constructor:
         Do RailStage specific initialization"""
@@ -252,6 +250,7 @@ class RailStage(PipelineStage):
         self._input_length: int | None = None
         self.io = StageIO(self)
         self.stage_columns: list[str] | None = None
+        self.data_store = DataStore()
 
     @classmethod
     def make_and_connect(cls: type[S], **kwargs: Any) -> S:
@@ -302,12 +301,13 @@ class RailStage(PipelineStage):
         DataHandle
             The handle that give access to the associated data
         """
-        aliased_tag = self.get_aliased_tag(tag)
-        handle = self.data_store.get(aliased_tag)
+        # aliased_tag = self.get_aliased_tag(tag)
+
+        handle = self.data_store.get(tag)
         if handle is None:
             if not allow_missing:
                 raise KeyError(
-                    f"{self.instance_name} failed to get data by handle {aliased_tag}, associated to {tag}"
+                    f"{self.instance_name} failed to get data by handle {tag}, associated to {tag}"
                 )
             handle = self.add_handle(tag, path=path)
         return handle
@@ -333,22 +333,20 @@ class RailStage(PipelineStage):
         DataHandle
             The handle that gives access to the associated data
         """
-        aliased_tag = self.get_aliased_tag(tag)
-        if aliased_tag in self._inputs:
+        # aliased_tag = self.get_aliased_tag(tag)
+        if tag in self._inputs:
             if path is None:
-                path = self.get_input(aliased_tag)
+                path = self.get_input(tag)
             handle_type = self.get_input_type(tag)
         else:
             if path is None:
-                path = self.get_output(aliased_tag)
+                path = self.get_output(tag)
             handle_type = self.get_output_type(tag)
-        handle = handle_type(
-            aliased_tag, path=path, data=data, creator=self.instance_name
-        )
+        handle = handle_type(tag, path=path, data=data, creator=self.instance_name)
         print(
-            f"Inserting handle into data store.  {aliased_tag}: {handle.path}, {handle.creator}"
+            f"Inserting handle into data store.  {tag}: {handle.path}, {handle.creator}"
         )
-        self.data_store[aliased_tag] = handle
+        self.data_store[tag] = handle
         return handle
 
     def get_data(self, tag: str, allow_missing: bool = True) -> DataLike:
@@ -407,16 +405,16 @@ class RailStage(PipelineStage):
         Returns
         -------
         DataLike
-            The data accesed by the handle assocated to the tag
+            The data accessed by the handle associated to the tag
         """
         # First we grab the handle that we will be using
         handle = self.get_handle(tag, path=path, allow_missing=True)
 
         if isinstance(data, DataHandle):
             # If we were passed a DataHandle, we use that
-            aliased_tag = data.tag
+            # aliased_tag = data.tag
             if tag in self.input_tags():
-                self._aliases[tag] = aliased_tag
+                # self._aliases[tag] = aliased_tag
                 if data.has_path:
                     self._inputs[tag] = data.path
                     handle.path = data.path
@@ -427,12 +425,12 @@ class RailStage(PipelineStage):
         elif not isinstance(data, (type(None), str)):
             # If we were passed data, we use that and reset the path
             handle.data = data
-            if path in ['None', 'none', None]:
-                handle.path = 'None'
+            if path in ["None", "none", None]:
+                handle.path = "None"
         else:
             # Data is None, we use the path
-            if path not in ['None', 'none', None]:
-                # Path exists, use that                
+            if path not in ["None", "none", None]:
+                # Path exists, use that
                 if not os.path.isfile(path):
                     raise FileNotFoundError(f"Unable to find file: {path}")
                 handle.path = path
@@ -487,13 +485,13 @@ class RailStage(PipelineStage):
 
         chunk_size = kwargs.get("chunk_size", self.config.chunk_size)
 
-        on_disk: bool= False
-        in_memory: bool= False
-        if handle.path not in [None, 'None', 'none']:
+        on_disk: bool = False
+        in_memory: bool = False
+        if handle.path not in [None, "None", "none"]:
             on_disk = True
         if handle.data is not None:
             in_memory = True
-        
+
         if on_disk:
             self._input_length = handle.size(groupname=groupname)
 
@@ -536,7 +534,7 @@ class RailStage(PipelineStage):
         # Data is neither on disk or in memory, return empty list
         else:
             return []
-        
+
     def connect_input(
         self,
         other: PipelineStage,

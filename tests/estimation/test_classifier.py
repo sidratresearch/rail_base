@@ -9,8 +9,8 @@ from rail.estimation.algos.equal_count import EqualCountClassifier
 from rail.estimation.algos.uniform_binning import UniformBinningClassifier
 from rail.utils.path_utils import RAILDIR
 
-DS = RailStage.data_store
-DS.__class__.allow_overwrite = True
+# DS = RailStage.data_store
+# DS.__class__.allow_overwrite = True
 
 inputdata = os.path.join(RAILDIR, "rail/examples_data/testdata/output_BPZ_lite.hdf5")
 
@@ -24,8 +24,9 @@ inputdata = os.path.join(RAILDIR, "rail/examples_data/testdata/output_BPZ_lite.h
     ],
 )
 def test_UniformBinningClassifier(input_param: dict) -> None:
-    DS.clear()
-    input_data = DS.read_file("input_data", QPHandle, inputdata)
+    # DS.clear()
+    # input_data = DS.read_file("input_data", QPHandle, inputdata)
+    input_data_handle = QPHandle("input_data", path=inputdata)
 
     tomo = UniformBinningClassifier.make_stage(
         point_estimate="zmode",
@@ -33,13 +34,15 @@ def test_UniformBinningClassifier(input_param: dict) -> None:
         **input_param,
     )
 
-    _out_data = tomo.classify(input_data)
+    _out_data = tomo.classify(input_data_handle)
     os.remove(tomo.get_output(tomo.get_aliased_tag("output"), final_name=True))
 
 
 def test_UniformBinningClassifier_binsize() -> None:
-    DS.clear()
-    input_data = DS.read_file("input_data", QPHandle, inputdata)
+    # DS.clear()
+    # input_data = DS.read_file("input_data", QPHandle, inputdata)
+    input_data = QPHandle("input_data", path=inputdata)
+    input_data.read()  # make sure the data is read in
 
     tomo = UniformBinningClassifier.make_stage(
         point_estimate="zmode",
@@ -77,8 +80,10 @@ def test_UniformBinningClassifier_binsize() -> None:
 
 
 def test_UniformBinningClassifier_ancil() -> None:
-    DS.clear()
-    input_data = DS.read_file("input_data", QPHandle, inputdata)
+    # DS.clear()
+    # input_data = DS.read_file("input_data", QPHandle, inputdata)
+    input_data_handle = QPHandle("input_data", path=inputdata)
+    input_data = input_data_handle.read()
 
     tomo = UniformBinningClassifier.make_stage(
         point_estimate="zmedian",
@@ -99,8 +104,10 @@ def test_UniformBinningClassifier_ancil() -> None:
     ],
 )
 def test_EqualCountClassifier(input_param: dict) -> None:
-    DS.clear()
-    input_data = DS.read_file("input_data", QPHandle, inputdata)
+    # DS.clear()
+    # input_data = DS.read_file("input_data", QPHandle, inputdata)
+    input_data_handle = QPHandle("input_data", path=inputdata)
+    input_data = input_data_handle.read()
 
     tomo = EqualCountClassifier.make_stage(
         point_estimate="zmode",
@@ -113,8 +120,10 @@ def test_EqualCountClassifier(input_param: dict) -> None:
 
 
 def test_EqualCountClassifier_nobj() -> None:
-    DS.clear()
-    input_data = DS.read_file("input_data", QPHandle, inputdata)
+    # DS.clear()
+    # input_data = DS.read_file("input_data", QPHandle, inputdata)
+    input_data_handle = QPHandle("input_data", path=inputdata)
+    input_data = input_data_handle.read()
 
     tomo = EqualCountClassifier.make_stage(
         point_estimate="zmode",
@@ -147,8 +156,10 @@ def test_EqualCountClassifier_nobj() -> None:
 
 
 def test_EqualCountClassifier_ancil() -> None:
-    DS.clear()
-    input_data = DS.read_file("input_data", QPHandle, inputdata)
+    # DS.clear()
+    # input_data = DS.read_file("input_data", QPHandle, inputdata)
+    input_data_handle = QPHandle("input_data", path=inputdata)
+    input_data = input_data_handle.read()
 
     tomo = EqualCountClassifier.make_stage(
         point_estimate="zmedian",

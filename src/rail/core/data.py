@@ -970,9 +970,9 @@ class DataStore(dict):
             handle.write(**local_kwargs)
 
 
-_DATA_STORE = DataStore()
+# _DATA_STORE = DataStore()
 
 
-def DATA_STORE() -> DataStore:
-    """Return the factory instance"""
-    return _DATA_STORE
+# def DATA_STORE() -> DataStore:
+#     """Return the factory instance"""
+#     return _DATA_STORE

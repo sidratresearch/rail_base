@@ -14,8 +14,8 @@ from rail.utils.path_utils import RAILDIR
 
 traindata = os.path.join(RAILDIR, "rail/examples_data/testdata/training_100gal.hdf5")
 validdata = os.path.join(RAILDIR, "rail/examples_data/testdata/validation_10gal.hdf5")
-DS = RailStage.data_store
-DS.__class__.allow_overwrite = True
+# DS = RailStage.data_store
+# DS.__class__.allow_overwrite = True
 
 
 def one_algo(
@@ -33,9 +33,9 @@ def one_algo(
     Then, load tempmodelfile.tmp and re-run, return
     both datasets.
     """
-    DS.clear()
-    training_data = DS.read_file("training_data", TableHandle, traindata)
-    validation_data = DS.read_file("validation_data", TableHandle, validdata)
+    # DS.clear()
+    training_data = TableHandle("training_data", path=traindata)
+    validation_data = TableHandle("validation_data", path=validdata)
 
     if single_trainer is not None:
         train_pz = single_trainer.make_stage(**train_kwargs)

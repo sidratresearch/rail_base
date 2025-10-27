@@ -13,8 +13,8 @@ from rail.utils.testing_utils import one_algo
 sci_ver_str = scipy.__version__.split(".")
 
 
-DS = RailStage.data_store
-DS.__class__.allow_overwrite = True
+# DS = RailStage.data_store
+# DS.__class__.allow_overwrite = True
 
 
 def test_random_pz() -> None:
@@ -63,7 +63,7 @@ def test_train_pz() -> None:
         "TrainZ", train_algo, pz_algo, train_config_dict, estim_config_dict
     )
 
-    assert (results.ancil['distribution_type']==0).all()
+    assert (results.ancil["distribution_type"] == 0).all()
     assert np.isclose(results.ancil["zmode"], zb_expected).all()
     assert np.isclose(results.ancil["zmode"], rerun_results.ancil["zmode"]).all()
 
@@ -74,8 +74,8 @@ def test_train_pz() -> None:
 
 
 def test_train_pz_with_wrong_columns_path() -> None:
-    DS.clear()
-    DS.__class__.allow_overwrite = False
+    # DS.clear()
+    # DS.__class__.allow_overwrite = False
 
     datapath_pq = os.path.join(
         RAILDIR, "rail", "examples_data", "testdata", "test_dc2_training_9816.pq"
@@ -84,7 +84,7 @@ def test_train_pz_with_wrong_columns_path() -> None:
     # ! create training data to be a data handle with path only
     # ! however it seems that with set_data() one always reads in the data
     # ! hence the way we make the data here:
-    training_data1 = DS.add_handle("pq1", PqHandle, path=datapath_pq)
+    training_data1 = PqHandle("input", path=datapath_pq)
 
     train_config_dict = dict(
         zmin=0.0,
@@ -92,6 +92,7 @@ def test_train_pz_with_wrong_columns_path() -> None:
         nzbins=301,
         hdf5_groupname=None,
         model="model_train_z.tmp",
+        input=training_data1,
         redshift_col="REDSHIFT",
     )
 
@@ -104,20 +105,21 @@ def test_train_pz_with_wrong_columns_path() -> None:
 
 
 def test_train_pz_with_wrong_columns_nogroupname() -> None:
-    DS.clear()
-    DS.__class__.allow_overwrite = False
+    # DS.clear()
+    # DS.__class__.allow_overwrite = False
 
     datapath_pq = os.path.join(
         RAILDIR, "rail", "examples_data", "testdata", "test_dc2_training_9816.pq"
     )
 
-    training_data2 = DS.read_file("pq2", PqHandle, path=datapath_pq)
+    training_data2 = PqHandle("input", path=datapath_pq)
 
     train_config_dict = dict(
         zmin=0.0,
         zmax=3.0,
         nzbins=301,
         hdf5_groupname=None,
+        input=training_data2,
         model="model_train_z.tmp",
         redshift_col="REDSHIFT",
     )
@@ -131,8 +133,8 @@ def test_train_pz_with_wrong_columns_nogroupname() -> None:
 
 
 def test_train_pz_with_wrong_columns_table() -> None:
-    DS.clear()
-    DS.__class__.allow_overwrite = False
+    # DS.clear()
+    # DS.__class__.allow_overwrite = False
 
     datapath_pq = os.path.join(
         RAILDIR, "rail", "examples_data", "testdata", "test_dc2_training_9816.pq"
@@ -141,14 +143,16 @@ def test_train_pz_with_wrong_columns_table() -> None:
     # ! create training data to be a table
     # ! however it seems that with set_data() one always reads in the data handle
     # ! hence the way we make the data here:
-    training_data2 = DS.read_file("pq2", PqHandle, path=datapath_pq)
-    training_data3 = training_data2.data
+    training_data2 = PqHandle("input", path=datapath_pq)
+    # training_data3 = training_data2.data
+    training_data3 = training_data2.read()
 
     train_config_dict = dict(
         zmin=0.0,
         zmax=3.0,
         nzbins=301,
         hdf5_groupname=None,
+        input=datapath_pq,
         model="model_train_z.tmp",
         redshift_col="REDSHIFT",
     )
@@ -162,8 +166,8 @@ def test_train_pz_with_wrong_columns_table() -> None:
 
 
 def test_train_pz_with_wrong_columns_table_wgroupname() -> None:
-    DS.clear()
-    DS.__class__.allow_overwrite = False
+    # DS.clear()
+    # DS.__class__.allow_overwrite = False
 
     traindata = os.path.join(
         RAILDIR, "rail/examples_data/testdata/training_100gal.hdf5"
@@ -172,14 +176,16 @@ def test_train_pz_with_wrong_columns_table_wgroupname() -> None:
     # ! create training data to be a table
     # ! however it seems that with set_data() one always reads in the data handle
     # ! hence the way we make the data here:
-    training_data2 = DS.read_file("training_data", TableHandle, traindata)
-    training_data3 = training_data2.data
+    training_data2 = TableHandle("input", path=traindata)
+    # training_data3 = training_data2.data
+    training_data3 = training_data2.read()
 
     train_config_dict = dict(
         zmin=0.0,
         zmax=3.0,
         nzbins=301,
         hdf5_groupname="photometry",
+        input=training_data2,
         model="model_train_z.tmp",
         redshift_col="REDSHIFT",
     )
@@ -192,22 +198,20 @@ def test_train_pz_with_wrong_columns_table_wgroupname() -> None:
         train_pz._check_column_names(training_data3, train_pz.stage_columns)
 
 
-
 def test_gaussian_pz() -> None:
-        
-    DS.clear()
-    DS.__class__.allow_overwrite = False
+
+    # DS.clear()
+    # DS.__class__.allow_overwrite = False
 
     input_path = os.path.join(
         RAILDIR, "rail/examples_data/testdata/output_BPZ_lite.hdf5"
     )
 
-    input_data = DS.read_file("input_data", QPHandle, input_path)
+    input_data = QPHandle("input_data", path=input_path)
 
     inform_gauss_pz = gaussian_pz.GaussianPzInformer.make_stage()
     model = inform_gauss_pz.inform(input_data)
-    
+
     estimate_gauss_pz = gaussian_pz.GaussianPzEstimator.make_stage(model=model)
     outdata = estimate_gauss_pz.estimate(input_data)
     assert outdata.data.npdf == 10
-    
