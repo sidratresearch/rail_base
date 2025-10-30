@@ -9,7 +9,6 @@ from rail.creation.engines.flowEngine import FlowCreator
 from rail.creation.degraders.photometric_errors import LSSTErrorModel
 
 
-@pytest.mark.skip()
 def test_creator():
     flow_file = os.path.join(
         os.path.dirname(pzflow.__file__), "example_files", "example-flow.pzflow.pkl"

@@ -301,13 +301,13 @@ class RailStage(PipelineStage):
         DataHandle
             The handle that give access to the associated data
         """
-        # aliased_tag = self.get_aliased_tag(tag)
+        aliased_tag = self.get_aliased_tag(tag)
 
-        handle = self.data_store.get(tag)
+        handle = self.data_store.get(aliased_tag)
         if handle is None:
             if not allow_missing:
                 raise KeyError(
-                    f"{self.instance_name} failed to get data by handle {tag}, associated to {tag}"
+                    f"{self.instance_name} failed to get data by handle {aliased_tag}, associated to {tag}"
                 )
             handle = self.add_handle(tag, path=path)
         return handle
@@ -333,20 +333,22 @@ class RailStage(PipelineStage):
         DataHandle
             The handle that gives access to the associated data
         """
-        # aliased_tag = self.get_aliased_tag(tag)
+        aliased_tag = self.get_aliased_tag(tag)
         if tag in self._inputs:
             if path is None:
-                path = self.get_input(tag)
+                path = self.get_input(aliased_tag)
             handle_type = self.get_input_type(tag)
         else:
             if path is None:
-                path = self.get_output(tag)
+                path = self.get_output(aliased_tag)
             handle_type = self.get_output_type(tag)
-        handle = handle_type(tag, path=path, data=data, creator=self.instance_name)
-        print(
-            f"Inserting handle into data store.  {tag}: {handle.path}, {handle.creator}"
+        handle = handle_type(
+            aliased_tag, path=path, data=data, creator=self.instance_name
         )
-        self.data_store[tag] = handle
+        print(
+            f"Inserting handle into data store.  {aliased_tag}: {handle.path}, {handle.creator}"
+        )
+        self.data_store[aliased_tag] = handle
         return handle
 
     def get_data(self, tag: str, allow_missing: bool = True) -> DataLike:
@@ -408,13 +410,18 @@ class RailStage(PipelineStage):
             The data accessed by the handle associated to the tag
         """
         # First we grab the handle that we will be using
-        handle = self.get_handle(tag, path=path, allow_missing=True)
+        # handle = self.get_handle(tag, path=path, allow_missing=True)
 
         if isinstance(data, DataHandle):
             # If we were passed a DataHandle, we use that
-            # aliased_tag = data.tag
+            aliased_tag = data.tag
             if tag in self.input_tags():
-                # self._aliases[tag] = aliased_tag
+                self._aliases[tag] = aliased_tag
+
+                # make sure the aliased tag exists in the inputs dictionary
+                self._inputs[aliased_tag] = self._inputs[tag]
+
+                handle = self.get_handle(tag, path=path, allow_missing=True)
                 if data.has_path:
                     self._inputs[tag] = data.path
                     handle.path = data.path
@@ -424,11 +431,13 @@ class RailStage(PipelineStage):
                     handle.read()
         elif not isinstance(data, (type(None), str)):
             # If we were passed data, we use that and reset the path
+            handle = self.get_handle(tag, path=path, allow_missing=True)
             handle.data = data
             if path in ["None", "none", None]:
                 handle.path = "None"
         else:
             # Data is None, we use the path
+            handle = self.get_handle(tag, path=path, allow_missing=True)
             if path not in ["None", "none", None]:
                 # Path exists, use that
                 if not os.path.isfile(path):
