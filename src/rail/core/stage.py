@@ -334,7 +334,7 @@ class RailStage(PipelineStage):
             The handle that gives access to the associated data
         """
         aliased_tag = self.get_aliased_tag(tag)
-        if tag in self._inputs:
+        if tag in self._inputs or aliased_tag in self._inputs:
             if path is None:
                 path = self.get_input(aliased_tag)
             handle_type = self.get_input_type(tag)

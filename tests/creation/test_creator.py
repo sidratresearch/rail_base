@@ -7,6 +7,8 @@ import os
 import pzflow
 from rail.creation.engines.flowEngine import FlowCreator
 from rail.creation.degraders.photometric_errors import LSSTErrorModel
+from rail.estimation.algos.flexzboost import FlexZBoostInformer, FlexZBoostEstimator
+import ceci
 
 
 def test_creator():
@@ -20,4 +22,4 @@ def test_creator():
     )
     samples_truth = flowCreator_truth.sample(n_samples, seed=0)
     errorModel = LSSTErrorModel.make_stage(name="error_model", input="output_truth.pq")
-    samples_w_errs = errorModel(samples_truth)
+    test_data = errorModel(samples_truth)
