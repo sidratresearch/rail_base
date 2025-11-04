@@ -10,8 +10,14 @@ import numpy as np
 import qp
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import (DataHandle, ModelHandle, ModelLike, QPHandle,
-                            TableHandle, TableLike)
+from rail.core.data import (
+    DataHandle,
+    ModelHandle,
+    ModelLike,
+    QPHandle,
+    TableHandle,
+    TableLike,
+)
 from rail.core.point_estimation import PointEstimationMixin
 from rail.core.stage import RailStage
 from rail.core.enums import DistributionType
@@ -137,7 +143,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
             qp_dstn.set_ancil(ancil_dict)
 
         quantiles = [0.025, 0.16, 0.5, 0.85, 0.975]
-        quant_names = ['q2p5', 'q16', 'median', 'q84', '97p5']
+        quant_names = ["q2p5", "q16", "median", "q84", "97p5"]
 
         locs = qp_dstn.ppf(quantiles)
         for name_, vals_ in zip(quant_names, locs.T):
@@ -145,13 +151,13 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
         grid: np.ndarray | None = None
 
-        if 'z_mode' not in qp_dstn.ancil:
+        if "z_mode" not in qp_dstn.ancil:
             grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
-            qp_dstn.ancil['z_mode'] = qp_dstn.mode(grid)
+            qp_dstn.ancil["z_mode"] = qp_dstn.mode(grid)
 
         try:
-            qp_dstn.ancil['z_mean'] = qp_dstn.mean()
-            qp_dstn.ancil['z_std'] = qp_dstn.std()
+            qp_dstn.ancil["z_mean"] = qp_dstn.mean()
+            qp_dstn.ancil["z_std"] = qp_dstn.std()
         except IndexError:  # pragma: no cover
             # this is needed b/c qp.MixMod pdf sometimes fails to compute moments
             grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
@@ -160,9 +166,9 @@ class CatEstimator(RailStage, PointEstimationMixin):
             means = np.sum(pdfs * grid, axis=1) / norms
             diffs = (np.expand_dims(grid, -1) - means).T
             wt_diffs = diffs * diffs * pdfs
-            stds = np.sqrt((wt_diffs).sum(axis=1)/norms)
-            qp_dstn.ancil['z_mean'] = np.expand_dims(means, -1)
-            qp_dstn.ancil['z_std'] = np.expand_dims(stds, -1)
+            stds = np.sqrt((wt_diffs).sum(axis=1) / norms)
+            qp_dstn.ancil["z_mean"] = np.expand_dims(means, -1)
+            qp_dstn.ancil["z_std"] = np.expand_dims(stds, -1)
 
         return qp_dstn
 
@@ -192,8 +198,12 @@ class CatEstimator(RailStage, PointEstimationMixin):
             if self.config.redshift_col in data.keys():  # pragma: no cover
                 qp_dstn.ancil.update(redshift=data[self.config.redshift_col])
 
-            if 'distribution_type' not in qp_dstn.ancil:
-                qp_dstn.ancil.update(distribution_type=np.repeat(self.default_distribution_type().value, end-start))
+            if "distribution_type" not in qp_dstn.ancil:
+                qp_dstn.ancil.update(
+                    distribution_type=np.repeat(
+                        self.default_distribution_type().value, end - start
+                    )
+                )
 
         if first:
             the_handle = self.add_handle("output", data=qp_dstn)
@@ -209,15 +219,75 @@ class CatEstimator(RailStage, PointEstimationMixin):
             self._output_handle.write_chunk(start, end)
         return qp_dstn
 
+    #######################################
+    # Functions to replace _do_chunk_output
+    #######################################
+    def _update_ancil(
+        self,
+        qp_dstn: qp.Ensemble,
+        start: int,
+        end: int,
+        data: Optional[TableLike] = None,
+    ):
+        """Updates the ancillary data of the distribution with summary statistics and columns from `data`."""
 
-    def _convert_table_format(self, data: TableLike, out_fmt_str: str="numpyDict") -> TableLike: # pragma: no cover
+        qp_dstn = self.calculate_point_estimates(qp_dstn)
+
+        if self.config.calc_summary_stats:
+            qp_dstn = self._calculate_summary_stats(qp_dstn)
+
+        # if there is no ancil set by the calculate_point_estimate, initiate one
+        if data is not None:
+            if qp_dstn.ancil is None:  # pragma: no cover
+                ancil_dict: dict[str, np.ndarray] = dict()
+                qp_dstn.set_ancil(ancil_dict)
+            assert qp_dstn.ancil is not None
+            # if there is ID column in the input dataset, attach it to the ancil
+            if self.config.id_col in data.keys():  # pragma: no cover
+                qp_dstn.ancil.update(id=data[self.config.id_col])
+            # if there is redshift column in the input dataset, attach it to the ancil
+            if self.config.redshift_col in data.keys():  # pragma: no cover
+                qp_dstn.ancil.update(redshift=data[self.config.redshift_col])
+
+            if "distribution_type" not in qp_dstn.ancil:
+                qp_dstn.ancil.update(
+                    distribution_type=np.repeat(
+                        self.default_distribution_type().value,
+                        end - start,
+                    )
+                )
+
+        return qp_dstn
+
+    def _handle_chunk_output(
+        self, qp_dstn: qp.Ensemble, start: int, end: int, first: bool
+    ):
+        """Adds data to DataStore or updates it and writes out the chunk of data"""
+
+        if first:
+            the_handle = self.add_handle("output", data=qp_dstn)
+            assert isinstance(the_handle, QPHandle)
+            self._output_handle = the_handle
+            if self.config.output_mode != "return":
+                self._output_handle.initialize_write(
+                    self._input_length, communicator=self.comm
+                )
+        assert self._output_handle is not None
+        self._output_handle.set_data(qp_dstn, partial=True)
+        if self.config.output_mode != "return":
+            self._output_handle.write_chunk(start, end)
+        return qp_dstn
+
+    def _convert_table_format(
+        self, data: TableLike, out_fmt_str: str = "numpyDict"
+    ) -> TableLike:  # pragma: no cover
         """
         Utility function to convert existing Tabular data to a numpy dictionary,
         ingestable for most informer and estimators.
         To be called in _process_chunk().
         """
         # required format for informer/estimator
-        out_fmt = tables_io.types.TABULAR_FORMAT_NAMES[out_fmt_str] 
+        out_fmt = tables_io.types.TABULAR_FORMAT_NAMES[out_fmt_str]
         out_data = tables_io.convert(data, out_fmt)
         # overwrite set_data
         return out_data
