@@ -4,7 +4,7 @@ for z_mode, and Gaussian centered at z_mode with width
 random_width*(1+zmode).
 """
 
-from typing import Any
+from typing import Any, Tuple
 
 import numpy as np
 import qp
@@ -56,15 +56,40 @@ class RandomGaussEstimator(CatEstimator):
         self,
         data: TableLike,
         random_seed: int,
-        start: int,
-        end: int,
         column_name: str,
         rand_width: float,
         rand_zmax: float,
         rand_zmin: float,
         nzbins: int,
         **kwargs,
-    ):
+    ) -> Tuple[qp.Ensemble, np.ndarray]:
+        """_summary_
+
+        Parameters
+        ----------
+        data : TableLike
+            The table of data to add to the ancillary data of the Ensemble
+        random_seed : int
+            The random seed to use for the generation of Gaussian locations
+        column_name : str
+            The column name of the redshifts in the data table
+        rand_width : float
+            ad hoc width of PDF
+        rand_zmax : float
+            The maximum redshift of the z grid
+        rand_zmin : float
+            The minimum redshift of the z grid
+        nzbins : int
+            The number of gridpoints in the z grid
+
+        Returns
+        -------
+        qp_dstn : qp.Ensemble
+            The Ensemble of Gaussian redshift distributions of each galaxy and their associated ancillary data
+        zgrid : np.ndarray
+            The redshift grid used
+        """
+
         pdf = []
         # allow for either format for now
         numzs = len(data[column_name])
@@ -83,7 +108,7 @@ class RandomGaussEstimator(CatEstimator):
         )
         qp_d.set_ancil(dict(zmode=zmode))
 
-        self._update_ancil(qp_d, start, end, data)
+        self._update_ancil(qp_d, data)
         return qp_d, zgrid
 
     def _process_chunk(
@@ -94,14 +119,14 @@ class RandomGaussEstimator(CatEstimator):
         random_seed = self.config.seed + start
 
         # run the main functionality
-        # note - could also pass the whole set of parameters as a dictionary to the function
-        # to make this part easier within functions (or as an unpacked dictionary and add kwargs to core)
-        qp_d, zgrid = self.core(data, random_seed, start, end, **self.config)
+        # We pass all of the config parameters to the function so that it can access them without accessing self
+        # As well as any additional parameters that the function needs
+        qp_d, zgrid = self.core(data, random_seed, **self.config)
 
-        self.zgrid = zgrid  # do we need to do this?
+        self.zgrid = zgrid
 
         # do file IO and adding to DataStore
-        self._handle_chunk_output(qp_d, start, end, first, data=data)
+        self._handle_chunk_output(qp_d, start, end, first)
 
     # def _process_chunk(
     #     self, start: int, end: int, data: TableLike, first: bool

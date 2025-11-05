@@ -225,11 +225,9 @@ class CatEstimator(RailStage, PointEstimationMixin):
     def _update_ancil(
         self,
         qp_dstn: qp.Ensemble,
-        start: int,
-        end: int,
         data: Optional[TableLike] = None,
     ):
-        """Updates the ancillary data of the distribution with summary statistics and columns from `data`."""
+        """Updates the ancillary data of the distribution with summary statistics and columns from input `data` table."""
 
         qp_dstn = self.calculate_point_estimates(qp_dstn)
 
@@ -253,7 +251,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
                 qp_dstn.ancil.update(
                     distribution_type=np.repeat(
                         self.default_distribution_type().value,
-                        end - start,
+                        qp_dstn.npdf,
                     )
                 )
 
@@ -261,8 +259,25 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
     def _handle_chunk_output(
         self, qp_dstn: qp.Ensemble, start: int, end: int, first: bool
-    ):
-        """Adds data to DataStore or updates it and writes out the chunk of data"""
+    ) -> qp.Ensemble:
+        """Adds the chunk of data to the class DataStore or updates it and writes out the chunk of data
+
+        Parameters
+        ----------
+        qp_dstn : qp.Ensemble
+            The Ensemble of data
+        start : int
+            The start index of the chunk
+        end : int
+            The end index of the chunk
+        first : bool
+            True if this is the first chunk, otherwise False.
+
+        Returns
+        -------
+        qp.Ensemble
+            The ensemble of data.
+        """
 
         if first:
             the_handle = self.add_handle("output", data=qp_dstn)
