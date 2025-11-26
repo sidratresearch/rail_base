@@ -104,3 +104,6 @@ exclude_also = [
     "if cls._instance is None:",
     "except KeyError as missing_key:",    
 ]
+
+[tool.isort]
+profile = "black"
