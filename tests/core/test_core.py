@@ -18,7 +18,8 @@ from rail.core.data import (
 )
 from rail.core.model import Model
 from rail.core.stage import RailStage
-from rail.utils.catalog_utils import CatalogConfigBase, RomanPlusRubinCatalogConfig
+from rail.utils.catalog_utils import CatalogConfigBase
+from rail.utils.catalog_utils_old import RomanPlusRubinCatalogConfig
 from rail.utils.path_utils import RAILDIR
 
 # def test_data_file():
@@ -366,6 +367,7 @@ def test_catalog_utils() -> None:
         "com_cam_euclid",
         "roman_3band_rubin",
         "roman_7band_rubin",
+        "com_cam_euclid_nir",
     ]:
         CatalogConfigBase.apply(tag)
         assert CatalogConfigBase.active_class().band_name_dict()
