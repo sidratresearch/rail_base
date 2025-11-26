@@ -13,6 +13,7 @@ class PointToPointEvaluator(Evaluator):
     """Evaluate the performance of a photo-z estimator against reference point estimate"""
 
     name = "PointToPointEvaluator"
+    entrypoint_function = "evaluate"  # the user-facing science function for this class
     config_options = Evaluator.config_options.copy()
     config_options.update(
         hdf5_groupname=Param(
@@ -55,6 +56,7 @@ class PointToPointBinnedEvaluator(Evaluator):
     """Evaluate the performance of a photo-z estimator against reference point estimate"""
 
     name = "PointToPointBinnedEvaluator"
+    entrypoint_function = "evaluate"  # the user-facing science function for this class
     config_options = Evaluator.config_options.copy()
     config_options.update(
         hdf5_groupname=Param(

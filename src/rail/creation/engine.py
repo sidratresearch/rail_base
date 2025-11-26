@@ -24,6 +24,7 @@ class Modeler(RailStage):  # pragma: no cover
     """Base class for creating a model of redshift and photometry."""
 
     name = "Modeler"
+    entrypoint_function = "fit_model"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         seed=Param(int, default=12345, msg="Random number seed"),
@@ -62,6 +63,7 @@ class Creator(RailStage):  # pragma: no cover
     """
 
     name = "Creator"
+    entrypoint_function = "sample"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         n_samples=Param(int, required=True, msg="Number of samples to create"),
@@ -127,6 +129,9 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
     """
 
     name = "PosteriorCalculator"
+    entrypoint_function = (
+        "get_posterior"  # the user-facing science function for this class
+    )
     config_options = RailStage.config_options.copy()
     config_options.update(
         column=Param(str, required=True, msg="Column to compute posterior for"),

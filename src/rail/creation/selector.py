@@ -20,6 +20,7 @@ class Selector(RailStage):
     """
 
     name = "Selector"
+    entrypoint_function = "__call__"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         drop_rows=Param(bool, True, msg="Drop selected rows from output table"),

@@ -39,6 +39,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
     """
 
     name = "CatEstimator"
+    entrypoint_function = "estimate"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         chunk_size=SHARED_PARAMS,
@@ -319,6 +320,7 @@ class PzEstimator(RailStage, PointEstimationMixin):
     """
 
     name = "PzEstimator"
+    entrypoint_function = "estimate"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         chunk_size=SHARED_PARAMS,

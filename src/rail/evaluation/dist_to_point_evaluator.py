@@ -12,6 +12,7 @@ class DistToPointEvaluator(Evaluator):
     """Evaluate the performance of a photo-z estimator against reference point estimate"""
 
     name = "DistToPointEvaluator"
+    entrypoint_function = "evaluate"  # the user-facing science function for this class
     config_options = Evaluator.config_options.copy()
     config_options.update(
         limits=Param(

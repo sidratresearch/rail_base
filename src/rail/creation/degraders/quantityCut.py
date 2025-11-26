@@ -17,6 +17,7 @@ class QuantityCut(Selector):
     """
 
     name = "QuantityCut"
+    entrypoint_function = "__call__"  # the user-facing science function for this class
     config_options = Selector.config_options.copy()
     config_options.update(
         cuts=Param(dict, required=True, msg="Cuts to apply"),

@@ -9,6 +9,7 @@ from rail.core.stage import RailStage
 
 class KDEBinOverlap(RailStage):
     name = "KDEBinOverlap"
+    entrypoint_function = "evaluate"  # the user-facing science function for this class
     inputs = [("truth", TableHandle), ("bin_index", Hdf5Handle)]
     outputs = [("output", Hdf5Handle)]
 

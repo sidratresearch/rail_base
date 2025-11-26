@@ -44,6 +44,7 @@ class Evaluator(RailStage):  # pylint: disable=too-many-instance-attributes
     """Evaluate the performance of a photo-z estimator against reference point estimate"""
 
     name = "Evaluator"
+    entrypoint_function = "evaluate"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         metrics=Param(
@@ -415,6 +416,7 @@ class OldEvaluator(RailStage):
     """Evaluate the performance of a photo-Z estimator"""
 
     name = "OldEvaluator"
+    entrypoint_function = "evaluate"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         zmin=Param(float, 0.0, msg="min z for grid"),

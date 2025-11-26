@@ -15,6 +15,7 @@ class EqualCountClassifier(PZClassifier):
     bins based on point estimate according to SRD"""
 
     name = "EqualCountClassifier"
+    entrypoint_function = "classify"  # the user-facing science function for this class
     config_options = PZClassifier.config_options.copy()
     config_options.update(
         id_name=Param(

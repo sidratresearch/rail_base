@@ -17,6 +17,7 @@ class UniformBinningClassifier(PZClassifier):
     """
 
     name = "UniformBinningClassifier"
+    entrypoint_function = "classify"  # the user-facing science function for this class
     config_options = PZClassifier.config_options.copy()
     config_options.update(
         id_name=Param(

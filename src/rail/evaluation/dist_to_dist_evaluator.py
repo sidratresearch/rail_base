@@ -11,6 +11,7 @@ class DistToDistEvaluator(Evaluator):
     """Evaluate the performance of a photo-z estimator against reference PDFs"""
 
     name = "DistToDistEvaluator"
+    entrypoint_function = "evaluate"  # the user-facing science function for this class
     config_options = Evaluator.config_options.copy()
     config_options.update(
         limits=Param(

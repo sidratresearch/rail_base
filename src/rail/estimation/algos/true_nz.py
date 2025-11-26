@@ -17,6 +17,7 @@ class TrueNZHistogrammer(RailStage):
     """Summarizer-like stage which simply histograms the true redshift"""
 
     name = "TrueNZHistogrammer"
+    entrypoint_function = "histogram"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         zmin=SHARED_PARAMS,

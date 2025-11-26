@@ -32,6 +32,7 @@ class TrainZInformer(CatInformer):
     """Train an Estimator which returns a global PDF for all galaxies"""
 
     name = "TrainZInformer"
+    entrypoint_function = "inform"  # the user-facing science function for this class
     config_options = CatInformer.config_options.copy()
     config_options.update(
         zmin=SHARED_PARAMS,
@@ -74,6 +75,7 @@ class TrainZEstimator(CatEstimator):
     """CatEstimator which returns a global PDF for all galaxies"""
 
     name = "TrainZEstimator"
+    entrypoint_function = "estimate"  # the user-facing science function for this class
     config_options = CatEstimator.config_options.copy()
     config_options.update(zmin=SHARED_PARAMS, zmax=SHARED_PARAMS, nzbins=SHARED_PARAMS)
 

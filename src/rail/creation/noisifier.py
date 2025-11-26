@@ -19,6 +19,7 @@ class Noisifier(RailStage):
     """
 
     name = "Noisifier"
+    entrypoint_function = "__call__"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         seed=Param(

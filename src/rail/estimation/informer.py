@@ -111,6 +111,7 @@ class PzInformer(RailStage):
     """
 
     name = "PzInformer"
+    entrypoint_function = "inform"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         hdf5_groupname=SHARED_PARAMS,

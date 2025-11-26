@@ -17,6 +17,7 @@ class PointEstHistInformer(PzInformer):
     """Placeholder Informer"""
 
     name = "PointEstHistInformer"
+    entrypoint_function = "inform"  # the user-facing science function for this class
     config_options = PzInformer.config_options.copy()
 
     def _finalize_run(self) -> None:
@@ -28,6 +29,7 @@ class PointEstHistSummarizer(PZSummarizer):
     """Summarizer which simply histograms a point estimate"""
 
     name = "PointEstHistSummarizer"
+    entrypoint_function = "summarize"  # the user-facing science function for this class
     config_options = PZSummarizer.config_options.copy()
     config_options.update(
         zmin=Param(float, 0.0, msg="The minimum redshift of the z grid"),
@@ -112,6 +114,7 @@ class PointEstHistMaskedSummarizer(PointEstHistSummarizer):
     """Summarizer which simply histograms a point estimate"""
 
     name = "PointEstHistMaskedSummarizer"
+    entrypoint_function = "summarize"  # the user-facing science function for this class
     config_options = PointEstHistSummarizer.config_options.copy()
     config_options.update(
         selected_bin=Param(int, -1, msg="bin to use"),

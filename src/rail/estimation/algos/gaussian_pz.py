@@ -17,6 +17,7 @@ class GaussianPzInformer(PzInformer):
     """Placeholder Informer"""
 
     name = "GaussianPzInformer"
+    entrypoint_function = "inform"  # the user-facing science function for this class
     config_options = PzInformer.config_options.copy()
 
     def _finalize_run(self) -> None:
@@ -28,6 +29,7 @@ class GaussianPzEstimator(PzEstimator):
     """Estimator which converts to Gaussian reps"""
 
     name = "GaussianPzEstimator"
+    entrypoint_function = "estimate"  # the user-facing science function for this class
     config_options = PzEstimator.config_options.copy()
 
     def _process_chunk(

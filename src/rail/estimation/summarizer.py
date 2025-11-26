@@ -25,6 +25,7 @@ class CatSummarizer(RailStage):  # pragma: no cover
     """
 
     name = "CatSummarizer"
+    entrypoint_function = "summarize"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(chunk_size=SHARED_PARAMS)
     inputs = [("input", TableHandle)]
@@ -69,6 +70,7 @@ class PZSummarizer(RailStage):
     """
 
     name = "PZtoNZSummarizer"
+    entrypoint_function = "summarize"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(chunk_size=SHARED_PARAMS)
     inputs = [("model", ModelHandle), ("input", QPHandle)]
@@ -134,6 +136,7 @@ class SZPZSummarizer(RailStage):  # pragma: no cover
     """
 
     name = "SZPZtoNZSummarizer"
+    entrypoint_function = "summarize"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(chunk_size=SHARED_PARAMS)
     inputs = [

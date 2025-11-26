@@ -12,6 +12,7 @@ class AddColumnOfRandom(Noisifier):
     """Add a column of random numbers to a dataframe"""
 
     name = "AddColumnOfRandom"
+    entrypoint_function = "__call__"  # the user-facing science function for this class
     config_options = Noisifier.config_options.copy()
     config_options.update(
         col_name=Param(

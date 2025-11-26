@@ -18,6 +18,7 @@ class ColumnMapper(RailStage):
     """
 
     name = "ColumnMapper"
+    entrypoint_function = "__call__"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         columns=Param(dict, required=True, msg="Map of columns to rename"),
@@ -68,6 +69,7 @@ class RowSelector(RailStage):
     """
 
     name = "RowSelector"
+    entrypoint_function = "__call__"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         start=Param(int, required=True, msg="Starting row number"),
@@ -113,6 +115,7 @@ class TableConverter(RailStage):
     """
 
     name = "TableConverter"
+    entrypoint_function = "__call__"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         output_format=Param(str, required=True, msg="Format of output table"),

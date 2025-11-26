@@ -20,6 +20,7 @@ class RandomGaussInformer(CatInformer):
     """Placeholder Informer"""
 
     name = "RandomGaussInformer"
+    entrypoint_function = "inform"  # the user-facing science function for this class
     config_options = CatInformer.config_options.copy()
 
     def run(self) -> None:
@@ -30,6 +31,7 @@ class RandomGaussEstimator(CatEstimator):
     """Random CatEstimator"""
 
     name = "RandomGaussEstimator"
+    entrypoint_function = "estimate"  # the user-facing science function for this class
     inputs = [("input", TableHandle), ("model", ModelHandle)]
     config_options = CatEstimator.config_options.copy()
     config_options.update(

@@ -20,6 +20,7 @@ class Degrader(RailStage):  # pragma: no cover
     """
 
     name = "Degrader"
+    entrypoint_function = "__call__"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         seed=Param(int, default=12345, msg="Random number seed"),

@@ -31,6 +31,7 @@ class CatClassifier(RailStage):  # pragma: no cover
     """
 
     name = "CatClassifier"
+    entrypoint_function = "classify"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
         chunk_size=SHARED_PARAMS,
@@ -88,6 +89,7 @@ class PZClassifier(RailStage):
     """
 
     name = "PZClassifier"
+    entrypoint_function = "classify"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(chunk_size=SHARED_PARAMS)
     inputs = [("input", QPHandle)]
