@@ -1,4 +1,4 @@
-""" Stages that implement utility functions """
+"""Stages that implement utility functions"""
 
 import tables_io
 from ceci.config import StageParameter as Param

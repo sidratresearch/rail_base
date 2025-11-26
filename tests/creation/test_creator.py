@@ -1,14 +1,14 @@
-import pytest
-
-import numpy as np
-import pandas as pd
 import os
 
-import pzflow
-from rail.creation.engines.flowEngine import FlowCreator
-from rail.creation.degraders.photometric_errors import LSSTErrorModel
-from rail.estimation.algos.flexzboost import FlexZBoostInformer, FlexZBoostEstimator
 import ceci
+import numpy as np
+import pandas as pd
+import pytest
+import pzflow
+
+from rail.creation.degraders.photometric_errors import LSSTErrorModel
+from rail.creation.engines.flowEngine import FlowCreator
+from rail.estimation.algos.flexzboost import FlexZBoostEstimator, FlexZBoostInformer
 
 
 def test_creator():

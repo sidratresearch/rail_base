@@ -1,13 +1,13 @@
 import os
 
 import numpy as np
-import qp
 import pytest
+import qp
 
-from rail.estimation.algos.equal_count import EqualCountClassifier
 import rail.evaluation.metrics.pointestimates as pe
 from rail.core.data import QPHandle, QPOrTableHandle, TableHandle
 from rail.core.stage import RailStage
+from rail.estimation.algos.equal_count import EqualCountClassifier
 from rail.evaluation.dist_to_dist_evaluator import DistToDistEvaluator
 from rail.evaluation.dist_to_point_evaluator import DistToPointEvaluator
 from rail.evaluation.evaluator import OldEvaluator
@@ -17,7 +17,6 @@ from rail.evaluation.point_to_point_evaluator import (
     PointToPointEvaluator,
 )
 from rail.evaluation.single_evaluator import SingleEvaluator
-
 
 # values for metrics
 OUTRATE = 0.0

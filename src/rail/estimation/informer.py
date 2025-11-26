@@ -7,15 +7,14 @@ be used for their corresponding Estimator, Summarizer, or Classifier stages.
 """
 
 from typing import Any, Generator
-import numpy as np
 
+import numpy as np
 import qp
+import tables_io
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import (DataHandle, ModelHandle, QPHandle, TableHandle,
-                            TableLike)
+from rail.core.data import DataHandle, ModelHandle, QPHandle, TableHandle, TableLike
 from rail.core.stage import RailStage
-import tables_io
 
 
 class CatInformer(RailStage):
@@ -36,6 +35,7 @@ class CatInformer(RailStage):
     """
 
     name = "CatInformer"
+    entrypoint_function = "inform"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     inputs = [("input", TableHandle)]
     outputs = [("model", ModelHandle)]
@@ -79,18 +79,20 @@ class CatInformer(RailStage):
         self.finalize()
         return self.get_handle("model")
 
-    def _convert_table_format(self, data: TableLike, out_fmt_str: str="numpyDict") -> TableLike: # pragma: no cover
+    def _convert_table_format(
+        self, data: TableLike, out_fmt_str: str = "numpyDict"
+    ) -> TableLike:  # pragma: no cover
         """
         Utility function to convert existing Tabular data to a numpy dictionary,
         ingestable for most informer and estimators.
         To be called in run().
         """
         # required format for informer/estimator
-        out_fmt = tables_io.types.TABULAR_FORMAT_NAMES[out_fmt_str] 
+        out_fmt = tables_io.types.TABULAR_FORMAT_NAMES[out_fmt_str]
         out_data = tables_io.convert(data, out_fmt)
         # overwrite set_data
         return out_data
-        
+
 
 class PzInformer(RailStage):
     """The base class for informing models used to make photo-z data products from
@@ -114,7 +116,7 @@ class PzInformer(RailStage):
         hdf5_groupname=SHARED_PARAMS,
         chunk_size=SHARED_PARAMS,
     )
-        
+
     inputs = [("input", QPHandle), ("truth", TableHandle)]
     outputs = [("model", ModelHandle)]
 
@@ -136,7 +138,7 @@ class PzInformer(RailStage):
             return []
         if truth_itr:  # pragma: no cover
             itrs.append(truth_itr)
-            
+
         for it in zip(*itrs):
             first = True
             for s, e, d in it:
@@ -152,7 +154,9 @@ class PzInformer(RailStage):
             yield start, end, qp_ens, true_redshift
 
     def inform(
-        self, training_data: qp.Ensemble | str="None", truth_data: TableLike | str = "None",
+        self,
+        training_data: qp.Ensemble | str = "None",
+        truth_data: TableLike | str = "None",
     ) -> dict[str, DataHandle]:
         """The main interface method for Informers
 
@@ -207,12 +211,16 @@ class PzInformer(RailStage):
     def _finalize_run(self) -> None:
         assert self.model is not None
         self.add_data("model", self.model)
-        self._model_handle = self.get_handle("model")        
-        assert self._model_handle is not None        
+        self._model_handle = self.get_handle("model")
+        assert self._model_handle is not None
         self._model_handle.write()
 
     def _process_chunk(
-        self, start: int, end: int, data: qp.Ensemble, truth_data: np.ndarray, first: bool
+        self,
+        start: int,
+        end: int,
+        data: qp.Ensemble,
+        truth_data: np.ndarray,
+        first: bool,
     ) -> None:
         return
-        

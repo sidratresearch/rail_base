@@ -4,9 +4,9 @@ import numpy as np
 import pytest
 import scipy.special
 
-from rail.core.data import PqHandle, TableHandle, QPHandle
+from rail.core.data import PqHandle, QPHandle, TableHandle
 from rail.core.stage import RailStage
-from rail.estimation.algos import random_gauss, train_z, gaussian_pz
+from rail.estimation.algos import gaussian_pz, random_gauss, train_z
 from rail.utils.path_utils import RAILDIR
 from rail.utils.testing_utils import one_algo
 

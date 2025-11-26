@@ -5,7 +5,7 @@ from ceci.config import StageParameter as Param
 from qp.metrics.base_metric_classes import MetricOutputType
 from qp.metrics.point_estimate_metric_classes import PointToPointMetric
 
-from rail.core.data import TableLike, QPHandle, TableHandle
+from rail.core.data import QPHandle, TableHandle, TableLike
 from rail.evaluation.evaluator import Evaluator
 
 

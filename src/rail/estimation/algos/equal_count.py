@@ -1,6 +1,6 @@
 """
 A classifier that uses pz point estimate to assign
-tomographic bins with uniform binning. 
+tomographic bins with uniform binning.
 """
 
 import numpy as np

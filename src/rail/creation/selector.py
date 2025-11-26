@@ -1,8 +1,8 @@
 """Abstract base class defining a selector.
 
-The key feature here is make selection to either the photometric or spectroscopic catalog. 
-Intended subclasses spectroscopic selection, probability selection on a grid for the photometry, 
-or pure photometric selection. 
+The key feature here is make selection to either the photometric or spectroscopic catalog.
+Intended subclasses spectroscopic selection, probability selection on a grid for the photometry,
+or pure photometric selection.
 """
 
 from ceci.config import StageParameter as Param

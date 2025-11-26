@@ -8,8 +8,7 @@ import numpy as np
 import qp
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import (DataHandle, ModelHandle, QPHandle, TableHandle,
-                            TableLike)
+from rail.core.data import DataHandle, ModelHandle, QPHandle, TableHandle, TableLike
 from rail.core.stage import RailStage
 
 # for backwards compatibility

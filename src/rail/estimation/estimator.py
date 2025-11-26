@@ -8,6 +8,7 @@ from typing import Any, Optional
 
 import numpy as np
 import qp
+import tables_io
 
 from rail.core.common_params import SHARED_PARAMS
 from rail.core.data import (
@@ -18,13 +19,12 @@ from rail.core.data import (
     TableHandle,
     TableLike,
 )
+from rail.core.enums import DistributionType
 from rail.core.point_estimation import PointEstimationMixin
 from rail.core.stage import RailStage
-from rail.core.enums import DistributionType
 
 # for backwards compatibility, to avoid break stuff that imports it from here
 from .informer import CatInformer  # pylint: disable=unused-import
-import tables_io
 
 
 class CatEstimator(RailStage, PointEstimationMixin):

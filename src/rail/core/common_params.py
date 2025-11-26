@@ -1,4 +1,4 @@
-""" Parameters that are shared between stages """
+"""Parameters that are shared between stages"""
 
 from typing import Any
 
@@ -8,7 +8,7 @@ from ceci.config import StageParameter as Param
 lsst_bands = "ugrizy"
 lsst_mag_cols = [f"mag_{band}_lsst" for band in lsst_bands]
 lsst_mag_err_cols = [f"mag_err_{band}_lsst" for band in lsst_bands]
-lsst_def_err_dict: dict[str, str|None] = dict(zip(lsst_mag_cols, lsst_mag_err_cols))
+lsst_def_err_dict: dict[str, str | None] = dict(zip(lsst_mag_cols, lsst_mag_err_cols))
 lsst_def_err_dict["redshift"] = None
 
 lsst_def_maglims = dict(
@@ -54,9 +54,7 @@ SHARED_PARAMS = StageConfig(
     nondetect_val=Param(
         float, 99.0, msg="value to be replaced with magnitude limit for non detects"
     ),
-    nonobserved_val=Param(
-        float, -99.0, msg="guard value for non-observations"
-    ),
+    nonobserved_val=Param(float, -99.0, msg="guard value for non-observations"),
     bands=Param(
         list, lsst_mag_cols, msg="Names of columns for magnitgude by filter band"
     ),

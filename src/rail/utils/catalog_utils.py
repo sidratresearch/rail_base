@@ -124,9 +124,9 @@ class CatalogConfigBase:
         return [cls.band_err_template.format(band=band) for band in cls.bandlist]
 
     @classmethod
-    def _build_err_dict(cls) -> dict[str, str| None]:
+    def _build_err_dict(cls) -> dict[str, str | None]:
         """Construct the mapping from magnitude columns to associated uncertainties"""
-        the_dict: dict[str, str|None] = {
+        the_dict: dict[str, str | None] = {
             cls.band_template.format(band=band): cls.band_err_template.format(band=band)
             for band in cls.bandlist
         }
@@ -169,7 +169,7 @@ class HscCatalogConfig(CatalogConfigBase):
     """Configuration for HSC data"""
 
     tag = "hsc"
-    bandlist = ['g', 'r', 'i', 'z', 'y']
+    bandlist = ["g", "r", "i", "z", "y"]
     maglims = [27.66, 27.25, 26.6, 26.24, 25.35]
     a_env = [3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "HSC{band}_cmodel_dered"
@@ -187,7 +187,7 @@ class Dc2CatalogConfig(CatalogConfigBase):
     """Configuration for DC2 data"""
 
     tag = "dc2"
-    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    bandlist = ["u", "g", "r", "i", "z", "y"]
     maglims = [24.0, 27.66, 27.25, 26.6, 26.24, 25.35]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "mag_{band}_cModel_obj_dered"
@@ -204,7 +204,7 @@ class RubinCatalogConfig(CatalogConfigBase):
     """Configuration for Rubin project data"""
 
     tag = "rubin"
-    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    bandlist = ["u", "g", "r", "i", "z", "y"]
     maglims = [24.0, 27.66, 27.25, 26.6, 26.24, 25.35]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "LSST_obs_{band}"
@@ -265,7 +265,7 @@ class RomanRubinCatalogConfig(CatalogConfigBase):
     """Configuration for Rubin data from Roman / Rubin simulations"""
 
     tag = "roman_rubin"
-    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    bandlist = ["u", "g", "r", "i", "z", "y"]
     maglims = [24.0, 27.66, 27.25, 26.6, 26.24, 25.35]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "LSST_obs_{band}"
@@ -282,7 +282,7 @@ class ComCamCatalogConfig(CatalogConfigBase):
     """Configuration for ComCam data"""
 
     tag = "com_cam"
-    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    bandlist = ["u", "g", "r", "i", "z", "y"]
     maglims = [26.4, 27.8, 27.1, 26.7, 25.8, 24.6]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "{band}_cModelMag"
@@ -293,10 +293,10 @@ class ComCamCatalogConfig(CatalogConfigBase):
 
 
 class RubinFLCatalogConfig(CatalogConfigBase):
-    """Configuration for Rubin first look data """
+    """Configuration for Rubin first look data"""
 
     tag = "rubin_fl"
-    bandlist = ['u', 'g', 'r', 'i']
+    bandlist = ["u", "g", "r", "i"]
     maglims = [26.4, 27.8, 27.1, 26.7]
     a_env = [4.81, 3.64, 2.70, 2.06]
     band_template = "{band}_cModelMag"
@@ -312,7 +312,7 @@ class ComCamGaapCatalogConfig(CatalogConfigBase):
     """Configuration for ComCam data"""
 
     tag = "com_cam_gaap"
-    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    bandlist = ["u", "g", "r", "i", "z", "y"]
     maglims = [26.4, 27.8, 27.1, 26.7, 25.8, 24.6]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "{band}_gaap1p0Mag"
@@ -324,12 +324,12 @@ class ComCamGaapCatalogConfig(CatalogConfigBase):
     hdf5_groupname = ""
     replace_error_vals = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 
-        
+
 class ComCamGaap4BandCatalogConfig(CatalogConfigBase):
     """Configuration for ComCam data"""
 
     tag = "com_cam_gaap_4band"
-    bandlist = ['g', 'r', 'i', 'z']
+    bandlist = ["g", "r", "i", "z"]
     maglims = [27.8, 27.1, 26.7, 25.8]
     a_env = [3.64, 2.70, 2.06, 1.58]
     band_template = "{band}_gaap1p0Mag"
@@ -339,14 +339,14 @@ class ComCamGaap4BandCatalogConfig(CatalogConfigBase):
     redshift_col = "redshift"
     object_id_col = "objectId"
     hdf5_groupname = ""
-    replace_error_vals = [ 0.1, 0.1, 0.1, 0.1]
+    replace_error_vals = [0.1, 0.1, 0.1, 0.1]
 
 
 class ComCamKronCatalogConfig(CatalogConfigBase):
     """Configuration for ComCam data"""
 
     tag = "com_cam_kron"
-    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    bandlist = ["u", "g", "r", "i", "z", "y"]
     maglims = [26.4, 27.8, 27.1, 26.7, 25.8, 24.6]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "{band}_kronMag"
@@ -363,7 +363,7 @@ class ComCamEuclidCatalogConfig(CatalogConfigBase):
     """Configuration for ComCam data"""
 
     tag = "com_cam_euclid"
-    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    bandlist = ["u", "g", "r", "i", "z", "y"]
     maglims = [26.4, 27.8, 27.1, 26.7, 25.8, 24.6]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "{band}_gaap1p0Mag"
@@ -457,7 +457,7 @@ class ComCamEuclidNIRCatalogConfig(CatalogConfigBase):
     """Configuration for ComCam data"""
 
     tag = "com_cam_euclid_nir"
-    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    bandlist = ["u", "g", "r", "i", "z", "y"]
     maglims = [26.4, 27.8, 27.1, 26.7, 25.8, 24.6]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "{band}_gaap1p0Mag"
@@ -539,11 +539,12 @@ class ComCamEuclidNIRCatalogConfig(CatalogConfigBase):
         ]
         return filter_list
 
+
 class RomanPlusRubinCatalogConfig(CatalogConfigBase):
     """Configuration for Roman + Rubin bands in Roman / Rubin simulations"""
 
     tag = "roman_plus_rubin"
-    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    bandlist = ["u", "g", "r", "i", "z", "y"]
     maglims = [24.0, 27.66, 27.25, 26.6, 26.24, 25.35]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "LSST_obs_{band}"
@@ -636,7 +637,7 @@ class Roman3BandPlusRubinCatalogConfig(CatalogConfigBase):
     """Configuration for Roman3Band + Rubin bands in Roman / Rubin simulations"""
 
     tag = "roman_3band_rubin"
-    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    bandlist = ["u", "g", "r", "i", "z", "y"]
     maglims = [24.0, 27.66, 27.25, 26.6, 26.24, 25.35]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "LSST_obs_{band}"
@@ -723,7 +724,7 @@ class Roman7BandPlusRubinCatalogConfig(CatalogConfigBase):
     """Configuration for Roman3Band + Rubin bands in Roman / Rubin simulations"""
 
     tag = "roman_7band_rubin"
-    bandlist = ['u', 'g', 'r', 'i', 'z', 'y']
+    bandlist = ["u", "g", "r", "i", "z", "y"]
     maglims = [24.0, 27.66, 27.25, 26.6, 26.24, 25.35]
     a_env = [4.81, 3.64, 2.70, 2.06, 1.58, 1.31]
     band_template = "LSST_obs_{band}"
@@ -849,11 +850,10 @@ class Roman7BandPlusRubinCatalogConfig(CatalogConfigBase):
         return filter_list
 
 
-
-DP1_FILTERS = 'ugrizy'
-DP1_FLUX_TYPES = ['cModel', 'kron', 'sersic', 'gaap1p0', 'psf', 'gaap3p0']
-DP1_A_ENV_IN = Dc2CatalogConfig.build_base_dict()['band_a_env']
-DP1_MAGLIMS_IN = Dc2CatalogConfig.build_base_dict()['mag_limits']
+DP1_FILTERS = "ugrizy"
+DP1_FLUX_TYPES = ["cModel", "kron", "sersic", "gaap1p0", "psf", "gaap3p0"]
+DP1_A_ENV_IN = Dc2CatalogConfig.build_base_dict()["band_a_env"]
+DP1_MAGLIMS_IN = Dc2CatalogConfig.build_base_dict()["mag_limits"]
 DP1_A_ENV_LIST = []
 DP1_REPLACE_ERR_VALS = []
 DP1_MAGLIMS = []
@@ -885,8 +885,6 @@ class DP1AllFluxesCatalogConfig(CatalogConfigBase):
     hdf5_groupname = ""
     replace_error_vals = DP1_REPLACE_ERR_VALS
     zp_errors = DP1_ZP_ERRORS
-
-
 
 
 apply_defaults = CatalogConfigBase.apply

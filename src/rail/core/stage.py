@@ -10,7 +10,7 @@ from ceci.config import StageParameter as Param
 from ceci.pipeline import MiniPipeline
 from ceci.stage import PipelineStage
 
-from .data import DataStore, DataHandle, DataLike, ModelHandle
+from .data import DataHandle, DataLike, DataStore, ModelHandle
 
 T = TypeVar("T", bound="RailPipeline")
 S = TypeVar("S", bound="RailStage")

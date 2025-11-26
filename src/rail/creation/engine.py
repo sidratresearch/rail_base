@@ -1,7 +1,7 @@
 """Abstract base classes defining a Creator.
 
-A Creator will create synthetic photometric data and a PosteriorCalculator, 
-which can calculate posteriors for the data with respect to the distribution 
+A Creator will create synthetic photometric data and a PosteriorCalculator,
+which can calculate posteriors for the data with respect to the distribution
 defined by the Creator.
 """
 
@@ -9,8 +9,14 @@ from typing import Any
 
 from ceci.config import StageParameter as Param
 
-from rail.core.data import (DataHandle, ModelHandle, ModelLike, QPHandle,
-                            TableHandle, TableLike)
+from rail.core.data import (
+    DataHandle,
+    ModelHandle,
+    ModelLike,
+    QPHandle,
+    TableHandle,
+    TableLike,
+)
 from rail.core.stage import RailStage
 
 

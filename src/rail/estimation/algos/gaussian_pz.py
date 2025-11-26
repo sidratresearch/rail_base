@@ -9,8 +9,8 @@ import qp
 from ceci.config import StageParameter as Param
 
 from rail.core.data import DataHandle, QPHandle, TableHandle, TableLike
-from rail.estimation.informer import PzInformer
 from rail.estimation.estimator import PzEstimator
+from rail.estimation.informer import PzInformer
 
 
 class GaussianPzInformer(PzInformer):
@@ -37,8 +37,6 @@ class GaussianPzEstimator(PzEstimator):
         mean = np.squeeze(data.mean())
         std = np.squeeze(data.std())
         std = np.where(np.isfinite(std), std, 0.01)
-        
+
         qp_dstn = qp.Ensemble(qp.stats.norm, data=dict(loc=mean, scale=std))
         self._do_chunk_output(qp_dstn, start, end, first)
-
-        

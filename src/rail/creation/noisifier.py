@@ -1,6 +1,6 @@
 """Abstract base class defining a noisifier.
 
-The key feature here is the run adds noise to the catalog. 
+The key feature here is the run adds noise to the catalog.
 Intended subclasses are noisifier that adds LSST noise / other telescope noise
 """
 

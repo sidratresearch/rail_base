@@ -1,9 +1,9 @@
 import numpy as np
-from scipy import stats
 from ceci.config import StageParameter as Param
+from scipy import stats
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import TableLike, DataHandle, Hdf5Handle, TableHandle
+from rail.core.data import DataHandle, Hdf5Handle, TableHandle, TableLike
 from rail.core.stage import RailStage
 
 
@@ -35,11 +35,11 @@ class KDEBinOverlap(RailStage):
         return self.get_handle("output")
 
     def run(self) -> None:
-        if self.config.hdf5_groupname is None: # pragma: no cover
+        if self.config.hdf5_groupname is None:  # pragma: no cover
             true_redshifts = self.get_handle("truth").data[
                 self.config.redshift_col
             ]  # 1D array of redshifts
-        else: 
+        else:
             true_redshifts = self.get_handle("truth").data[self.config.hdf5_groupname][
                 self.config.redshift_col
             ]  # 1D array of redshifts
