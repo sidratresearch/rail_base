@@ -45,6 +45,7 @@ class RailEnv:
         "CatClassifier",
         "PZClassifier",
         "CatEstimator",
+        "PzEstimator",
         "CatInformer",
         "PzInformer",
         "CatSummarizer",
