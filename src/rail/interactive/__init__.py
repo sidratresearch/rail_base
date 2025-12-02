@@ -3,16 +3,34 @@ A "factory" of sorts, turning regular class-based RAIL stages into single-call f
 for interactive use
 """
 
+from .utils import (
+    attatch_interactive_namespaces,
+    check_interactive_function_names,
+    create_attatch_interactive_function,
+    get_interactive_namespace_names,
+    get_rail_stages,
+)
+
 # look through and get all rail stages
 
+rail_stages = get_rail_stages()
 
 # look through rail stages and their interactive names
 # if names collide, raise error
 
+check_interactive_function_names(rail_stages)
+
 # add all sub-namespaces, where the interactive functions will live
+
+namespace_names = get_interactive_namespace_names(rail_stages)
+namespace_dict = attatch_interactive_namespaces(namespace_names)
 
 # for each rail stage make a new function, named after the interactive_function
 # class parameter
+
+for class_name, import_path in rail_stages.items():
+    create_attatch_interactive_function(class_name, import_path, namespace_dict)
+    break
 
 
 def interactive_function(**kwargs):
