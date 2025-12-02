@@ -244,6 +244,10 @@ class RailStage(PipelineStage):
     # `self.model = None` in the __init__ wouldn't have unintended consequences
     # pylint: disable=attribute-defined-outside-init
 
+    entrypoint_function: str | None = None
+    interactive_function: str | None = None
+    extra_interactive_documentation: str | None = None
+
     config_options = dict(
         output_mode=Param(str, "default", msg="What to do with the outputs")
     )
