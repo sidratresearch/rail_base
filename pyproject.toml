@@ -68,6 +68,7 @@ disable = [
     "too-many-arguments",
     "too-many-positional-arguments",
     "too-many-statements",
+    "unused-argument",                # need extra **kwargs in some places
     "use-dict-literal",
 ]
 max-line-length = 110
