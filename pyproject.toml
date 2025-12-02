@@ -57,16 +57,18 @@ addopts   = ["--cov=rail", "--cov-report=html"]
 [tool.pylint]
 disable = [
     "abstract-method",
+    "attribute-defined-outside-init",
+    "broad-exception-caught",
+    "duplicate-code",
     "invalid-name",
-    "too-many-statements",
-    "too-many-arguments",
-    "missing-module-docstring",
     "missing-class-docstring",
     "missing-function-docstring",
+    "missing-module-docstring",
     "too-few-public-methods",
-    "duplicate-code",
+    "too-many-arguments",
+    "too-many-positional-arguments",
+    "too-many-statements",
     "use-dict-literal",
-    "broad-exception-caught",
 ]
 max-line-length = 110
 max-locals = 50

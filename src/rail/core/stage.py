@@ -10,7 +10,7 @@ from ceci.config import StageParameter as Param
 from ceci.pipeline import MiniPipeline
 from ceci.stage import PipelineStage
 
-from .data import DataHandle, DataLike, DataStore, ModelHandle
+from .data import DataHandle, DataLike, DataStore, ModelHandle, ModelLike
 
 T = TypeVar("T", bound="RailPipeline")
 S = TypeVar("S", bound="RailStage")
@@ -238,6 +238,11 @@ class RailStage(PipelineStage):
     I.e., it is the same as calling
     `self.set_data(inputTag, other.get_handle(outputTag, allow_missing=True), do_read=False)`
     """
+
+    # disable the message for setting self.attribute outside of the init. This occurs in
+    # (for ex) RailStage.open_model() with self.model, but I can't be sure that setting
+    # `self.model = None` in the __init__ wouldn't have unintended consequences
+    # pylint: disable=attribute-defined-outside-init
 
     config_options = dict(
         output_mode=Param(str, "default", msg="What to do with the outputs")
@@ -527,7 +532,7 @@ class RailStage(PipelineStage):
 
         # If data is in memory and not in a file, it means is small enough to process it
         # in a single chunk.
-        elif in_memory:  # pragma: no cover
+        if in_memory:  # pragma: no cover
             if self.config.hdf5_groupname:
                 test_data = self.get_data(tag)[self.config.hdf5_groupname]
                 self._input_length = self.get_handle(tag).data_size(
@@ -541,8 +546,7 @@ class RailStage(PipelineStage):
             return iterator
 
         # Data is neither on disk or in memory, return empty list
-        else:
-            return []
+        return []
 
     def connect_input(
         self,
@@ -605,7 +609,7 @@ class RailStage(PipelineStage):
                 # data handle only has a path, read the columns from the path
                 path = data.path
                 assert path is not None
-                data._check_data_columns(
+                data._check_data_columns(  # pylint: disable=protected-access
                     path, columns_to_check, parent_groupname=groupname, **kwargs
                 )
             elif not data.has_path:  # pragma: no cover
