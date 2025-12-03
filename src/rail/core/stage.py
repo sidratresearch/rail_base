@@ -585,9 +585,14 @@ class RailStage(PipelineStage):
             assert handle.path is not None
             if not os.path.exists(handle.path) or not handle.partial:
                 handle.write()
-        final_name = PipelineStage._finalize_tag(self, tag)
-        handle.path = final_name
-        return final_name
+            final_name = PipelineStage._finalize_tag(self, tag)
+            handle.path = final_name
+            return final_name
+        elif self.config.output_mode == "return":
+            handle.path = (
+                None  # TODO: or should this be a test, i.e. assert handle.path == None?
+            )
+            return
 
     def _check_column_names(
         self, data: Any, columns_to_check: list[str], **kwargs: Any

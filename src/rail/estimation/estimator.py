@@ -56,6 +56,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
     )
     inputs = [("model", ModelHandle), ("input", TableHandle)]
     outputs = [("output", QPHandle)]
+    _partial_output = {}  # TODO: make this an ordered dict?
 
     def __init__(self, args: Any, **kwargs: Any) -> None:
         """Initialize Estimator"""
@@ -91,7 +92,9 @@ class CatEstimator(RailStage, PointEstimationMixin):
         self.run()
         self.finalize()
         results = self.get_handle("output")
-        results.read(force=True)  # TODO: add an output_mode check here
+        if self.config.output_mode != "return":
+            # only read from file if it wrote to a file
+            results.read(force=True)
         return results
 
     def run(self) -> None:
@@ -115,7 +118,25 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
     def _finalize_run(self) -> None:
         assert self._output_handle is not None
-        self._output_handle.finalize_write()  # TODO: add output_mode test here
+        if self.config.output_mode != "return":
+            self._output_handle.finalize_write()
+        elif self.config.output_mode == "return":
+            # turn this into an ordered list by sorting the keys and then appending the data into a sorted list
+            # TODO: should we skip this bit and create a list from the start
+            gathered_data = []
+            start = 0
+            for key in sorted(self._partial_output.keys()):
+                gathered_data.append(self._partial_output[key])
+
+            # set the output data handle path to None
+            self._output_handle.path = None
+            if len(gathered_data) <= 1:
+                # if there is only one entry in the dictionary skip the concatenation
+                self._output_handle.set_data(gathered_data[0])
+            else:
+                # concatenate all the chunks together
+                gathered_ensembles = qp.concatenate(gathered_data)
+                self._output_handle.set_data(gathered_ensembles)
 
     def _process_chunk(
         self, start: int, end: int, data: TableLike, first: bool
@@ -218,6 +239,8 @@ class CatEstimator(RailStage, PointEstimationMixin):
         self._output_handle.set_data(qp_dstn, partial=True)
         if self.config.output_mode != "return":
             self._output_handle.write_chunk(start, end)
+        elif self.config.output_mode == "return":
+            self._partial_output[(start, end)] = qp_dstn
         return qp_dstn
 
     #######################################
