@@ -4,6 +4,7 @@ import sys
 
 from ..utils import (
     _attatch_interactive_function,
+    _create_virtual_submodules,
     _get_all_stage_names,
     _get_stage_module,
 )
@@ -18,6 +19,8 @@ _degrader_stages = [
 ]
 _current_module = sys.modules[__name__]
 
+
+_create_virtual_submodules(_current_module, _degrader_stages)
 
 # for testing
 _degrader_stages = _degrader_stages[:1]

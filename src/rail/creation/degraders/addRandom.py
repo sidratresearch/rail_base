@@ -34,7 +34,7 @@ class AAAFakeRailStage(RailStage):
         """
         return
 
-    def maybe_lie(self, truth: str, **kwargs) -> None:
+    def maybe_lie(self, truth: str, **kwargs: Any) -> None:
         """Main function for FakeRailStage
 
         Needs to have **kwargs, or else things from __init__ will "overflow" (unexpected
