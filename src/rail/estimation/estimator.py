@@ -91,7 +91,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
         self.run()
         self.finalize()
         results = self.get_handle("output")
-        results.read(force=True)
+        results.read(force=True)  # TODO: add an output_mode check here
         return results
 
     def run(self) -> None:
@@ -115,7 +115,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
     def _finalize_run(self) -> None:
         assert self._output_handle is not None
-        self._output_handle.finalize_write()
+        self._output_handle.finalize_write()  # TODO: add output_mode test here
 
     def _process_chunk(
         self, start: int, end: int, data: TableLike, first: bool
