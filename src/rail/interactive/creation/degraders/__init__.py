@@ -17,11 +17,10 @@ _degrader_stages = [
 ]
 _current_module = sys.modules[__name__]
 
+# for testing
+_degrader_stages = _degrader_stages[:2] + _degrader_stages[-1:]
 
 _stage_module_dict = _create_virtual_submodules(_current_module, _degrader_stages)
-
-# for testing
-_degrader_stages = _degrader_stages[:2]
 
 
 for _stage_name in _degrader_stages:

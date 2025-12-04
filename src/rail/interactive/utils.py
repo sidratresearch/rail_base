@@ -19,6 +19,8 @@ _stage_names = [
 ]
 _stage_names.sort()
 
+_SHOW_STUB_CONTENT = False
+
 
 def _interactive_factory(rail_stage: RailStage, **kwargs) -> Any:
     instance = rail_stage.make_stage(**kwargs)
@@ -81,14 +83,15 @@ def _create_virtual_submodules(module: types.ModuleType, stage_names: list[str])
             parent.children.append(virtual_modules[virtual_module_name].module.__name__)
 
     # print the import section of type stubs for child and top level virtual modules
-    for vm_name, vm_VM in virtual_modules.items():
-        print("\n" + vm_name.replace(".", "/") + ".pyi")
-        for child_module_name in vm_VM.children:
-            print(f"from . import {child_module_name.split(".")[-1]}")
-    print("\n" + module.__path__[0].strip() + "/__init__.pyi")
-    for vm_name, vm_VM in virtual_modules.items():
-        if vm_VM.parent == module.__name__:
-            print(f"from . import {vm_name.split('.')[-1]}")
+    if _SHOW_STUB_CONTENT:
+        for vm_name, vm_VM in virtual_modules.items():
+            print("\n" + vm_name.replace(".", "/") + ".pyi")
+            for child_module_name in vm_VM.children:
+                print(f"from . import {child_module_name.split(".")[-1]}")
+        print("\n" + module.__path__[0].strip() + "/__init__.pyi")
+        for vm_name, vm_VM in virtual_modules.items():
+            if vm_VM.parent == module.__name__:
+                print(f"from . import {vm_name.split('.')[-1]}")
 
     # attatch virtual modules to their correct parents
     for vm_name, vm_VM in virtual_modules.items():
@@ -101,39 +104,74 @@ def _create_virtual_submodules(module: types.ModuleType, stage_names: list[str])
     return virtual_modules
 
 
+def _create_interactive_docstring(stage_name: str):
+    stage_definition = _get_stage_definition(stage_name)
+
+    class_docstring = stage_definition.__doc__
+    epf_docstring = getattr(
+        stage_definition, stage_definition.entrypoint_function
+    ).__doc__
+
+    class_summary = class_docstring[
+        : class_docstring.index("\nParameters\n----------")
+    ].strip()
+    class_parameters = class_docstring[
+        class_docstring.index("\nParameters\n----------") + 22 :
+    ].strip()
+    epf_summary = epf_docstring[
+        : epf_docstring.index("\nParameters\n----------")
+    ].strip()
+    epf_parameters = epf_docstring[
+        epf_docstring.index("\nParameters\n----------") : epf_docstring.index(
+            "\nReturns\n-------"
+        )
+    ].strip()
+    epf_returns = epf_docstring[epf_docstring.index("\nReturns\n-------") :].strip()
+
+    # print(f">>>>>>>>>>>>>\n{class_summary}\n<<<<<<<<<<<<<<<")
+    # print(f">>>>>>>>>>>>>\n{epf_summary}\n<<<<<<<<<<<<<<<")
+    # print(f">>>>>>>>>>>>>\n{epf_parameters}\n<<<<<<<<<<<<<<<")
+    # print(f">>>>>>>>>>>>>\n{class_parameters}\n<<<<<<<<<<<<<<<")
+    # print(f">>>>>>>>>>>>>\n{epf_returns}\n<<<<<<<<<<<<<<<")
+
+    source_file = inspect.getsourcefile(stage_definition)
+
+    docstring = f"""{class_summary}
+
+{epf_summary}
+
+This function was generated from {source_file}
+
+{epf_parameters}
+{class_parameters}
+
+{epf_returns}"""
+
+    if stage_definition.extra_interactive_documentation is not None:
+        docstring += "\n" + stage_definition.extra_interactive_documentation
+
+    return docstring
+
+
 def _attatch_interactive_function(stage_module_dict, stage_name: str) -> None:
     stage_definition = _get_stage_definition(stage_name)
     function_name = stage_definition.interactive_function
     created_function: Callable = functools.partial(
         _interactive_factory, stage_definition
     )
-    created_function.__doc__ = """docstring
-
-    Second summary
-
-    Parameters
-    ----------
-    p1 : int
-        about p1
-
-    Returns
-    -------
-    float
-        It returns a float
-    """
+    created_function.__doc__ = _create_interactive_docstring(stage_name)
 
     virtual_module_name = _get_stage_module(stage_name, interactive=True)
     virtual_module = stage_module_dict[virtual_module_name]
 
-    print(f"\n{virtual_module_name.split('.')[-1]}.pyi")
-
-    signature = inspect.signature(created_function)
-    stub_docstring = (
-        f'    """{created_function.__doc__}"""'  # inspect.getdoc(created_function)
-    )
-    stub_string = f"def {function_name}{signature.format()}:\n{stub_docstring}"
-    print(stub_string)
-
-    print()
+    if _SHOW_STUB_CONTENT:
+        print(f"\n{virtual_module_name.split('.')[-1]}.pyi")
+        signature = inspect.signature(created_function)
+        stub_docstring = (
+            f'    """{created_function.__doc__}"""'  # inspect.getdoc(created_function)
+        )
+        stub_string = f"def {function_name}{signature.format()}:\n{stub_docstring}"
+        print(stub_string)
+        print()
 
     setattr(virtual_module.module, function_name, created_function)

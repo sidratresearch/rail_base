@@ -1,14 +1,14 @@
 from typing import Any
 
-def aaa_fake_stage(**kwargs) -> Any:
-    """A fake RailStage for testing, named to be first alphabetically
+def aab_fake_stage(**kwargs) -> Any:
+    """A fake RailStage for testing, named to be second alphabetically
 
     Main function for FakeRailStage
 
     Needs to have **kwargs, or else things from __init__ will "overflow" (unexpected
     keyword argument)
 
-    This function was generated from /home/tai/projects/desc-rail/rail_base/src/rail/creation/degraders/addRandom.py
+    This function was generated from /home/tai/projects/desc-rail/rail_base/src/rail/creation/degraders/deep/addSandom.py
 
     Parameters
     ----------
