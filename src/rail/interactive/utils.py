@@ -1,8 +1,8 @@
 import functools
 import inspect
-import sys
 import types
 from collections.abc import Callable
+from dataclasses import dataclass
 from typing import Any
 
 import rail.stages
@@ -42,29 +42,66 @@ def _get_stage_module(stage_name: str, interactive: bool = False) -> str:
     return module
 
 
+@dataclass
+class VirtualModule:
+    module: types.ModuleType
+    children: dict[str, str]
+    parent: str
+
+
 def _create_virtual_submodules(module: types.ModuleType, stage_names: list[str]):
-    # note: should be made recursive, stubs will need to be handled as well
-    stage_modules = [
+    stage_module_names = [
         _get_stage_module(stage, interactive=True) for stage in stage_names
     ]
-    stage_modules = list(set(stage_modules))
+    stage_module_names = sorted(list(set(stage_module_names)))
 
-    print("\n", module.__path__[0].strip() + "/__init__.pyi")
-    for virtual_module_name in stage_modules:
-        virtual_module = types.ModuleType(virtual_module_name, "docstring")
-        sys.modules[virtual_module_name] = (
-            virtual_module  # only needed because this is how we access it when attatching the function
+    # get a recursive version of the names
+    recursive_module_names = []
+    for module_name in stage_module_names:
+        relative_name = module_name.replace(module.__name__, "")[1:]
+        parts = relative_name.split(".")
+        for depth in range(len(parts)):
+            relative_name = ".".join(parts[: depth + 1])
+            if relative_name not in recursive_module_names:
+                recursive_module_names.append(module.__name__ + "." + relative_name)
+
+    # populate a dictionary of virtual modules, keeping track of relationships
+    virtual_modules = {}
+    for virtual_module_name in recursive_module_names:
+        virtual_modules[virtual_module_name] = VirtualModule(
+            module=types.ModuleType(virtual_module_name),
+            children=[],
+            parent=module.__name__,
         )
-        setattr(
-            module,
-            virtual_module_name.split(".")[-1],
-            virtual_module,
-        )
-        print(f"from . import {virtual_module_name.split('.')[-1]}")
-    print()
+        if len(virtual_module_name.split(".")) != len(module.__name__.split(".")) + 1:
+            parent = virtual_modules[
+                virtual_module_name[: virtual_module_name.rindex(".")]
+            ]
+            virtual_modules[virtual_module_name].parent = parent.module.__name__
+            parent.children.append(virtual_modules[virtual_module_name].module.__name__)
+
+    # print the import section of type stubs for child and top level virtual modules
+    for vm_name, vm_VM in virtual_modules.items():
+        print("\n" + vm_name.replace(".", "/") + ".pyi")
+        for child_module_name in vm_VM.children:
+            print(f"from . import {child_module_name.split(".")[-1]}")
+    print("\n" + module.__path__[0].strip() + "/__init__.pyi")
+    for vm_name, vm_VM in virtual_modules.items():
+        if vm_VM.parent == module.__name__:
+            print(f"from . import {vm_name.split('.')[-1]}")
+
+    # attatch virtual modules to their correct parents
+    for vm_name, vm_VM in virtual_modules.items():
+        if vm_VM.parent == module.__name__:
+            setattr(module, vm_name.split(".")[-1], vm_VM.module)
+        else:
+            parent = virtual_modules[vm_VM.parent]
+            setattr(parent.module, vm_name.split(".")[-1], vm_VM.module)
+
+    return virtual_modules
 
 
-def _attatch_interactive_function(stage_name: str) -> None:
+def _attatch_interactive_function(stage_module_dict, stage_name: str) -> None:
     stage_definition = _get_stage_definition(stage_name)
     function_name = stage_definition.interactive_function
     created_function: Callable = functools.partial(
@@ -86,7 +123,7 @@ def _attatch_interactive_function(stage_name: str) -> None:
     """
 
     virtual_module_name = _get_stage_module(stage_name, interactive=True)
-    virtual_module = sys.modules[virtual_module_name]
+    virtual_module = stage_module_dict[virtual_module_name]
 
     print(f"\n{virtual_module_name.split('.')[-1]}.pyi")
 
@@ -99,4 +136,4 @@ def _attatch_interactive_function(stage_name: str) -> None:
 
     print()
 
-    setattr(virtual_module, function_name, created_function)
+    setattr(virtual_module.module, function_name, created_function)

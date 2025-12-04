@@ -3,6 +3,7 @@ from rail.core import RailEnv
 from rail.core.stage import RailStage
 from rail.creation.degrader import Degrader
 from rail.creation.degraders.addRandom import AddColumnOfRandom
+from rail.creation.degraders.deep.addSandom import AABFakeRailStage
 from rail.creation.degraders.quantityCut import QuantityCut
 from rail.creation.engine import Creator, Modeler, PosteriorCalculator
 from rail.creation.noisifier import Noisifier

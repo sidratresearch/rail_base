@@ -17,6 +17,7 @@ import sys
 from rail import interactive as interact
 from rail.interactive.creation import degraders
 
+degraders.deep.addSandom.aab_fake_stage(truthiness=0.6, truth="sandom = random")
 degraders.addRandom.aaa_fake_stage(truthiness=1, truth="Rail is interactive")
 
 interact.creation.degraders.addRandom.aaa_fake_stage(truthiness=0, truth="Cow says moo")
