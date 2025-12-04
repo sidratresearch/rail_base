@@ -9,7 +9,7 @@ import rail.stages
 from rail.core import RailEnv
 from rail.core.stage import RailStage
 
-rail.stages.import_and_attach_all()
+rail.stages.import_and_attach_all(silent=True)
 
 _stage_names = list(RailStage.pipeline_stages.keys())
 _stage_names = [
