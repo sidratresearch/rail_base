@@ -528,7 +528,7 @@ class RailStage(PipelineStage):
         # If data is in memory and not in a file, it means is small enough to process it
         # in a single chunk.
         elif in_memory:  # pragma: no cover
-            if self.config.hdf5_groupname:
+            if "hdf5_groupname" in self.config and self.config.hdf5_groupname:
                 test_data = self.get_data(tag)[self.config.hdf5_groupname]
                 self._input_length = self.get_handle(tag).data_size(
                     groupname=self.config.hdf5_groupname
