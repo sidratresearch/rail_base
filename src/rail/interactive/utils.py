@@ -1,4 +1,5 @@
 import functools
+import inspect
 import sys
 import types
 from collections.abc import Callable
@@ -42,21 +43,25 @@ def _get_stage_module(stage_name: str, interactive: bool = False) -> str:
 
 
 def _create_virtual_submodules(module: types.ModuleType, stage_names: list[str]):
-    # note: should be made recursive
+    # note: should be made recursive, stubs will need to be handled as well
     stage_modules = [
         _get_stage_module(stage, interactive=True) for stage in stage_names
     ]
     stage_modules = list(set(stage_modules))
 
+    print("\n", module.__path__[0].strip() + "/__init__.pyi")
     for virtual_module_name in stage_modules:
         virtual_module = types.ModuleType(virtual_module_name, "docstring")
-        module.__all__.append(virtual_module_name.split(".")[-1])
-        sys.modules[virtual_module_name] = virtual_module
+        sys.modules[virtual_module_name] = (
+            virtual_module  # only needed because this is how we access it when attatching the function
+        )
         setattr(
             module,
             virtual_module_name.split(".")[-1],
             virtual_module,
         )
+        print(f"from . import {virtual_module_name.split('.')[-1]}")
+    print()
 
 
 def _attatch_interactive_function(stage_name: str) -> None:
@@ -65,10 +70,33 @@ def _attatch_interactive_function(stage_name: str) -> None:
     created_function: Callable = functools.partial(
         _interactive_factory, stage_definition
     )
+    created_function.__doc__ = """docstring
+
+    Second summary
+
+    Parameters
+    ----------
+    p1 : int
+        about p1
+
+    Returns
+    -------
+    float
+        It returns a float
+    """
+
     virtual_module_name = _get_stage_module(stage_name, interactive=True)
     virtual_module = sys.modules[virtual_module_name]
 
-    # how much of stub_string can come from inspect
-    _ = f"def {function_name}(**kwargs:Any)"
+    print(f"\n{virtual_module_name.split('.')[-1]}.pyi")
+
+    signature = inspect.signature(created_function)
+    stub_docstring = (
+        f'    """{created_function.__doc__}"""'  # inspect.getdoc(created_function)
+    )
+    stub_string = f"def {function_name}{signature.format()}:\n{stub_docstring}"
+    print(stub_string)
+
+    print()
 
     setattr(virtual_module, function_name, created_function)
