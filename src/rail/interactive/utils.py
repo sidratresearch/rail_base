@@ -115,9 +115,11 @@ def _create_interactive_docstring(stage_name: str):
     class_summary = class_docstring[
         : class_docstring.index("\nParameters\n----------")
     ].strip()
-    class_parameters = class_docstring[
-        class_docstring.index("\nParameters\n----------") + 22 :
-    ].strip()
+    class_parameters = (
+        class_docstring[class_docstring.index("\nParameters\n----------") + 22 :]
+        .strip()
+        .replace("\n\n", "\n")
+    )
     epf_summary = epf_docstring[
         : epf_docstring.index("\nParameters\n----------")
     ].strip()

@@ -1,5 +1,7 @@
 from typing import Any
 
+from ceci.config import StageParameter as Param
+
 from rail.core import RailStage
 
 
@@ -11,6 +13,10 @@ class AABFakeRailStage(RailStage):
     interactive_function = "aab_fake_stage"
     inputs = []
     outputs = []
+    config_options = RailStage.config_options.copy()
+    config_options.update(
+        truthiness=Param(float, None, msg="How truthful the output should be"),
+    )
 
     def __init__(self, args: Any, **kwargs: Any) -> None:
         super().__init__(args, **kwargs)

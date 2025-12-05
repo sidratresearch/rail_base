@@ -16,6 +16,8 @@ def aaa_fake_stage(**kwargs) -> Any:
         The string to print
     output_mode: [str] default=default
         What to do with the outputs
+    truthiness: [float] (required)
+        How truthful the output should be
 
     Returns
     -------
