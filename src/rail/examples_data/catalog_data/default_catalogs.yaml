@@ -1,3 +1,17 @@
+# Information about a filter bands
+# For each band this is just a name and a reddening
+# parameter: a_env.   
+
+# The name is used for lookup and should be unique.
+# It should match the name of the associated filter file.
+#
+# These are typically found in:
+# rail_base/src/rail/examples_data/estimation_data/data/FILTER
+#
+# The a_env parameter can be computed from filter 
+# curves using code in `rail_astro_tools`:
+#
+# https://github.com/LSSTDESC/rail_astro_tools/blob/main/src/rail/tools/filter_tools.py
 Bands:
   - Band:
       name: comcam_u
@@ -37,16 +51,16 @@ Bands:
       a_env: 1.31
   - Band:
       name: euclid_H
-      a_env: 0.
+      a_env: 0.47
   - Band:
       name: euclid_J
-      a_env: 0.
+      a_env: 0.76
   - Band:
       name: euclid_Y
-      a_env: 0.
+      a_env: 1.10
   - Band:
       name: euclid_vis
-      a_env: 0.
+      a_env: 2.24
   - Band:
       name: hsc_g
       a_env: 3.64
@@ -83,7 +97,44 @@ Bands:
   - Band:
       name: roman_Z087
       a_env: 1.57
-
+# These are just copied from the comcam values and should be updated
+  - Band:
+      name: DECam_g
+      a_env: 3.64
+  - Band:
+      name: DECam_r
+      a_env: 2.70
+  - Band:
+      name: DECam_i
+      a_env: 2.06
+  - Band:
+      name: DECam_z
+      a_env: 1.58
+  - Band:
+      name: DECam_y
+      a_env: 1.31
+      
+#
+# Particulars about specific catalogs.
+# 
+# These keep track of things like the mapping between band names and columns,
+# names of special columns like the objectId and the 'true' redshift, guard
+# values used to specify non-detections or non-observations.
+#
+# The mapping between bands and magnitude, magnitude error columns
+# is constructed by looping over the band_list add resolving
+# mag_column_template and mag_err_column_template.
+#
+# Similarly, the mapping between bands and filters is constructed
+# by looping over the band_list add resolving filter_template.
+#
+# The `bands` field is used to provide band-specific overrides.
+# At a minimum this must include 5-sigma limiting magnitdues.
+#
+# But it may also include specfic overrides for the names of the
+# mag_column, mag_err_columns and filter template file, for example when a
+# subset of band_list entries do not follow the patterns in the templates.
+#
 CatalogTags:
   - CatalogTag:
       name: "com_cam"
@@ -487,3 +538,20 @@ CatalogTags:
           mag_column_name: "ROMAN_obs_K213"
           mag_err_column_name: "ROMAN_obs_K213_err"
           mag_limit: 25.9
+  - CatalogTag:
+      name: "des"
+      mag_column_template: "DES_{band}_mag"
+      mag_err_column_template: "DES_{band}_mag_err"
+      filter_template: "DECam_{band}"
+      band_list: ['g', 'r', 'i', 'z']
+      redshift_col: "ZTRUE"
+      object_id_col: "OBJID"      
+      bands:
+        g:
+          mag_limit: 24.4
+        r:
+          mag_limit: 23.8
+        i:
+          mag_limit: 23.1
+        z:
+          mag_limit: 21.7
