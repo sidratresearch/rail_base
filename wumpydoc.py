@@ -22,10 +22,7 @@ import sys
 
 import numpydoc.validate
 
-# this is a problem because importing utils means that interactive tries to parse all
-# the docstrings before we validate them, presumably this will be fixed when these utils
-# are moved from the interactive directory to utils
-from rail.interactive.utils import (
+from rail.utils.interactive_utils import (
     _get_stage_definition,
     _stage_names,
 )

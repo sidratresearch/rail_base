@@ -2,7 +2,7 @@
 
 import sys
 
-from ...utils import (
+from rail.utils.interactive_utils import (
     _attatch_interactive_function,
     _create_virtual_submodules,
     _get_all_stage_names,
