@@ -1,5 +1,7 @@
+import collections
 import functools
 import inspect
+import textwrap
 import types
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -20,6 +22,33 @@ _stage_names = [
 _stage_names.sort()
 
 _SHOW_STUB_CONTENT = False
+
+
+@dataclass
+class VirtualModule:
+    module: types.ModuleType
+    children: dict[str, str]
+    parent: str
+
+
+DOCSTRING_FORMAT = """
+{class_summary}
+
+---
+
+{function_summary}
+
+---
+
+This function was generated from the function {source_file}
+
+{function_parameters}
+{class_parameters}
+
+{function_returns}
+
+{extra_documentation}
+"""
 
 
 def _interactive_factory(rail_stage: type[RailStage], **kwargs) -> Any:
@@ -44,14 +73,9 @@ def _get_stage_module(stage_name: str, interactive: bool = False) -> str:
     return module
 
 
-@dataclass
-class VirtualModule:
-    module: types.ModuleType
-    children: dict[str, str]
-    parent: str
-
-
-def _create_virtual_submodules(module: types.ModuleType, stage_names: list[str]):
+def _create_virtual_submodules(
+    module: types.ModuleType, stage_names: list[str]
+) -> dict[str, VirtualModule]:
     stage_module_names = [
         _get_stage_module(stage, interactive=True) for stage in stage_names
     ]
@@ -104,53 +128,117 @@ def _create_virtual_submodules(module: types.ModuleType, stage_names: list[str])
     return virtual_modules
 
 
-def _create_interactive_docstring(stage_name: str):
+def _split_docstring(
+    docstring: str, include_headers: bool = True
+) -> collections.defaultdict[str, str]:
+    """Split the docstring into sections based on specific numpy-style headers.
+
+    Does some whitespace formatting on the returned sections
+
+    Parameters
+    ----------
+    docstring : str
+        The raw docstring (.__doc__, inspect.getdoc, pydoc.doc)
+    include_headers : bool, optional
+        Whether or not to include the section header in the returned string, by default
+        True
+
+    Returns
+    -------
+    collections.defaultdict[str, str]
+        Dictionary of {header: content}
+    """
+
+    result = collections.defaultdict(list)
+    docstring_lines = docstring.splitlines()
+
+    line_no = 0
+    current_section = 0
+    sections = ["Summary", "Parameters", "Returns"]
+    while line_no < len(docstring_lines) - 1:
+        if _is_section_header(line_no, docstring_lines):
+            current_section += 1
+            if include_headers:
+                result[sections[current_section]].append(docstring_lines[line_no])
+                result[sections[current_section]].append(docstring_lines[line_no + 1])
+            line_no += 2
+        else:
+            result[sections[current_section]].append(docstring_lines[line_no])
+            line_no += 1
+    result[sections[current_section]].append(docstring_lines[line_no])
+
+    joined_result = collections.defaultdict(str)
+    for title, lines in result.items():
+        joined_result[title] = "\n".join(lines).replace("\n\n\n", "\n\n").strip()
+    return joined_result
+
+
+def _is_section_header(line_no: int, docstring_lines: list[str]) -> bool:
+    """Check whether a given line is the start (text line) of a header.
+
+    Headers are checked against a list of "splitting headers", and a line containing
+    exactly this text, followed be a line of hyphens of the same length indicates a
+    header
+
+    This roughly follows the numpydoc function NumpyDocString._is_at_section()
+
+    Parameters
+    ----------
+    line_no : int
+        The line number to check
+    docstring_lines : list[str]
+        All lines in the docstring
+
+    Returns
+    -------
+    bool
+        Whether this line number starts a header
+    """
+
+    splitting_headers = [
+        "Parameters",
+        "Returns",
+    ]  # very small subset of numpydoc.validate.ALLOWED_SECTIONS
+
+    current_line = docstring_lines[line_no].strip()
+    if current_line in splitting_headers:
+        next_line = docstring_lines[line_no + 1].strip()
+        return next_line == ("-" * len(current_line))
+    return False
+
+
+def _create_interactive_docstring(stage_name: str) -> str:
     stage_definition = _get_stage_definition(stage_name)
 
+    # get the raw docstrings
     class_docstring = stage_definition.__doc__
     epf_docstring = getattr(
         stage_definition, stage_definition.entrypoint_function
     ).__doc__
 
-    class_summary = class_docstring[
-        : class_docstring.index("\nParameters\n----------")
-    ].strip()
-    class_parameters = (
-        class_docstring[class_docstring.index("\nParameters\n----------") + 22 :]
-        .strip()
-        .replace("\n\n", "\n")
+    # do some pre-processing
+    class_sections = _split_docstring(class_docstring, include_headers=False)
+    epf_sections = _split_docstring(epf_docstring)
+    source_file = ".".join(
+        [stage_definition.__module__, stage_name, stage_definition.entrypoint_function]
     )
-    epf_summary = epf_docstring[
-        : epf_docstring.index("\nParameters\n----------")
-    ].strip()
-    epf_parameters = epf_docstring[
-        epf_docstring.index("\nParameters\n----------") : epf_docstring.index(
-            "\nReturns\n-------"
-        )
-    ].strip()
-    epf_returns = epf_docstring[epf_docstring.index("\nReturns\n-------") :].strip()
 
-    # print(f">>>>>>>>>>>>>\n{class_summary}\n<<<<<<<<<<<<<<<")
-    # print(f">>>>>>>>>>>>>\n{epf_summary}\n<<<<<<<<<<<<<<<")
-    # print(f">>>>>>>>>>>>>\n{epf_parameters}\n<<<<<<<<<<<<<<<")
-    # print(f">>>>>>>>>>>>>\n{class_parameters}\n<<<<<<<<<<<<<<<")
-    # print(f">>>>>>>>>>>>>\n{epf_returns}\n<<<<<<<<<<<<<<<")
+    # assemble the docstring
+    docstring = DOCSTRING_FORMAT.format(
+        class_summary=class_sections["Summary"],
+        function_summary=epf_sections["Summary"],
+        source_file=source_file,
+        function_parameters=epf_sections["Parameters"].replace("\n\n", "\n"),
+        class_parameters=class_sections["Parameters"].replace("\n\n", "\n"),
+        function_returns=epf_sections["Returns"],
+        extra_documentation=(
+            stage_definition.extra_interactive_documentation
+            if stage_definition.extra_interactive_documentation is not None
+            else ""
+        ),
+    )
 
-    source_file = inspect.getsourcefile(stage_definition)
-
-    docstring = f"""{class_summary}
-
-{epf_summary}
-
-This function was generated from {source_file}
-
-{epf_parameters}
-{class_parameters}
-
-{epf_returns}"""
-
-    if stage_definition.extra_interactive_documentation is not None:
-        docstring += "\n" + stage_definition.extra_interactive_documentation
+    docstring = textwrap.indent(docstring.strip(), " " * 4)
 
     return docstring
 
