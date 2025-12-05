@@ -1,6 +1,7 @@
 import collections
 import functools
 import inspect
+import sys
 import textwrap
 import types
 from collections.abc import Callable
@@ -329,3 +330,35 @@ def _write_stubs(
         )
 
         print(f"Created {str(path)}")
+
+
+def _initialize_interactive_module(calling_module_name: str, write_stubs: bool = False):
+    """Create wrappers for RAIL stages as single-call functions for interactive use.
+
+    Optionally create stub files to improve static analysis of these dynamically created functions.
+
+    Parameters
+    ----------
+    calling_module_name : str
+        The __name__ attribute of the module calling this function.
+    write_stubs : bool, optional
+        Whether to write stub files, by default False
+    """
+
+    calling_module = sys.modules[calling_module_name]
+    relevant_stages = [
+        stage
+        for stage in _stage_names
+        if _get_stage_module(stage, interactive=True).startswith(calling_module_name)
+    ]
+
+    # for testing
+    relevant_stages = relevant_stages[:2] + relevant_stages[-1:]
+
+    virtual_module_dict = _create_virtual_submodules(calling_module, relevant_stages)
+
+    for stage_name in relevant_stages:
+        _attatch_interactive_function(virtual_module_dict, stage_name)
+
+    if write_stubs:
+        _write_stubs(calling_module, relevant_stages, virtual_module_dict)
