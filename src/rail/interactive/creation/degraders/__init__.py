@@ -7,6 +7,7 @@ from rail.utils.interactive_utils import (
     _create_virtual_submodules,
     _get_stage_module,
     _stage_names,
+    _write_stubs,
 )
 
 _degrader_stages = [
@@ -24,3 +25,6 @@ _stage_module_dict = _create_virtual_submodules(_current_module, _degrader_stage
 
 for _stage_name in _degrader_stages:
     _attatch_interactive_function(_stage_module_dict, _stage_name)
+
+
+_write_stubs(_current_module, _degrader_stages, _stage_module_dict)

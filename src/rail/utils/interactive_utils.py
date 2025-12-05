@@ -5,6 +5,7 @@ import textwrap
 import types
 from collections.abc import Callable
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import rail.stages
@@ -20,8 +21,6 @@ _stage_names = [
     if i not in RailEnv._base_stages_names  # pylint: disable=protected-access
 ]
 _stage_names.sort()
-
-_SHOW_STUB_CONTENT = False
 
 
 @dataclass
@@ -101,17 +100,6 @@ def _create_virtual_submodules(
             ]
             virtual_modules[virtual_module_name].parent = parent.module.__name__
             parent.children.append(virtual_modules[virtual_module_name].module.__name__)
-
-    # print the import section of type stubs for child and top level virtual modules
-    if _SHOW_STUB_CONTENT:
-        for vm_name, vm_VM in virtual_modules.items():
-            print("\n" + vm_name.replace(".", "/") + ".pyi")
-            for child_module_name in vm_VM.children:
-                print(f"from . import {child_module_name.split(".")[-1]}")
-        print("\n" + module.__path__[0].strip() + "/__init__.pyi")
-        for vm_name, vm_VM in virtual_modules.items():
-            if vm_VM.parent == module.__name__:
-                print(f"from . import {vm_name.split('.')[-1]}")
 
     # attatch virtual modules to their correct parents
     for vm_name, vm_VM in virtual_modules.items():
@@ -239,7 +227,9 @@ def _create_interactive_docstring(stage_name: str) -> str:
     return docstring
 
 
-def _attatch_interactive_function(stage_module_dict, stage_name: str) -> None:
+def _attatch_interactive_function(
+    stage_module_dict: dict[str, VirtualModule], stage_name: str
+) -> None:
     stage_definition = _get_stage_definition(stage_name)
     function_name = stage_definition.interactive_function
     created_function: Callable = functools.partial(
@@ -250,14 +240,70 @@ def _attatch_interactive_function(stage_module_dict, stage_name: str) -> None:
     virtual_module_name = _get_stage_module(stage_name, interactive=True)
     virtual_module = stage_module_dict[virtual_module_name]
 
-    if _SHOW_STUB_CONTENT:
-        print(f"\n{virtual_module_name.split('.')[-1]}.pyi")
-        signature = inspect.signature(created_function)
-        stub_docstring = (
-            f'    """{created_function.__doc__}"""'  # inspect.getdoc(created_function)
-        )
-        stub_string = f"def {function_name}{signature.format()}:\n{stub_docstring}"
-        print(stub_string)
-        print()
-
     setattr(virtual_module.module, function_name, created_function)
+
+
+def _get_stub_path(
+    stub_directory: Path,
+    virtual_module_name: str | None = None,
+) -> Path:
+    if virtual_module_name is not None:
+        final_segment = virtual_module_name.split(".")[-1]
+        filename = f"{final_segment}.pyi"
+        return stub_directory / filename
+
+    return stub_directory / "__init__.pyi"
+
+
+def _write_stubs(
+    module: types.ModuleType,
+    stage_names: list[str],
+    virtual_modules: dict[str, VirtualModule],
+) -> None:
+    stub_files = collections.defaultdict(list)
+    stub_directory = Path(module.__path__[0])
+
+    # import top level virtual modules
+    stub = stub_files[_get_stub_path(stub_directory)]
+    for vm_name, vm_VM in virtual_modules.items():
+        if vm_VM.parent == module.__name__:
+            stub.append(f"from . import {vm_name.split('.')[-1]}")
+
+    # import child virtual modules from their parents
+    for vm_name, vm_VM in virtual_modules.items():
+        stub = stub_files[_get_stub_path(stub_directory, virtual_module_name=vm_name)]
+        for child_module_name in vm_VM.children:
+            stub.append(f"from . import {child_module_name.split(".")[-1]}")
+
+    # add function stubs
+    for stage_name in stage_names:
+        virtual_module_name = _get_stage_module(stage_name, interactive=True)
+        stage_definition = _get_stage_definition(stage_name)
+
+        function_name = stage_definition.interactive_function
+        virtual_module = virtual_modules[virtual_module_name].module
+        created_function = getattr(virtual_module, function_name)
+
+        signature = inspect.signature(created_function)
+        buffer = " " * 4 + '"""'
+        docstring = f"{buffer}\n{created_function.__doc__}\n{buffer}"
+
+        stub_path = _get_stub_path(
+            stub_directory, virtual_module_name=virtual_module_name
+        )
+        stub_files[stub_path].append(
+            f"def {function_name}{signature.format()}:\n{docstring}"
+        )
+
+    # merge lists to strings
+    stub_files_strings = {}
+    for path, content in stub_files.items():
+        joined_content = "\n\n".join(content)
+        if ") -> Any:" in joined_content:
+            joined_content = f"from typing import Any\n\n{joined_content}"
+        stub_files_strings[path] = joined_content
+
+    for path, content in stub_files_strings.items():
+        print(path)
+        print(content)
+        print("\n\n" + "-" * 40 + "\n\n")
