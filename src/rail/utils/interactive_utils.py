@@ -58,10 +58,6 @@ def _interactive_factory(rail_stage: type[RailStage], **kwargs) -> Any:
     return entrypoint_function(**kwargs)
 
 
-def _get_all_stage_names() -> list[str]:
-    return _stage_names
-
-
 def _get_stage_definition(stage_name: str) -> type[RailStage]:
     return RailStage.pipeline_stages[stage_name][0]
 

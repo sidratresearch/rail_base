@@ -5,14 +5,13 @@ import sys
 from rail.utils.interactive_utils import (
     _attatch_interactive_function,
     _create_virtual_submodules,
-    _get_all_stage_names,
     _get_stage_module,
+    _stage_names,
 )
 
-_stages = _get_all_stage_names()
 _degrader_stages = [
     stage
-    for stage in _stages
+    for stage in _stage_names
     if _get_stage_module(stage, interactive=True).startswith(__name__)
 ]
 _current_module = sys.modules[__name__]
