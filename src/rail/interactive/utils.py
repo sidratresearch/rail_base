@@ -22,7 +22,7 @@ _stage_names.sort()
 _SHOW_STUB_CONTENT = False
 
 
-def _interactive_factory(rail_stage: RailStage, **kwargs) -> Any:
+def _interactive_factory(rail_stage: type[RailStage], **kwargs) -> Any:
     instance = rail_stage.make_stage(**kwargs)
     entrypoint_function_name = instance.entrypoint_function
     entrypoint_function: Callable = getattr(instance, entrypoint_function_name)
@@ -33,7 +33,7 @@ def _get_all_stage_names() -> list[str]:
     return _stage_names
 
 
-def _get_stage_definition(stage_name: str) -> type:
+def _get_stage_definition(stage_name: str) -> type[RailStage]:
     return RailStage.pipeline_stages[stage_name][0]
 
 
