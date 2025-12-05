@@ -8,6 +8,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import black
+
 import rail.stages
 from rail.core import RailEnv
 from rail.core.stage import RailStage
@@ -260,6 +262,18 @@ def _write_stubs(
     stage_names: list[str],
     virtual_modules: dict[str, VirtualModule],
 ) -> None:
+    """Write stub (type hint) files for interactive functions.
+
+    Parameters
+    ----------
+    module : types.ModuleType
+        The RAIL module that the interactive functions are children of
+    stage_names : list[str]
+        Names of RAIL stages that have interactive functions
+    virtual_modules : dict[str, VirtualModule]
+        The code-created namespaces that the interactive functions live in
+    """
+
     stub_files = collections.defaultdict(list)
     stub_directory = Path(module.__path__[0])
 
@@ -296,14 +310,22 @@ def _write_stubs(
         )
 
     # merge lists to strings
-    stub_files_strings = {}
+    stub_files_strings: dict[Path, str] = {}
     for path, content in stub_files.items():
-        joined_content = "\n\n".join(content)
+        joined_content = "\n".join(content)
         if ") -> Any:" in joined_content:
             joined_content = f"from typing import Any\n\n{joined_content}"
         stub_files_strings[path] = joined_content
 
+    # write and format the file
     for path, content in stub_files_strings.items():
-        print(path)
-        print(content)
-        print("\n\n" + "-" * 40 + "\n\n")
+        path = path.with_name(f"generated_{path.name}")
+        path.write_text(content)
+        black.format_file_in_place(
+            path,
+            fast=False,
+            mode=black.Mode(is_pyi=True),
+            write_back=black.WriteBack.YES,
+        )
+
+        print(f"Created {str(path)}")

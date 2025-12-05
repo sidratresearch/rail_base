@@ -36,6 +36,7 @@ dev = [
     "pylint",        # Used for static linting of files
     "jupyter",       # Used to render simple test notebook
     "numpydoc",
+    "black",
 ]
 
 [project.scripts]
