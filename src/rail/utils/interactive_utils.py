@@ -1,3 +1,7 @@
+"""
+Utility functions for the rail.interactive module.
+"""
+
 import collections
 import functools
 import inspect
@@ -28,6 +32,9 @@ _stage_names.sort()
 
 @dataclass
 class VirtualModule:
+    """A wrapper class to hold a code-created module/namespace, as well as it's
+    relationships to other modules"""
+
     module: types.ModuleType
     children: dict[str, str]
     parent: str
@@ -54,6 +61,19 @@ This function was generated from the function {source_file}
 
 
 def _interactive_factory(rail_stage: type[RailStage], **kwargs) -> Any:
+    """Create the actual interactive function for a RAIL stage
+
+    Parameters
+    ----------
+    rail_stage : type[RailStage]
+        The stage being operated on
+
+    Returns
+    -------
+    Any
+        This function returns the result of calling the stage's entrypoint function
+        (after calling make_stage)
+    """
     instance = rail_stage.make_stage(**kwargs)
     entrypoint_function_name = instance.entrypoint_function
     entrypoint_function: Callable = getattr(instance, entrypoint_function_name)
@@ -61,10 +81,36 @@ def _interactive_factory(rail_stage: type[RailStage], **kwargs) -> Any:
 
 
 def _get_stage_definition(stage_name: str) -> type[RailStage]:
+    """Fetch the original class definition for a RAIL stage from its name
+
+    Parameters
+    ----------
+    stage_name : str
+        Name of the RAIL stage class
+
+    Returns
+    -------
+    type[RailStage]
+        The class definition
+    """
     return RailStage.pipeline_stages[stage_name][0]
 
 
 def _get_stage_module(stage_name: str, interactive: bool = False) -> str:
+    """Get the name of the module from which you would import the given RAIL stage
+
+    Parameters
+    ----------
+    stage_name : str
+        Name of the RAIL stage class
+    interactive : bool, optional
+        Whether this would be imported from rail.interactive instead of rail, by default False
+
+    Returns
+    -------
+    str
+        Absolute import path
+    """
     module = _get_stage_definition(stage_name).__module__
     if interactive:
         return module.replace("rail.", "rail.interactive.", count=1)
@@ -74,6 +120,21 @@ def _get_stage_module(stage_name: str, interactive: bool = False) -> str:
 def _create_virtual_submodules(
     module: types.ModuleType, stage_names: list[str]
 ) -> dict[str, VirtualModule]:
+    """Create all the relevant child namespaces of `module` in which the interactive
+    functions will live.
+
+    Parameters
+    ----------
+    module : types.ModuleType
+        The parent module
+    stage_names : list[str]
+        RAIL stages which will have interactive functions
+
+    Returns
+    -------
+    dict[str, VirtualModule]
+        All of the created namespaces
+    """
     stage_module_names = [
         _get_stage_module(stage, interactive=True) for stage in stage_names
     ]
@@ -97,6 +158,8 @@ def _create_virtual_submodules(
             children=[],
             parent=module.__name__,
         )
+
+        # assign parent/child relationships if necessary
         if len(virtual_module_name.split(".")) != len(module.__name__.split(".")) + 1:
             parent = virtual_modules[
                 virtual_module_name[: virtual_module_name.rindex(".")]
@@ -105,12 +168,12 @@ def _create_virtual_submodules(
             parent.children.append(virtual_modules[virtual_module_name].module.__name__)
 
     # attatch virtual modules to their correct parents
-    for vm_name, vm_VM in virtual_modules.items():
-        if vm_VM.parent == module.__name__:
-            setattr(module, vm_name.split(".")[-1], vm_VM.module)
+    for name, virtual_module in virtual_modules.items():
+        if virtual_module.parent == module.__name__:
+            setattr(module, name.split(".")[-1], virtual_module.module)
         else:
-            parent = virtual_modules[vm_VM.parent]
-            setattr(parent.module, vm_name.split(".")[-1], vm_VM.module)
+            parent = virtual_modules[virtual_module.parent]
+            setattr(parent.module, name.split(".")[-1], virtual_module.module)
 
     return virtual_modules
 
@@ -138,10 +201,11 @@ def _split_docstring(
 
     result = collections.defaultdict(list)
     docstring_lines = docstring.splitlines()
+    sections = ["Summary", "Parameters", "Returns"]
 
+    # add lines to `result` one at a time, tracking which section is being used
     line_no = 0
     current_section = 0
-    sections = ["Summary", "Parameters", "Returns"]
     while line_no < len(docstring_lines) - 1:
         if _is_section_header(line_no, docstring_lines):
             current_section += 1
@@ -152,8 +216,11 @@ def _split_docstring(
         else:
             result[sections[current_section]].append(docstring_lines[line_no])
             line_no += 1
-    result[sections[current_section]].append(docstring_lines[line_no])
+    result[sections[current_section]].append(
+        docstring_lines[line_no]
+    )  # add the final line
 
+    # merge list items together
     joined_result = collections.defaultdict(str)
     for title, lines in result.items():
         joined_result[title] = "\n".join(lines).replace("\n\n\n", "\n\n").strip()
@@ -195,6 +262,19 @@ def _is_section_header(line_no: int, docstring_lines: list[str]) -> bool:
 
 
 def _create_interactive_docstring(stage_name: str) -> str:
+    """Merge the relevant information from the class and entrypoint function of a RAIL
+    stage to create a docstring for the interactive function
+
+    Parameters
+    ----------
+    stage_name : str
+        Name of the RAIL stage
+
+    Returns
+    -------
+    str
+        The final docstring for the interactive function
+    """
     stage_definition = _get_stage_definition(stage_name)
 
     # get the raw docstrings
@@ -233,15 +313,25 @@ def _create_interactive_docstring(stage_name: str) -> str:
 def _attatch_interactive_function(
     stage_module_dict: dict[str, VirtualModule], stage_name: str
 ) -> None:
+    """Create a wrapper function for a RAIL stage, and assign it to the appropriate namespace.
+
+    Parameters
+    ----------
+    stage_module_dict : dict[str, VirtualModule]
+        The set of namespaces that may be relevant
+    stage_name : str
+        The name of the RAIL stage class
+    """
     stage_definition = _get_stage_definition(stage_name)
     function_name = stage_definition.interactive_function
+    virtual_module_name = _get_stage_module(stage_name, interactive=True)
+    virtual_module = stage_module_dict[virtual_module_name]
+
+    # create the function
     created_function: Callable = functools.partial(
         _interactive_factory, stage_definition
     )
     created_function.__doc__ = _create_interactive_docstring(stage_name)
-
-    virtual_module_name = _get_stage_module(stage_name, interactive=True)
-    virtual_module = stage_module_dict[virtual_module_name]
 
     setattr(virtual_module.module, function_name, created_function)
 
@@ -250,6 +340,20 @@ def _get_stub_path(
     stub_directory: Path,
     virtual_module_name: str | None = None,
 ) -> Path:
+    """Get the final path to where a stub file should live
+
+    Parameters
+    ----------
+    stub_directory : Path
+        Parent directory for stub files
+    virtual_module_name : str | None, optional
+        The virtual module that's being written about if applicable, by default None
+
+    Returns
+    -------
+    Path
+        Path to the stub file
+    """
     if virtual_module_name is not None:
         final_segment = virtual_module_name.split(".")[-1]
         filename = f"{final_segment}.pyi"
@@ -346,6 +450,8 @@ def _initialize_interactive_module(calling_module_name: str, write_stubs: bool =
     """
 
     calling_module = sys.modules[calling_module_name]
+
+    # filter down all the RAIL stages to only ones which are children of this module
     relevant_stages = [
         stage
         for stage in _stage_names
