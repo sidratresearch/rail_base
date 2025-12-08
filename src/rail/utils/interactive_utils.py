@@ -562,7 +562,6 @@ def _write_stubs(
 
     # write and format the file
     for path, content in stub_files_strings.items():
-        path = path.with_name(f"generated_{path.name}")
         path.write_text(content)
         black.format_file_in_place(
             path,
@@ -575,7 +574,9 @@ def _write_stubs(
         print(f"Created {str(path)}")
 
 
-def _initialize_interactive_module(calling_module_name: str, write_stubs: bool = False):
+def _initialize_interactive_module(
+    calling_module_name: str, write_stubs: bool = False
+) -> None:
     """Create wrappers for RAIL stages as single-call functions for interactive use.
 
     Optionally create stub files to improve static analysis of these dynamically created functions.
