@@ -13,8 +13,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import black
-
 import rail.stages
 from rail.core import RailEnv
 from rail.core.stage import RailStage
@@ -261,6 +259,113 @@ def _is_section_header(line_no: int, docstring_lines: list[str]) -> bool:
     return False
 
 
+def _wrap_docstring(
+    text: str,
+    max_line_length: int,
+    line_filter: Callable[[int, list[str]], bool] | None = None,
+) -> str:
+    """Wrap a docstring (or portion thereof) to a given length
+
+    Parameters
+    ----------
+    text : str
+        The text to wrap
+    max_line_length : int
+        The width to wrap at
+    line_filter : Callable[[int, list[str]], bool] | None, optional
+        A filter function to check if a line should skip wrapping, by default None.
+        The function takes the line number and the full text (for multi-line analysis)
+        and returns True if this line should skip wrapping, and False if this line
+        should be wrapped. This function returning True (skip) will override the line
+        length check, so is a way to force long lines to not wrap
+
+    Returns
+    -------
+    str
+        The wrapped text
+    """
+    wrapped_lines = []
+
+    text = text.replace("\t", " " * 4)  # probably not necessary
+    lines = text.splitlines()
+
+    for i, line in enumerate(lines):
+        # exit early if the line is short, or the filter says so
+        line_is_short = len(line) <= max_line_length
+        line_skips = line_filter(i, lines) if line_filter is not None else False
+        if line_is_short or line_skips:
+            wrapped_lines.append(line)
+            continue
+
+        unindented = line.lstrip()
+        indent_size = len(line) - len(unindented)
+
+        # wrap the text, keeping the indent width in mind
+        wrapped_line = "\n".join(
+            textwrap.wrap(unindented, width=max_line_length - indent_size)
+        )
+
+        # re-indent to the original depth, and save the line
+        wrapped_lines.append(textwrap.indent(wrapped_line, " " * indent_size))
+
+    return "\n".join(wrapped_lines)
+
+
+def _param_annotion_wrap_filter(
+    parameters_section_header: int,
+    blank_lines: list[int],
+    lineno: int,
+    docstring_lines: list[str],
+) -> bool:
+    """Filter out annotation (not description) lines in the Parameters section of a
+    docstring from being wrapped.
+
+    Needs to be applied to a docstring BEFORE any indentation, as this uses the fact
+    that annotations are un-indented.
+    This also isn't applied to the Returns section (or any others that might have
+    annotation-style items that shouldn't be wrapped; because Parameters is the only
+    section we guarantee the existence of in an isolate-able fashion.
+
+    Parameters
+    ----------
+    parameters_section_header : int
+        The line number where the Parameters header is
+    blank_lines : list[int]
+        Empty lines in the docstring
+    lineno : int
+        The line number of the docstring to check
+    docstring_lines : list[str]
+        The entire docstring, split into lines
+
+    Returns
+    -------
+    bool
+        Whether to skip line wrapping because this is an annotation (True) or not (False)
+    """
+
+    # lines up to and including the parameter header are not parameter annotations
+    if lineno <= parameters_section_header + 1:
+        return False
+
+    # check if we've left the parameters section
+    if max(blank_lines) > parameters_section_header:
+        # there exist blank lines after the param header, these should denote a new
+        # section (though that new section might not have a header, which is why we're
+        # checking with newlines)
+        parameters_section_end = [
+            i for i in blank_lines if i > parameters_section_header
+        ][-1]
+        if parameters_section_end < lineno:
+            return False  # passed the end of the param section
+
+    # we are inside the parameters section
+    line = docstring_lines[lineno]
+    unindented = line.lstrip()
+
+    # if true this is a parameter annotation (not the description of it), skip wrapping
+    return len(line) == len(unindented)
+
+
 def _create_interactive_docstring(stage_name: str) -> str:
     """Merge the relevant information from the class and entrypoint function of a RAIL
     stage to create a docstring for the interactive function
@@ -305,7 +410,32 @@ def _create_interactive_docstring(stage_name: str) -> str:
         ),
     )
 
-    docstring = textwrap.indent(docstring.strip(), " " * 4)
+    # prepare to wrap the docstring
+    docstring_lines = docstring.splitlines()
+    section_headers = [
+        i for i in range(len(docstring_lines)) if _is_section_header(i, docstring_lines)
+    ]
+    parameters_section_header = [
+        i for i in section_headers if docstring_lines[i] == "Parameters"
+    ][0]
+    blank_lines = [
+        i for i in range(len(docstring_lines)) if len(docstring_lines[i]) == 0
+    ]
+    param_annotation_filter = functools.partial(
+        _param_annotion_wrap_filter, parameters_section_header, blank_lines
+    )
+
+    # wrap and then re-indent the docstring
+    indent_size = 4
+    max_line_length = 88
+    docstring = textwrap.indent(
+        _wrap_docstring(
+            docstring.strip(),
+            max_line_length=max_line_length - indent_size,
+            line_filter=param_annotation_filter,
+        ),
+        "" * indent_size,
+    )
 
     return docstring
 
@@ -369,6 +499,9 @@ def _write_stubs(
 ) -> None:
     """Write stub (type hint) files for interactive functions.
 
+    Multiple runs of this function should result in identical stub files, and will not
+    trigger a modification as read by Git.
+
     Parameters
     ----------
     module : types.ModuleType
@@ -378,6 +511,11 @@ def _write_stubs(
     virtual_modules : dict[str, VirtualModule]
         The code-created namespaces that the interactive functions live in
     """
+    # formatters used for the stub files, imported here since these are only required
+    # for developers
+    # pylint: disable=import-outside-toplevel
+    import black
+    import isort
 
     stub_files = collections.defaultdict(list)
     stub_directory = Path(module.__path__[0])
@@ -432,6 +570,7 @@ def _write_stubs(
             mode=black.Mode(is_pyi=True),
             write_back=black.WriteBack.YES,
         )
+        isort.api.sort_file(path, quiet=True, profile="black")
 
         print(f"Created {str(path)}")
 

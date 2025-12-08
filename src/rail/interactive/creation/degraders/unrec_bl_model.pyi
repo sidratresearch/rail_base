@@ -1,11 +1,15 @@
 from typing import Any
 
 def create_unrecognized_blend(**kwargs) -> Any:
-    """Model for Creating Unrecognized Blends.
+    """
+    Model for Creating Unrecognized Blends.
 
     Finding objects nearby each other. Merge them into one blended
     Use Friends of Friends for matching. May implement shape matching in the future.
-    Take avergaged Ra and Dec for blended source, and sum up fluxes in each band. May implement merged shapes in the future.
+    Take avergaged Ra and Dec for blended source, and sum up fluxes in each band. May
+    implement merged shapes in the future.
+
+    ---
 
     The main interface method for ``Degrader``.
 
@@ -23,7 +27,10 @@ def create_unrecognized_blend(**kwargs) -> Any:
     Finally, this will return a PqHandle providing access to that output
     data.
 
-    This function was generated from /home/tai/projects/desc-rail/alg_packages/rail_astro_tools/src/rail/creation/degraders/unrec_bl_model.py
+    ---
+
+    This function was generated from the function
+    rail.creation.degraders.unrec_bl_model.UnrecBlModel.__call__
 
     Parameters
     ----------
@@ -65,4 +72,5 @@ def create_unrecognized_blend(**kwargs) -> Any:
     Returns
     -------
     output_data : PqHandle
-        A handle giving access to a table with degraded sample"""
+        A handle giving access to a table with degraded sample
+    """

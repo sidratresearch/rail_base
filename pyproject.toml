@@ -36,7 +36,8 @@ dev = [
     "pylint",        # Used for static linting of files
     "jupyter",       # Used to render simple test notebook
     "numpydoc",
-    "black",
+    "black",         # Currently imported in interactive whether or not we're on dev
+    "isort",         # as above
 ]
 
 [project.scripts]
