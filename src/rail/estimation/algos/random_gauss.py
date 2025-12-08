@@ -21,6 +21,7 @@ class RandomGaussInformer(CatInformer):
 
     name = "RandomGaussInformer"
     entrypoint_function = "inform"  # the user-facing science function for this class
+    interactive_function = "random_gauss_informer"
     config_options = CatInformer.config_options.copy()
 
     def run(self) -> None:
@@ -32,6 +33,7 @@ class RandomGaussEstimator(CatEstimator):
 
     name = "RandomGaussEstimator"
     entrypoint_function = "estimate"  # the user-facing science function for this class
+    interactive_function = "random_gauss_estimator"
     inputs = [("input", TableHandle), ("model", ModelHandle)]
     config_options = CatEstimator.config_options.copy()
     config_options.update(
@@ -121,7 +123,8 @@ class RandomGaussEstimator(CatEstimator):
         random_seed = self.config.seed + start
 
         # run the main functionality
-        # We pass all of the config parameters to the function so that it can access them without accessing self
+        # We pass all of the config parameters to the function so that it can access
+        # them without accessing self
         # As well as any additional parameters that the function needs
         qp_d, zgrid = self.core(data, random_seed, **self.config)
 

@@ -63,6 +63,7 @@ class AddColumnOfRandom(Noisifier):
 
     name = "AddColumnOfRandom"
     entrypoint_function = "__call__"  # the user-facing science function for this class
+    interactive_function = "add_column_of_random"
     config_options = Noisifier.config_options.copy()
     config_options.update(
         col_name=Param(
