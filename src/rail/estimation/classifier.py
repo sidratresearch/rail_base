@@ -100,7 +100,7 @@ class PZClassifier(RailStage):
         super().__init__(args, **kwargs)
         self._output_handle: DataHandle | None = None
 
-    def classify(self, input_data: qp.Ensemble) -> DataHandle:
+    def classify(self, input_data: qp.Ensemble) -> TableHandle:
         """The main run method for the classifier, should be implemented
         in the specific subclass.
 
@@ -123,12 +123,12 @@ class PZClassifier(RailStage):
 
         Parameters
         ----------
-        input_data
+        input_data : qp.Ensemble
             Per-galaxy p(z), and any ancilary data associated with it
 
         Returns
         -------
-        DataHandle
+        TableHandle
             Class assignment for each galaxy, typically in the form of a
             dictionary with IDs and class labels.
         """

@@ -9,7 +9,7 @@ import qp
 from ceci.config import StageParameter as Param
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import DataHandle, QPHandle, TableHandle, TableLike
+from rail.core.data import PqHandle, QPHandle, TableHandle, TableLike
 from rail.core.stage import RailStage
 
 
@@ -56,7 +56,7 @@ class TrueNZHistogrammer(RailStage):
                         mask = np.ones(e - s, dtype=bool)
                     else:
                         mask = d["class_id"] == self.config.selected_bin
-            yield start, end, pz_data, mask
+            yield start, end, pz_data, mask  # pylint: disable=possibly-used-before-assignment
 
     def run(self) -> None:
         iterator = self._setup_iterator()
@@ -99,7 +99,7 @@ class TrueNZHistogrammer(RailStage):
         assert self.zgrid is not None
         single_hist += np.histogram(zb, bins=self.zgrid)[0]
 
-    def histogram(self, catalog: TableLike, tomo_bins: TableLike) -> DataHandle:
+    def histogram(self, catalog: TableLike, tomo_bins: TableLike) -> PqHandle:
         """The main interface method for ``TrueNZHistogrammer``.
 
         Creates histogram of N of Z_true.
@@ -126,7 +126,7 @@ class TrueNZHistogrammer(RailStage):
 
         Returns
         -------
-        DataHandle
+        PqHandle
             A handle giving access to a the histogram in QP format
         """
         self.set_data("input", catalog)

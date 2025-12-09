@@ -79,7 +79,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
         Parameters
         ----------
-        input_data
+        input_data : TableLike
             A dictionary of all input data
 
         Returns

@@ -8,7 +8,7 @@ import numpy as np
 import qp
 from ceci.config import StageParameter as Param
 
-from rail.core.data import DataHandle, QPHandle, TableHandle, TableLike
+from rail.core.data import QPHandle, TableHandle, TableLike
 from rail.estimation.informer import PzInformer
 from rail.estimation.summarizer import PZSummarizer
 
@@ -149,26 +149,29 @@ class NaiveStackMaskedSummarizer(NaiveStackSummarizer):
                 else:
                     mask = d["class_id"] == self.config.selected_bin
             if mask is None:
-                mask = np.ones(pz_data.npdf, dtype=bool)
-            yield start, end, pz_data, mask
+                mask = np.ones(
+                    pz_data.npdf,  # pylint: disable=possibly-used-before-assignment
+                    dtype=bool,
+                )
+            yield start, end, pz_data, mask  # pylint: disable=possibly-used-before-assignment
 
     def summarize(
         self, input_data: qp.Ensemble, tomo_bins: TableLike | None = None
-    ) -> DataHandle:
+    ) -> QPHandle:
         """Override the Summarizer.summarize() method to take tomo bins
         as an additional input
 
         Parameters
         ----------
-        input_data
+        input_data : qp.Ensemble
             Per-galaxy p(z), and any ancilary data associated with it
 
-        tomo_bins
-            Tomographic bins file
+        tomo_bins : TableLike | None, optional
+            Tomographic bins file, by default None
 
         Returns
         -------
-        DataHandle
+        QPHandle
             Ensemble with n(z), and any ancilary data
         """
         self.set_data("input", input_data)

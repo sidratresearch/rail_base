@@ -93,7 +93,7 @@ class PZSummarizer(RailStage):
 
         Parameters
         ----------
-        input_data
+        input_data : qp.Ensemble
             Per-galaxy p(z), and any ancilary data associated with it
 
         Returns

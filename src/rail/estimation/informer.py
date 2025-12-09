@@ -64,7 +64,7 @@ class CatInformer(RailStage):
 
         Parameters
         ----------
-        input_data
+        training_data : TableLike
             dictionary of all input data, or a `TableHandle` providing access to it
 
         Returns
@@ -127,7 +127,9 @@ class PzInformer(RailStage):
         self.model = None
         self.model_handle: ModelHandle | None = None
 
-    def _setup_iterator(self) -> Generator:
+    def _setup_iterator(  # pylint: disable=inconsistent-return-statements
+        self,
+    ) -> Generator:
 
         itrs = []
         input_itr = self.input_iterator("input", groupname="")
@@ -152,7 +154,7 @@ class PzInformer(RailStage):
                 else:  # pragma: no cover
                     true_redshift = d[self.config.redshift_col]
 
-            yield start, end, qp_ens, true_redshift
+            yield start, end, qp_ens, true_redshift  # pylint: disable=possibly-used-before-assignment
 
     def inform(
         self,
@@ -174,11 +176,11 @@ class PzInformer(RailStage):
 
         Parameters
         ----------
-        input_data
-            Per-galaxy p(z), and any ancilary data associated with it
+        training_data : qp.Ensemble | str, optional
+            Per-galaxy p(z), and any ancilary data associated with it, by default "None"
 
-        truth_data
-            Table with the true redshifts
+        truth_data : TableLike | str, optional
+            Table with the true redshifts, by default "None"
 
         Returns
         -------

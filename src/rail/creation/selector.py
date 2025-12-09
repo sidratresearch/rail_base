@@ -51,7 +51,7 @@ class Selector(RailStage):
 
         Parameters
         ----------
-        sample:
+        sample : TableLike
             The sample to be selected
 
         Returns

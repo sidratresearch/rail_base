@@ -44,12 +44,12 @@ class ColumnMapper(RailStage):
 
         Parameters
         ----------
-        sample : Table-like
+        data : Table-like
             The data to be renamed
 
         Returns
         -------
-        table : Table-like
+        Table-like
             The degraded sample
         """
         self.set_data("input", data)
@@ -93,12 +93,12 @@ class RowSelector(RailStage):
 
         Parameters
         ----------
-        sample : table-like
+        data : TableLike
             The data to be renamed
 
         Returns
         -------
-        table : table-like
+        DataHandle
             The degraded sample
         """
         self.set_data("input", data)
@@ -134,12 +134,12 @@ class TableConverter(RailStage):
 
         Parameters
         ----------
-        data : table-like
+        data : TableLike
             The data to be converted
 
         Returns
         -------
-        out_data : table-like
+        DataHandle
             The converted version of the table
         """
         self.set_data("input", data)

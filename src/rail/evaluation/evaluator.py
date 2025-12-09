@@ -111,10 +111,10 @@ class Evaluator(RailStage):  # pylint: disable=too-many-instance-attributes
 
         Parameters
         ----------
-        data
+        data : qp.Ensemble
             The sample to evaluate
 
-        truth
+        truth : Any
             Table with the truth information
 
         Returns
@@ -445,10 +445,10 @@ class OldEvaluator(RailStage):
 
         Parameters
         ----------
-        data
+        data : qp.Ensemble
             The sample to evaluate
 
-        truth
+        truth : Any
             Table with the truth information
 
         Returns
