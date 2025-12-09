@@ -43,7 +43,7 @@ class VirtualModule:
     parent: str
 
 
-# TODO: is there any case where an interactive function might not return? no, right?
+# INTERACTIVE_DO: is there any case where an interactive function might not return? no, right?
 DOCSTRING_FORMAT = """
 {class_summary}
 
@@ -559,7 +559,7 @@ def _create_interactive_docstring(stage_name: str) -> str:
             item.description = return_type.interactive_description
             if item.annotation is None or item.description is None:
                 raise ValueError(f"{return_type} is missing interactive details")
-                # TODO: move this to be a generic dev side test
+                # INTERACTIVE_DO: move this to be a generic dev side test
     returns_content = "\n".join([str(i) for i in return_elements])
 
     extra_documentation = ""
