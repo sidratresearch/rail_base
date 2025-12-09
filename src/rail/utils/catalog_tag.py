@@ -236,7 +236,7 @@ class CatalogTag(Configurable):
             bands.append(mag_column_name)
             err_bands.append(mag_err_column_name)
             err_dict[mag_column_name] = mag_err_column_name
-            mag_limits[band_name] = band_info["mag_limit"]
+            mag_limits[mag_column_name] = band_info["mag_limit"]
             if "zp_error" in band_info:  # pragma: no cover
                 zp_err = band_info["zp_error"]
             else:
