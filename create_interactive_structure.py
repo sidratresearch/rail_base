@@ -1,13 +1,21 @@
 import collections
 import importlib
+import sys
 from pathlib import Path
 
 import black
 import isort
+import pytest
 
 from rail.utils.interactive_utils import _initialize_interactive_module
 
-interactive_modules = ["creation.degraders", "creation.engines"]
+interactive_modules = [
+    "creation.degraders",
+    "creation.engines",
+    # "estimation.algos",
+    # "evaluation"
+    # "evaluation.metrics"
+]
 interactive_path = Path("src/rail/interactive")
 LOWEST_LEVEL_CONTENTS = """
 \"\"\"Module docstring for interactive {name}\"\"\"
@@ -60,5 +68,7 @@ def write_stubs() -> None:
 
 
 if __name__ == "__main__":
+    if pytest.main(["tests/interactive"]) != 0:
+        sys.exit()
     write_modules()
     write_stubs()
