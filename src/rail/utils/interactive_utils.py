@@ -15,6 +15,7 @@ from typing import Any
 
 import rail.stages
 from rail.core import RailEnv
+from rail.core.data import ModelHandle, PqHandle, QPHandle
 from rail.core.stage import RailStage
 
 rail.stages.import_and_attach_all(silent=True)
@@ -72,10 +73,43 @@ def _interactive_factory(rail_stage: type[RailStage], **kwargs) -> Any:
         This function returns the result of calling the stage's entrypoint function
         (after calling make_stage)
     """
+    # extract the input kwarg, and turn it into the appropriate DataHandle, need to
+    # handle multiple inputs - each input should become a kwarg based on it's name/tag
+    entrypoint_inputs = kwargs.pop("input")
+
     instance = rail_stage.make_stage(**kwargs)
     entrypoint_function_name = instance.entrypoint_function
     entrypoint_function: Callable = getattr(instance, entrypoint_function_name)
-    return entrypoint_function(**kwargs)
+
+    # input tags don't actually correspond to the *positional* arguments of the
+    # entrypoint function
+    output = entrypoint_function(entrypoint_inputs, **kwargs)
+
+    # convert output FROM a DataHandle into pure data, need to handle the case of
+    # multiple outputs - use each tag as dict key
+    interactive_output = {}
+
+    # single item output
+    if len(rail_stage.outputs) == 1:
+        tag, class_ = rail_stage.outputs[0]
+
+        if class_ == PqHandle:
+            interactive_output[tag] = output.data
+        elif class_ == ModelHandle:
+            interactive_output[tag] = output.data
+        elif class_ == QPHandle:
+            interactive_output[tag] = output.data
+        else:  # not impl
+            print(class_)
+            interactive_output[tag] = "Output class not impl"
+
+    else:  # not impl
+        # multi item output
+        print(rail_stage.output_tags(), rail_stage.outputs)
+        for tag, class_ in rail_stage.outputs:
+            pass
+
+    return interactive_output
 
 
 def _get_stage_definition(stage_name: str) -> type[RailStage]:
