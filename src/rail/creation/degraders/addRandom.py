@@ -48,6 +48,10 @@ class AAAFakeRailStage(RailStage):
         ----------
         truth : str
             The string to print
+
+        Returns
+        -------
+        None
         """
 
         if self.truthiness > 0.5:

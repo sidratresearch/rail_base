@@ -38,7 +38,8 @@ class Noisifier(RailStage):
         raise NotImplementedError("Noisifier._addNoise()")
 
     def __call__(self, sample: TableLike, seed: int | None = None) -> DataHandle:
-        """The main interface method for ``Noisifier``.
+        """
+        The main interface method for ``Noisifier``.
 
         Adds noise to the input catalog
 
@@ -60,15 +61,21 @@ class Noisifier(RailStage):
 
         Parameters
         ----------
-        sample :
-            The sample to be degraded
-        seed :
-            An integer to set the numpy random seed
+        sample : TableLike
+            The sample to be degraded.
+
+        seed : int, optional
+            An integer to set the numpy random seed, by default None.
 
         Returns
         -------
-        output_data : PqHandle
-            A handle giving access to a table with degraded sample
+        PqHandle
+            A handle giving access to a table with degraded sample.
+
+        Notes
+        -----
+        Further commentary on stuff. If there isn't a header line above this, it looks
+        like the type of a second return value, and Numpydoc will catch that
         """
         if seed is not None:
             self.config.seed = seed

@@ -49,7 +49,7 @@ RELEVANT_ERRORCODES = [
     "PR03",  # Wrong parameters order
     "PR04",  # Parameter "{param_name}" has no type
     # "PR05", # Parameter "{param_name}" type should not finish with "."
-    "PR06",  # Parameter "{param_name}" type should use "{right_type}" instead of "{wrong_type}"
+    "PR06",  # Misspelled parameter types (integer instead of int)
     "PR07",  # Parameter "{param_name}" has no description
     # "PR08", # Parameter "{param_name}" description should start with a capital letter
     # "PR09", # Parameter "{param_name}" description should finish with "."

@@ -14,7 +14,6 @@ from rail.core.common_params import SHARED_PARAMS
 from rail.core.data import (
     DataHandle,
     ModelHandle,
-    ModelLike,
     QPHandle,
     TableHandle,
     TableLike,
@@ -24,7 +23,9 @@ from rail.core.point_estimation import PointEstimationMixin
 from rail.core.stage import RailStage
 
 # for backwards compatibility, to avoid break stuff that imports it from here
-from .informer import CatInformer  # pylint: disable=unused-import
+from .informer import (  # pylint: disable=unused-import, relative-beyond-top-level
+    CatInformer,
+)
 
 
 class CatEstimator(RailStage, PointEstimationMixin):
@@ -63,7 +64,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
         self._output_handle: QPHandle | None = None
         self.model = None
 
-    def estimate(self, input_data: TableLike) -> DataHandle:
+    def estimate(self, input_data: TableLike, **kwargs) -> DataHandle:
         """The main interface method for the photo-z estimation
 
         This will attach the input data (defined in ``inputs`` as "input") to this
@@ -228,7 +229,8 @@ class CatEstimator(RailStage, PointEstimationMixin):
         qp_dstn: qp.Ensemble,
         data: Optional[TableLike] = None,
     ):
-        """Updates the ancillary data of the distribution with summary statistics and columns from input `data` table."""
+        """Updates the ancillary data of the distribution with summary statistics and
+        columns from input `data` table."""
 
         qp_dstn = self.calculate_point_estimates(qp_dstn)
 
