@@ -367,8 +367,8 @@ class TableHandle(DataHandle):
     """DataHandle for single tables of data"""
 
     suffix: str | None = None
-    interactive_type = "Some table type"
-    interactive_description = "Description of the type"
+    interactive_type = "A tablesio-compatible table"
+    interactive_description = "Description for TableHandle"
 
     def set_data(self, data: TableLike, partial: bool = False) -> None:
         """Set the data for a chunk, and set the partial flag if this is not all the data"""
@@ -514,7 +514,7 @@ class PqHandle(TableHandle):
 
     suffix = "pq"
     interactive_type = "pandas.core.frame.DataFrame"
-    interactive_description = "Description of the type"
+    interactive_description = "Description of PqHandle"
 
     def _size(self, path: str, **kwargs: Any) -> int:
         return tab_hdf5.get_input_data_length(path, **kwargs)

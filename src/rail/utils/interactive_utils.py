@@ -556,7 +556,7 @@ def _create_interactive_docstring(stage_name: str) -> str:
         if hasattr(rail.core.data, item.annotation):
             return_type = getattr(rail.core.data, item.annotation)
             item.annotation = return_type.interactive_type
-            item.description = return_type.interactive_description
+            item.description += "\n" + return_type.interactive_description
             if item.annotation is None or item.description is None:
                 raise ValueError(f"{return_type} is missing interactive details")
                 # INTERACTIVE_DO: move this to be a generic dev side test

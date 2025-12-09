@@ -47,7 +47,8 @@ def add_column_of_random(**kwargs) -> Any:
     Returns
     -------
     pandas.core.frame.DataFrame
-        Description of the type
+        A handle giving access to a table with degraded sample.
+        Description of PqHandle
 
 
     Notes

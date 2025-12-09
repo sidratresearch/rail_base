@@ -65,6 +65,7 @@ def train_z_estimator(**kwargs) -> Any:
     Returns
     -------
     qp.core.ensemble.Ensemble
+        Handle providing access to QP ensemble with output data
         A QP Ensemble
     """
 
@@ -118,5 +119,6 @@ def train_z_informer(**kwargs) -> Any:
     Returns
     -------
     numpy.ndarray
+        Handle providing access to trained model
         A trained model
     """

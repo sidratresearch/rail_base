@@ -68,6 +68,8 @@ def uniform_binning_classifier(**kwargs) -> Any:
 
     Returns
     -------
-    Some table type
-        Description of the type
+    A tablesio-compatible table
+        Class assignment for each galaxy, typically in the form of a
+        dictionary with IDs and class labels.
+        Description for TableHandle
     """

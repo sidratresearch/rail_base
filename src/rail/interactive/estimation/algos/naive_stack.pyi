@@ -94,6 +94,7 @@ def naive_stack_masked_summarizer(**kwargs) -> Any:
     Returns
     -------
     qp.core.ensemble.Ensemble
+        Ensemble with n(z), and any ancilary data
         A QP Ensemble
     """
 
@@ -151,5 +152,6 @@ def naive_stack_summarizer(**kwargs) -> Any:
     Returns
     -------
     qp.core.ensemble.Ensemble
+        Ensemble with n(z), and any ancilary data
         A QP Ensemble
     """

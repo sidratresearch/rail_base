@@ -48,5 +48,6 @@ def quantity_cut(**kwargs) -> Any:
     Returns
     -------
     pandas.core.frame.DataFrame
-        Description of the type
+        A handle giving access to a table with selected sample
+        Description of PqHandle
     """
