@@ -21,12 +21,14 @@ def test_interactive_function_names() -> None:
         interactive_function_name = getattr(
             _get_stage_definition(stage_name), if_name_attribute
         )
-        function_name_uses[interactive_function_name].append(stage_name)
 
         # run the is None check for this stage
         if interactive_function_name is None:
             print(f"{if_name_attribute} is not set for RailStage {stage_name}")
             exists_stage_without_attribute = True
+
+        else:
+            function_name_uses[interactive_function_name].append(stage_name)
     assert not exists_stage_without_attribute
 
     # secondary loop to check for duplicates
