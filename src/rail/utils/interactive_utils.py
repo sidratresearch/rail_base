@@ -772,14 +772,13 @@ def _initialize_interactive_module(
     ]
 
     # for testing
-    if "degraders" in calling_module_name:
-        relevant_stages = relevant_stages[:1]  # + relevant_stages[-1:]
     if "estimation.algos" in calling_module_name:
         relevant_stages = ["RandomGaussEstimator", "RandomGaussInformer"]
 
     virtual_module_dict = _create_virtual_submodules(calling_module, relevant_stages)
 
     for stage_name in relevant_stages:
+        print(f"Working on stage {stage_name}")
         _attatch_interactive_function(virtual_module_dict, stage_name)
 
     if write_stubs:

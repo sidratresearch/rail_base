@@ -7,7 +7,7 @@ or pure photometric selection.
 
 from ceci.config import StageParameter as Param
 
-from rail.core.data import DataHandle, PqHandle, TableLike
+from rail.core.data import PqHandle, TableLike
 from rail.core.stage import RailStage
 
 
@@ -33,7 +33,7 @@ class Selector(RailStage):
     inputs = [("input", PqHandle)]
     outputs = [("output", PqHandle)]
 
-    def __call__(self, sample: TableLike) -> DataHandle:
+    def __call__(self, sample: TableLike) -> PqHandle:
         """The main interface method for ``Selector``.
 
         Adds noise to the input catalog
@@ -56,7 +56,7 @@ class Selector(RailStage):
 
         Returns
         -------
-        DataHandle
+        PqHandle
             A handle giving access to a table with selected sample
         """
         self.set_data("input", sample)
