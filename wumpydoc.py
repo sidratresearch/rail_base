@@ -30,7 +30,7 @@ from rail.utils.interactive_utils import (
 RELEVANT_ERRORCODES = [
     # "GL01", # Which line summary starts on
     # "GL02", # Which line closing quotes are on
-    # "GL03", # Double line break found
+    "GL03",  # Double line break found
     "GL05",  # Tabs vs spaces
     "GL06",  # Unknown section - we can't match on sections we don't understand
     "GL07",  # Sections in wrong order
@@ -53,7 +53,7 @@ RELEVANT_ERRORCODES = [
     "PR07",  # Parameter "{param_name}" has no description
     # "PR08", # Parameter "{param_name}" description should start with a capital letter
     # "PR09", # Parameter "{param_name}" description should finish with "."
-    # "PR10", # Parameter "{param_name}" requires a space before the colon
+    "PR10",  # Parameter "{param_name}" requires a space before the colon
     "RT01",  # No Returns section found
     "RT02",  # The first line of the Returns section should contain only the type
     "RT03",  # Return value has no description
