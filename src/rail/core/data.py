@@ -507,8 +507,8 @@ class PqHandle(TableHandle):
     """DataHandle for a parquet table"""
 
     suffix = "pq"
-    interactive_description = "A parquet table"
-    interactive_type = "Whatever the type of this actually is"
+    interactive_type = "pandas.core.frame.DataFrame"
+    interactive_description = "Description of the type"
 
     def _size(self, path: str, **kwargs: Any) -> int:
         return tab_hdf5.get_input_data_length(path, **kwargs)
@@ -518,6 +518,8 @@ class QPHandle(DataHandle):
     """DataHandle for qp ensembles"""
 
     suffix = "hdf5"
+    interactive_type = "qp.core.ensemble.Ensemble"
+    interactive_description = "Description of the type"
 
     @classmethod
     def _open(cls, path: str, **kwargs: Any) -> FileLike:
@@ -804,6 +806,8 @@ class ModelHandle(DataHandle):
     """DataHandle for machine learning models"""
 
     suffix = "pkl"
+    interactive_type = "numpy.ndarray"
+    interactive_description = "A model"
 
     model_factory = ModelDict()
 

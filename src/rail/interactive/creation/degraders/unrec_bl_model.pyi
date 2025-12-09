@@ -85,6 +85,6 @@ def create_unrecognized_blend(**kwargs) -> Any:
 
     Returns
     -------
-    output_data : Whatever the type of this actually is
-        A parquet table
+    output_data : pandas.core.frame.DataFrame
+        Description of the type
     """

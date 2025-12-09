@@ -77,8 +77,8 @@ def add_column_of_random(**kwargs) -> Any:
 
     Returns
     -------
-    Whatever the type of this actually is
-        A parquet table
+    pandas.core.frame.DataFrame
+        Description of the type
 
 
     Notes

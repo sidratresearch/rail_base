@@ -64,7 +64,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
         self._output_handle: QPHandle | None = None
         self.model = None
 
-    def estimate(self, input_data: TableLike, **kwargs) -> DataHandle:
+    def estimate(self, input_data: TableLike, **kwargs) -> QPHandle:
         """The main interface method for the photo-z estimation
 
         This will attach the input data (defined in ``inputs`` as "input") to this
@@ -84,7 +84,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
         Returns
         -------
-        DataHandle
+        QPHandle
             Handle providing access to QP ensemble with output data
         """
         self.set_data("input", input_data)
