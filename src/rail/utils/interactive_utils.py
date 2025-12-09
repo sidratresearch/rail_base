@@ -774,10 +774,6 @@ def _initialize_interactive_module(
         if _get_stage_module(stage, interactive=True).startswith(calling_module_name)
     ]
 
-    # for testing
-    if "estimation.algos" in calling_module_name:
-        relevant_stages = ["RandomGaussEstimator", "RandomGaussInformer"]
-
     virtual_module_dict = _create_virtual_submodules(calling_module, relevant_stages)
 
     for stage_name in relevant_stages:

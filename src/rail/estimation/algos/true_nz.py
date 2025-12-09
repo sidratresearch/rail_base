@@ -9,7 +9,7 @@ import qp
 from ceci.config import StageParameter as Param
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import PqHandle, QPHandle, TableHandle, TableLike
+from rail.core.data import PqHandle, TableLike
 from rail.core.stage import RailStage
 
 
@@ -28,8 +28,10 @@ class TrueNZHistogrammer(RailStage):
         chunk_size=SHARED_PARAMS,
         hdf5_groupname=SHARED_PARAMS,
     )
-    inputs = [("input", TableHandle), ("tomography_bins", TableHandle)]
-    outputs = [("true_NZ", QPHandle)]
+    # INTERACTIVE-DO: this stage has multiple positional arguments to it's EPF
+    # not sure how to handle this, so making it an "incomplete" stage for now
+    # inputs = [("input", TableHandle), ("tomography_bins", TableHandle)]
+    # outputs = [("true_NZ", QPHandle)]
 
     def __init__(self, args: Any, **kwargs: Any) -> None:
         super().__init__(args, **kwargs)

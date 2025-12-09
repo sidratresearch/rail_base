@@ -100,7 +100,7 @@ class PZClassifier(RailStage):
         super().__init__(args, **kwargs)
         self._output_handle: DataHandle | None = None
 
-    def classify(self, input_data: qp.Ensemble) -> TableHandle:
+    def classify(self, input_data: qp.Ensemble, **kwargs) -> TableHandle:
         """The main run method for the classifier, should be implemented
         in the specific subclass.
 

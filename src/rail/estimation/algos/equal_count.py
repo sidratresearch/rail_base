@@ -16,6 +16,7 @@ class EqualCountClassifier(PZClassifier):
 
     name = "EqualCountClassifier"
     entrypoint_function = "classify"  # the user-facing science function for this class
+    interactive_function = "equal_count_classifier"
     config_options = PZClassifier.config_options.copy()
     config_options.update(
         id_name=Param(

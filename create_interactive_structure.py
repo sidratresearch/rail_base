@@ -12,7 +12,7 @@ from rail.utils.interactive_utils import _initialize_interactive_module
 interactive_modules = [
     "creation.degraders",
     "creation.engines",
-    # "estimation.algos",
+    "estimation.algos",
     # "evaluation"
     # "evaluation.metrics"
 ]

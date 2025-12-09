@@ -76,7 +76,7 @@ class PZSummarizer(RailStage):
     inputs = [("model", ModelHandle), ("input", QPHandle)]
     outputs = [("output", QPHandle)]
 
-    def summarize(self, input_data: qp.Ensemble) -> qp.Ensemble:
+    def summarize(self, input_data: qp.Ensemble) -> QPHandle:
         """The main run method for the summarization, should be implemented
         in the specific subclass.
 
@@ -98,7 +98,7 @@ class PZSummarizer(RailStage):
 
         Returns
         -------
-        qp.Ensemble
+        QPHandle
             Ensemble with n(z), and any ancilary data
         """
         self.set_data("input", input_data)

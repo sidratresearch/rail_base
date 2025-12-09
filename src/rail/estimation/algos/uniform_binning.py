@@ -18,6 +18,7 @@ class UniformBinningClassifier(PZClassifier):
 
     name = "UniformBinningClassifier"
     entrypoint_function = "classify"  # the user-facing science function for this class
+    interactive_function = "uniform_binning_classifier"
     config_options = PZClassifier.config_options.copy()
     config_options.update(
         id_name=Param(
@@ -102,5 +103,8 @@ class UniformBinningClassifier(PZClassifier):
             obj_id = np.arange(data.npdf)
             self.config.id_name = "row_index"
 
-        class_id = {self.config.id_name: obj_id, "class_id": bin_index}
+        class_id = {
+            self.config.id_name: obj_id,  # pylint: disable=possibly-used-before-assignment
+            "class_id": bin_index,
+        }
         self._do_chunk_output(class_id, start, end, first)

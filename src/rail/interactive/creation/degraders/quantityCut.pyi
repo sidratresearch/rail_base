@@ -31,7 +31,7 @@ def quantity_cut(**kwargs) -> Any:
 
     Parameters
     ----------
-    sample:
+    input : TableLike
         The sample to be selected
     output_mode : str, optional
         What to do with the outputs

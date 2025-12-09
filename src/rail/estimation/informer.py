@@ -193,6 +193,7 @@ class PzInformer(RailStage):
         self.run()
         self.finalize()
         self._model_handle = self.get_handle("model")
+        # INTERACTIVE-DO: figure out what to do with this in interactive
         return dict(
             model=self._model_handle,
         )

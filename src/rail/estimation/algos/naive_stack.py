@@ -18,6 +18,7 @@ class NaiveStackInformer(PzInformer):
 
     name = "NaiveStackInformer"
     entrypoint_function = "inform"  # the user-facing science function for this class
+    interactive_function = "naive_stack_informer"
     config_options = PzInformer.config_options.copy()
 
     def _finalize_run(self) -> None:
@@ -30,6 +31,7 @@ class NaiveStackSummarizer(PZSummarizer):
 
     name = "NaiveStackSummarizer"
     entrypoint_function = "summarize"  # the user-facing science function for this class
+    interactive_function = "naive_stack_summarizer"
     config_options = PZSummarizer.config_options.copy()
     config_options.update(
         zmin=Param(float, 0.0, msg="The minimum redshift of the z grid"),
@@ -117,6 +119,7 @@ class NaiveStackSummarizer(PZSummarizer):
 class NaiveStackMaskedSummarizer(NaiveStackSummarizer):
     name = "NaiveStackMaskedSummarizer"
     entrypoint_function = "summarize"  # the user-facing science function for this class
+    interactive_function = "naive_stack_masked_summarizer"
     config_options = NaiveStackSummarizer.config_options.copy()
     config_options.update(
         selected_bin=Param(int, -1, msg="bin to use"),

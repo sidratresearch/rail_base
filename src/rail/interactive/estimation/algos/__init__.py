@@ -1,4 +1,4 @@
-"""Module docstring for interactive estimators"""
+"""Module docstring for interactive algos"""
 
 from rail.utils.interactive_utils import _initialize_interactive_module
 
