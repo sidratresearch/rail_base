@@ -138,6 +138,8 @@ class CatEstimator(RailStage, PointEstimationMixin):
                 gathered_ensembles = qp.concatenate(gathered_data)
                 self._output_handle.set_data(gathered_ensembles)
 
+            self._partial_output = {}  # clear the variable once we've used it
+
     def _process_chunk(
         self, start: int, end: int, data: TableLike, first: bool
     ) -> None:
@@ -147,11 +149,11 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
     @classmethod
     def default_distribution_type(cls) -> DistributionType:
-        """Return the type of distribtuion that this estimator creates
+        """Return the type of distribution that this estimator creates
 
         By default this is DistributionType.ad_hoc
         But this can be overrided by sub-classes to return
-        DistributionType.posetrior or DistributionType.likelihood if appropriate
+        DistributionType.posterior or DistributionType.likelihood if appropriate
         """
         return DistributionType.ad_hoc
 

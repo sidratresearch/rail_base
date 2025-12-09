@@ -252,7 +252,7 @@ class DataHandle:  # pylint: disable=too-many-instance-attributes
         """
         if self.fileObj is None:  # pragma: no cover
             raise ValueError(
-                f"TableHandle.finalize_wite() called before open for {self.tag} : {self.path}"
+                f"TableHandle.finalize_write() called before open for {self.tag} : {self.path}"
             )
         self._finalize_write(self.data, self.fileObj, **kwargs)
 
@@ -294,7 +294,7 @@ class DataHandle:  # pylint: disable=too-many-instance-attributes
         raise NotImplementedError("DataHandle._size")  # pragma: no cover
 
     def data_size(self, **kwargs: Any) -> int:
-        """Return the size of the in memorry data"""
+        """Return the size of the in memory data"""
         if self.data is None:  # pragma: no cover
             return 0
         return self._data_size(self.data, **kwargs)
