@@ -1,8 +1,11 @@
 import collections
+import importlib
 from pathlib import Path
 
 import black
 import isort
+
+from rail.utils.interactive_utils import _initialize_interactive_module
 
 interactive_modules = ["creation.degraders", "creation.engines"]
 interactive_path = Path("src/rail/interactive")
@@ -15,7 +18,7 @@ _initialize_interactive_module(__name__)
 """
 
 
-def main() -> None:
+def write_modules() -> None:
     module_contents: collections.defaultdict[Path, list[str]] = collections.defaultdict(
         list
     )
@@ -49,5 +52,13 @@ def main() -> None:
         print(f"Created {str(path)}")
 
 
+def write_stubs() -> None:
+    for module in interactive_modules:
+        module = "rail.interactive." + module
+        importlib.import_module(module)
+        _initialize_interactive_module(module, write_stubs=True)
+
+
 if __name__ == "__main__":
-    main()
+    write_modules()
+    write_stubs()
