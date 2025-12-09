@@ -1,36 +1,5 @@
 from typing import Any
 
-def aaa_fake_stage(**kwargs) -> Any:
-    """
-    A fake RailStage for testing, named to be first alphabetically
-
-    ---
-
-    Main function for FakeRailStage
-
-    Needs to have **kwargs, or else things from __init__ will "overflow" (unexpected
-    keyword argument)
-
-    ---
-
-    This function was generated from the function
-    rail.creation.degraders.addRandom.AAAFakeRailStage.maybe_lie
-
-    Parameters
-    ----------
-    input : str
-        The string to print
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
-    truthiness : float
-        How truthful the output should be
-
-    Returns
-    -------
-    None
-    """
-
 def add_column_of_random(**kwargs) -> Any:
     """
     Add a column of random numbers to a dataframe
