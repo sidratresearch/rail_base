@@ -18,11 +18,12 @@ def aab_fake_stage(**kwargs) -> Any:
 
     Parameters
     ----------
-    truth : str
+    input : str
         The string to print
-    output_mode: [str] default=default
+    output_mode : str, optional
         What to do with the outputs
-    truthiness: [float] (required)
+        Default: default
+    truthiness : float
         How truthful the output should be
 
     Returns

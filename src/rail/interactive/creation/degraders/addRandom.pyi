@@ -18,12 +18,17 @@ def aaa_fake_stage(**kwargs) -> Any:
 
     Parameters
     ----------
-    truth : str
+    input : str
         The string to print
-    output_mode: [str] default=default
+    output_mode : str, optional
         What to do with the outputs
-    truthiness: [float] (required)
+        Default: default
+    truthiness : float
         How truthful the output should be
+
+    Returns
+    -------
+    None
     """
 
 def add_column_of_random(**kwargs) -> Any:
@@ -59,21 +64,25 @@ def add_column_of_random(**kwargs) -> Any:
 
     Parameters
     ----------
-    sample :
-        The sample to be degraded
-    seed :
-        An integer to set the numpy random seed
-    output_mode: [str] default=default
+    input : TableLike
+        The sample to be degraded.
+    seed : int, optional
+        An integer to set the numpy random seed, by default None.
+    output_mode : str, optional
         What to do with the outputs
-    seed: [type not specified] default=None
-        Set to an `int` to force reproducible results.
-    col_name: [str] default=chaos_bunny
+        Default: default
+    col_name : str, optional
         Name of the column with random numbers
-    input: PqHandle (INPUT)
-    output: PqHandle (OUTPUT)
+        Default: chaos_bunny
 
     Returns
     -------
-    output_data : PqHandle
-        A handle giving access to a table with degraded sample
+    Whatever the type of this actually is
+        A parquet table
+
+
+    Notes
+    -----
+    Further commentary on stuff. If there isn't a header line above this, it looks
+    like the type of a second return value, and Numpydoc will catch that
     """

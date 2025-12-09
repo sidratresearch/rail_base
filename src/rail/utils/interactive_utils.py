@@ -2,6 +2,8 @@
 Utility functions for the rail.interactive module.
 """
 
+# pylint: disable=fixme
+
 import collections
 import functools
 import inspect
@@ -12,6 +14,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+from ceci.config import StageConfig, StageParameter
 
 import rail.stages
 from rail.core import RailEnv
@@ -39,6 +43,7 @@ class VirtualModule:
     parent: str
 
 
+# TODO: is there any case where an interactive function might not return? no, right?
 DOCSTRING_FORMAT = """
 {class_summary}
 
@@ -50,13 +55,23 @@ DOCSTRING_FORMAT = """
 
 This function was generated from the function {source_file}
 
-{function_parameters}
-{class_parameters}
+Parameters
+----------
+{parameters}
 
-{function_returns}
+Returns
+-------
+{returns}
 
 {extra_documentation}
 """
+
+SECTION_HEADERS = [
+    "Summary",
+    "Parameters",
+    "Returns",
+    "Notes",
+]  # very small subset of numpydoc.validate.ALLOWED_SECTIONS
 
 
 def _interactive_factory(rail_stage: type[RailStage], **kwargs) -> Any:
@@ -210,9 +225,7 @@ def _create_virtual_submodules(
     return virtual_modules
 
 
-def _split_docstring(
-    docstring: str, include_headers: bool = True
-) -> collections.defaultdict[str, str]:
+def _split_docstring(docstring: str) -> collections.defaultdict[str, str]:
     """Split the docstring into sections based on specific numpy-style headers.
 
     Does some whitespace formatting on the returned sections
@@ -221,9 +234,6 @@ def _split_docstring(
     ----------
     docstring : str
         The raw docstring (.__doc__, inspect.getdoc, pydoc.doc)
-    include_headers : bool, optional
-        Whether or not to include the section header in the returned string, by default
-        True
 
     Returns
     -------
@@ -233,7 +243,6 @@ def _split_docstring(
 
     result = collections.defaultdict(list)
     docstring_lines = docstring.splitlines()
-    sections = ["Summary", "Parameters", "Returns"]
 
     # add lines to `result` one at a time, tracking which section is being used
     line_no = 0
@@ -241,14 +250,11 @@ def _split_docstring(
     while line_no < len(docstring_lines) - 1:
         if _is_section_header(line_no, docstring_lines):
             current_section += 1
-            if include_headers:
-                result[sections[current_section]].append(docstring_lines[line_no])
-                result[sections[current_section]].append(docstring_lines[line_no + 1])
             line_no += 2
         else:
-            result[sections[current_section]].append(docstring_lines[line_no])
+            result[SECTION_HEADERS[current_section]].append(docstring_lines[line_no])
             line_no += 1
-    result[sections[current_section]].append(
+    result[SECTION_HEADERS[current_section]].append(
         docstring_lines[line_no]
     )  # add the final line
 
@@ -281,13 +287,8 @@ def _is_section_header(line_no: int, docstring_lines: list[str]) -> bool:
         Whether this line number starts a header
     """
 
-    splitting_headers = [
-        "Parameters",
-        "Returns",
-    ]  # very small subset of numpydoc.validate.ALLOWED_SECTIONS
-
     current_line = docstring_lines[line_no].strip()
-    if current_line in splitting_headers:
+    if current_line in SECTION_HEADERS:
         next_line = docstring_lines[line_no + 1].strip()
         return next_line == ("-" * len(current_line))
     return False
@@ -400,6 +401,126 @@ def _param_annotion_wrap_filter(
     return len(line) == len(unindented)
 
 
+@dataclass
+class InteractiveParameter:
+    name: str | None
+    annotation: str
+    description: str
+    is_input: bool = False
+
+    def __str__(self) -> str:
+        if self.name is None:
+            return f"{self.annotation}\n{textwrap.indent(self.description, ' '*4)}"
+        return f"{self.name} : {self.annotation}\n{textwrap.indent(self.description, ' '*4)}"
+
+    @classmethod
+    def from_ceci(
+        cls, name: str, ceci_param: StageConfig | StageParameter
+    ) -> "InteractiveParameter":
+        if isinstance(ceci_param, StageParameter):
+            return cls.from_ceci_parameter(name, ceci_param)
+        return cls.from_ceci_parameter(name, dict.__getitem__(ceci_param, name))
+
+    @classmethod
+    def from_ceci_parameter(
+        cls, name: str, ceci_param: StageConfig
+    ) -> "InteractiveParameter":
+        dtype_name = "unknown type"
+        if ceci_param.dtype is not None:
+            dtype_name = ceci_param.dtype.__name__
+
+        description = ceci_param.msg
+        annotation = dtype_name
+
+        if not ceci_param.required:
+            annotation += ", optional"
+            description += f"\nDefault: {ceci_param.default}"
+
+        return InteractiveParameter(
+            name=name, annotation=annotation, description=description
+        )
+
+
+def _create_parameters_section(
+    stage_definition: type[RailStage], stage_name: str, epf_parameter_string: str
+) -> str:
+
+    class_parameter_dict = {
+        name: InteractiveParameter.from_ceci(name, ceci_param)
+        for name, ceci_param in stage_definition.config_options.items()
+    }
+
+    epf_parameters = inspect.signature(
+        getattr(stage_definition, stage_definition.entrypoint_function)
+    ).parameters.values()
+    input_parameter_names = [
+        i.name
+        for i in epf_parameters
+        if i.name not in ["self", "kwargs"] and i.default == inspect.Parameter.empty
+    ]
+    if len(input_parameter_names) > 1:
+        raise ValueError(
+            f"Stage {stage_name}'s EPF has multiple positional parameters: {input_parameter_names}"
+        )
+
+    annotation_linenos = []
+    epf_parameter_string_lines = epf_parameter_string.splitlines()
+    for i, line in enumerate(epf_parameter_string_lines):
+        if len(line.lstrip()) == len(line):
+            annotation_linenos.append(i)
+
+    epf_parameters = _parse_annotation_string(epf_parameter_string)
+    for parameter in epf_parameters:
+        parameter.is_input = parameter.name in input_parameter_names
+        if parameter.is_input:
+            parameter.name = "input"
+
+    existing_names = [p.name for p in epf_parameters]
+    for parameter in class_parameter_dict.values():
+        if parameter.name not in existing_names:
+            epf_parameters.append(parameter)
+        else:
+            print(
+                f"Warning - parameter '{parameter.name}' is duplicated in config_options and EPF of {stage_name}"  # pylint: disable=line-too-long
+            )
+
+    return "\n".join([str(i) for i in epf_parameters])
+
+
+def _parse_annotation_string(text: str) -> list[InteractiveParameter]:
+    lines = text.replace("\n\n", "\n").splitlines()
+    annotation_linenos = []
+    for i, line in enumerate(lines):
+        if len(line.lstrip()) == len(line):
+            annotation_linenos.append(i)
+
+    parameters = []
+    for i, lineno in enumerate(annotation_linenos):
+        # get the item type and name (if supplied)
+        if " : " in lines[lineno]:
+            param_name, param_type = lines[lineno].split(" : ")
+        else:
+            param_name = None
+            param_type = lines[lineno]
+
+        # get the description
+        if i < len(annotation_linenos) - 1:  # this is not the last annotation
+            description_end = annotation_linenos[i + 1]
+            description_lines = lines[lineno + 1 : description_end]
+        else:
+            description_lines = lines[lineno + 1 :]
+
+        parameters.append(
+            InteractiveParameter(
+                name=param_name,
+                annotation=param_type,
+                description="\n".join([j.strip() for j in description_lines]),
+            )
+        )
+
+    return parameters
+
+
 def _create_interactive_docstring(stage_name: str) -> str:
     """Merge the relevant information from the class and entrypoint function of a RAIL
     stage to create a docstring for the interactive function
@@ -414,6 +535,7 @@ def _create_interactive_docstring(stage_name: str) -> str:
     str
         The final docstring for the interactive function
     """
+    # print(stage_name)
     stage_definition = _get_stage_definition(stage_name)
 
     # get the raw docstrings
@@ -423,25 +545,42 @@ def _create_interactive_docstring(stage_name: str) -> str:
     ).__doc__
 
     # do some pre-processing
-    class_sections = _split_docstring(class_docstring, include_headers=False)
+    class_sections = _split_docstring(class_docstring)
     epf_sections = _split_docstring(epf_docstring)
     source_file = ".".join(
         [stage_definition.__module__, stage_name, stage_definition.entrypoint_function]
     )
+
+    return_elements = _parse_annotation_string(epf_sections["Returns"])
+    for item in return_elements:
+        if hasattr(rail.core.data, item.annotation):
+            return_type = getattr(rail.core.data, item.annotation)
+            item.annotation = return_type.interactive_type
+            item.description = return_type.interactive_description
+    returns_content = "\n".join([str(i) for i in return_elements])
+
+    extra_documentation = ""
+    for section_name, section_content in class_sections.items():
+        if section_name not in ["Summary", "Parameters", "Returns"]:
+            header = f"\n{section_name}\n{'-'*len(section_name)}"
+            extra_documentation += f"{header}\n{section_content}"
+    for section_name, section_content in epf_sections.items():
+        if section_name not in ["Summary", "Parameters", "Returns"]:
+            header = f"\n{section_name}\n{'-'*len(section_name)}"
+            extra_documentation += f"{header}\n{section_content}"
+    if stage_definition.extra_interactive_documentation is not None:
+        extra_documentation += f"\n{stage_definition.extra_interactive_documentation}"
 
     # assemble the docstring
     docstring = DOCSTRING_FORMAT.format(
         class_summary=class_sections["Summary"],
         function_summary=epf_sections["Summary"],
         source_file=source_file,
-        function_parameters=epf_sections["Parameters"].replace("\n\n", "\n"),
-        class_parameters=class_sections["Parameters"].replace("\n\n", "\n"),
-        function_returns=epf_sections["Returns"],
-        extra_documentation=(
-            stage_definition.extra_interactive_documentation
-            if stage_definition.extra_interactive_documentation is not None
-            else ""
+        parameters=_create_parameters_section(
+            stage_definition, stage_name, epf_sections["Parameters"]
         ),
+        returns=returns_content,
+        extra_documentation=extra_documentation,
     )
 
     # prepare to wrap the docstring

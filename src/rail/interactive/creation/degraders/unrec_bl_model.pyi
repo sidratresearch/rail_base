@@ -34,43 +34,57 @@ def create_unrecognized_blend(**kwargs) -> Any:
 
     Parameters
     ----------
-    sample : table-like
+    input : table-like
         The sample to be degraded
     seed : int, default=None
         An integer to set the numpy random seed
-    output_mode: [str] default=default
+    output_mode : str, optional
         What to do with the outputs
-    seed: [int] default=12345
-        Random number seed
-    ra_label: [str] default=ra
+        Default: default
+    ra_label : str, optional
         ra column name
-    dec_label: [str] default=dec
+        Default: ra
+    dec_label : str, optional
         dec column name
-    linking_lengths: [float] default=1.0
+        Default: dec
+    linking_lengths : float, optional
         linking_lengths for FoF matching
-    bands: list] (default=['mag_u_lsst', 'mag_g_lsst', 'mag_r_lsst', 'mag_i_lsst', 'mag_z_lsst', 'mag_y_lsst'])
-    zp_dict: [dict] default={'u': 12.65, 'g': 14.69, 'r': 14.56, 'i': 14.38, 'z': 13.99, 'y': 13.02}
+        Default: 1.0
+    bands : list, optional
+        Names of columns for magnitgude by filter band
+        Default: ['mag_u_lsst', 'mag_g_lsst', 'mag_r_lsst', 'mag_i_lsst', 'mag_z_lsst',
+        'mag_y_lsst']
+    zp_dict : dict, optional
         magnitude zeropoints dictionary
-    ref_band: str] (default=mag_i_lsst)
-    redshift_col: str] (default=redshift)
-    match_size: [bool] default=False
+        Default: {'u': 12.65, 'g': 14.69, 'r': 14.56, 'i': 14.38, 'z': 13.99, 'y':
+        13.02}
+    ref_band : str, optional
+        band to use in addition to colors
+        Default: mag_i_lsst
+    redshift_col : str, optional
+        name of redshift column
+        Default: redshift
+    match_size : bool, optional
         consider object size for finding blends
-    match_shape: [bool] default=False
+        Default: False
+    match_shape : bool, optional
         consider object shape for finding blends
-    obj_size: [str] default=obj_size
+        Default: False
+    obj_size : str, optional
         object size column name
-    a: [str] default=semi_major
+        Default: obj_size
+    a : str, optional
         semi major axis column name
-    b: [str] default=semi_minor
+        Default: semi_major
+    b : str, optional
         semi minor axis column name
-    theta: [str] default=orientation
+        Default: semi_minor
+    theta : str, optional
         orientation angle column name
-    input: PqHandle (INPUT)
-    output: PqHandle (OUTPUT)
-    compInd: PqHandle (OUTPUT)
+        Default: orientation
 
     Returns
     -------
-    output_data : PqHandle
-        A handle giving access to a table with degraded sample
+    output_data : Whatever the type of this actually is
+        A parquet table
     """

@@ -507,6 +507,8 @@ class PqHandle(TableHandle):
     """DataHandle for a parquet table"""
 
     suffix = "pq"
+    interactive_description = "A parquet table"
+    interactive_type = "Whatever the type of this actually is"
 
     def _size(self, path: str, **kwargs: Any) -> int:
         return tab_hdf5.get_input_data_length(path, **kwargs)
