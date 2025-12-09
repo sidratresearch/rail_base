@@ -773,7 +773,7 @@ def _initialize_interactive_module(
 
     # for testing
     if "degraders" in calling_module_name:
-        relevant_stages = relevant_stages[:1] + relevant_stages[-1:]
+        relevant_stages = relevant_stages[:1]  # + relevant_stages[-1:]
     if "estimation.algos" in calling_module_name:
         relevant_stages = ["RandomGaussEstimator", "RandomGaussInformer"]
 
