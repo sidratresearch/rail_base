@@ -59,7 +59,7 @@ class EqualCountClassifier(PZClassifier):
             # because the data doesn't have ID yet
             # obj_id = test_data[self.config.id_name]
             obj_id = np.arange(npdf)
-        elif self.config.id_name == "":
+        else:
             # ID set to row index
             obj_id = np.arange(npdf)
             self.config.id_name = "row_index"
