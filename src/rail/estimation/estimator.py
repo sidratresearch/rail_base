@@ -12,7 +12,6 @@ import tables_io
 
 from rail.core.common_params import SHARED_PARAMS
 from rail.core.data import (
-    DataHandle,
     ModelHandle,
     QPHandle,
     TableHandle,
@@ -340,7 +339,7 @@ class PzEstimator(RailStage, PointEstimationMixin):
         self._output_handle: QPHandle | None = None
         self.model = None
 
-    def estimate(self, input_data: QPHandle) -> DataHandle:
+    def estimate(self, input_data: QPHandle) -> QPHandle:
         """The main interface method for the photo-z estimation
 
         This will attach the input data (defined in ``inputs`` as "input") to this
@@ -355,13 +354,15 @@ class PzEstimator(RailStage, PointEstimationMixin):
 
         Parameters
         ----------
-        input_data
+        input_data : QPHandle
             A dictionary of all input data
 
         Returns
         -------
-        DataHandle
+        QPHandle
             Handle providing access to QP ensemble with output data
+            Interactive update note: this doesn't actually return the handle, it returns
+            the data
         """
         self.set_data("input", input_data)
         self.validate()

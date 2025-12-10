@@ -22,6 +22,9 @@ import sys
 
 import numpydoc.validate
 
+import rail.stages
+from rail.core.introspection import RailEnv
+from rail.core.stage import RailStage
 from rail.utils.interactive_utils import (
     _get_stage_definition,
     _stage_names,
@@ -68,6 +71,12 @@ RELEVANT_ERRORCODES = [
 ]
 
 
+def make_import_path(stage_definition: type[RailStage], stage_name: str) -> str:
+    return ".".join(
+        [stage_definition.__module__, stage_name, stage_definition.entrypoint_function]
+    )
+
+
 def get_entrypoint_function_paths() -> list[str]:
     """Get the import paths for all RailStage entrypoint functions
 
@@ -78,14 +87,13 @@ def get_entrypoint_function_paths() -> list[str]:
         "rail.creation.degraders.addRandom.AddColumnOfRandom.__call__")
     """
 
-    paths = []
+    paths = [
+        make_import_path(getattr(rail.stages, base_stage), base_stage)
+        for base_stage in RailEnv._base_stages_names  # pylint: disable=protected-access
+    ]
     for stage_name in _stage_names:
         stage_definition = _get_stage_definition(stage_name)
-        stage_path = stage_definition.__module__
-        function_path = ".".join(
-            [stage_path, stage_name, stage_definition.entrypoint_function]
-        )
-        paths.append(function_path)
+        paths.append(make_import_path(stage_definition, stage_name))
     return paths
 
 

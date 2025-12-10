@@ -49,7 +49,7 @@ class CatClassifier(RailStage):  # pragma: no cover
             args = vars(args)
         self.open_model(**args)
 
-    def classify(self, input_data: TableLike) -> DataHandle:
+    def classify(self, input_data: TableLike) -> TableHandle:
         """The main run method for the classifier, should be implemented
         in the specific subclass.
 
@@ -66,12 +66,12 @@ class CatClassifier(RailStage):  # pragma: no cover
 
         Parameters
         ----------
-        input_data
+        input_data : TableLike
             A dictionary of all input data
 
         Returns
         -------
-        DataHandle
+        TableHandle
             Class assignment for each galaxy.
         """
         self.set_data("input", input_data)

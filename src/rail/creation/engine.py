@@ -12,7 +12,6 @@ from ceci.config import StageParameter as Param
 from rail.core.data import (
     DataHandle,
     ModelHandle,
-    ModelLike,
     QPHandle,
     TableHandle,
     TableLike,
@@ -82,7 +81,7 @@ class Creator(RailStage):  # pragma: no cover
 
     def sample(
         self, n_samples: int, seed: int | None = None, **kwargs: Any
-    ) -> DataHandle:
+    ) -> TableHandle:
         """Draw samples from the model specified in the configuration.
 
         This is a method for running a Creator in interactive mode. In pipeline
@@ -90,19 +89,19 @@ class Creator(RailStage):  # pragma: no cover
 
         Parameters
         ----------
-        n_samples
+        n_samples : int
             The number of samples to draw
 
-        seed
-            The random seed to control sampling
+        seed : int, optional
+            The random seed to control sampling, by default None
 
-        **kwargs:
+        **kwargs : Any
             Used to update the configuration
 
         Returns
         -------
-        DataHandle
-            DataHandle wrapping the newly created samples
+        TableHandle
+            TableHandle wrapping the newly created samples
 
         Notes
         -----
@@ -111,7 +110,7 @@ class Creator(RailStage):  # pragma: no cover
 
         It then calls the ``run`` method, which must be defined by a subclass.
 
-        Finally, the ``DataHandle`` associated to the ``output`` tag is returned.
+        Finally, the ``TableHandle`` associated to the ``output`` tag is returned.
         """
         self.config["n_samples"] = n_samples
         self.config["seed"] = seed
@@ -150,7 +149,7 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
             args = vars(args)
         self.open_model(**args)
 
-    def get_posterior(self, input_data: TableLike, **kwargs: Any) -> DataHandle:
+    def get_posterior(self, input_data: TableLike, **kwargs: Any) -> QPHandle:
         """Return posteriors for the given column.
 
         This is a method for running a Creator in interactive mode. In pipeline
@@ -158,15 +157,15 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
 
         Parameters
         ----------
-        data
+        input_data : TableLike
             A table of the galaxies for which posteriors are calculated
 
-        **kwargs
+        **kwargs : Any
             Used to update configuration
 
         Returns
         -------
-        DataHandle
+        QPHandle
             Posterior Estimate
 
         Notes
@@ -177,7 +176,7 @@ class PosteriorCalculator(RailStage):  # pragma: no cover
         This will put the additional functional arguments into this Stages
         configuration data.
 
-        It will then call ``self.run()`` and return the ``DataHandle``
+        It will then call ``self.run()`` and return the ``QPHandle``
         associated to the ``output`` tag.
         """
         self.set_data("input", input_data)
