@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from math import ceil
 from typing import Any, Iterable, TypeVar
+import yaml
 
 from ceci.config import StageParameter as Param
 from ceci.pipeline import MiniPipeline
@@ -183,6 +184,30 @@ class RailPipeline(MiniPipeline):
             ),
             stages_config,
         )
+
+        # make sure stage_config_dict is a dict of stages_config
+        if isinstance(stages_config, str): # pragma: no cover
+            with open(stages_config, "r") as f:
+                stages_config_dict = yaml.safe_load(f) or {}
+        else:
+            stages_config_dict = stages_config or {}
+        
+        # loop through stages
+        for key, exec_cfg in pipe.stage_execution_config.items():
+            stage_cfg = (stages_config_dict.get(key) or {})
+            nprocess = stage_cfg.get("nprocess")
+        
+            if nprocess is None:
+                continue
+            else: # pragma: no cover
+        
+                exec_cfg.nprocess = nprocess
+            
+                # bump max_threads if needed
+                site_cfg = exec_cfg.site.config
+                if nprocess > site_cfg.get("max_threads", 0):
+                    print(f"{class_name} update max_threads to {nprocess}")
+                    site_cfg["max_threads"] = nprocess
         pipe.save(output_yaml)
 
     def __init__(self) -> None:
