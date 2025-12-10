@@ -19,3 +19,15 @@ def find_rail_file(relpath: str) -> str:
         if os.path.exists(fullpath):
             return fullpath
     raise ValueError(f"Could not file {relpath} in {rail.__path__}")
+
+
+def unfind_rail_file(abspath: str) -> str:
+    """Go backwards from an absolute path to a rail file to the value that was passed to
+    `find_rail_file`"""
+    for path_ in rail.__path__:
+        if abspath.startswith(path_):
+            rail_package_directory = os.path.abspath(
+                os.path.join(path_, "..", "..", "..")
+            )
+            return os.path.normpath(abspath.removeprefix(rail_package_directory + "/"))
+    raise ValueError(f"Could not find the originating source of {abspath}")

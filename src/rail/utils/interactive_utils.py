@@ -21,6 +21,7 @@ import rail.stages
 from rail.core import RailEnv
 from rail.core.data import ModelHandle, PqHandle, QPHandle
 from rail.core.stage import RailStage
+from rail.utils.path_utils import RAILDIR, unfind_rail_file
 
 rail.stages.import_and_attach_all(silent=True)
 
@@ -418,6 +419,27 @@ def _param_annotion_wrap_filter(
     return len(line) == len(unindented)
 
 
+def _handle_default_path(path: str | Path) -> str:
+    if isinstance(path, Path):
+        path = str(path)
+
+    if path.startswith(RAILDIR):
+        return path.replace(RAILDIR, "rail.utils.path_utils.RAILDIR")
+    if path.startswith("/"):
+        return unfind_rail_file(path)
+
+    return path
+
+
+def _handle_dictionary_paths(dictionary: dict[str, Any]) -> dict[str, Any]:
+    for key, value in dictionary.items():
+        if isinstance(value, (str, Path)):
+            dictionary[key] = _handle_default_path(value)
+        if isinstance(value, dict):
+            dictionary[key] = _handle_dictionary_paths(value)
+    return dictionary
+
+
 @dataclass
 class InteractiveParameter:
     name: str | None
@@ -452,21 +474,28 @@ class InteractiveParameter:
 
         if not ceci_param.required:
             annotation += ", optional"
-            default_string = str(ceci_param.default)
+            default_value = ceci_param.default
             max_default_length = (
                 DOCSTRING_LINE_LENGTH - DOCSTRING_INDENTATION * 2 - len("Default: ")
             )
-            # truncate long default values
-            if (len(default_string) > max_default_length) and (
-                isinstance(ceci_param.default, (dict, list))
-            ):
-                end = default_string[-1]
-                shortened_string = textwrap.shorten(
-                    default_string, width=max_default_length - 2, placeholder="..."
-                )
-                default_string = f"{shortened_string}{end}"
 
-            description += f"\nDefault: {default_string}"
+            # handle default values that might be paths
+            if isinstance(ceci_param.default, (str, Path)):
+                default_value = _handle_default_path(ceci_param.default)
+            if isinstance(ceci_param.default, dict):
+                default_value = _handle_dictionary_paths(ceci_param.default)
+
+            # truncate long default values
+            if (len(str(default_value)) > max_default_length) and (
+                isinstance(default_value, (dict, list))
+            ):
+                end = str(default_value)[-1]
+                shortened_string = textwrap.shorten(
+                    str(default_value), width=max_default_length - 2, placeholder="..."
+                )
+                default_value = f"{shortened_string}{end}"
+
+            description += f"\nDefault: {default_value}"
 
         return InteractiveParameter(
             name=name,
