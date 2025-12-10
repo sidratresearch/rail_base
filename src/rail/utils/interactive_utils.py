@@ -135,6 +135,11 @@ def _interactive_factory(
             print(class_)
             interactive_output[tag] = "Output class not impl"
 
+        # INTERACTIVE_DO: Testing line
+        print(
+            f"{rail_stage} output type is {class_}, output.data has type {type(output.data)}"
+        )
+
     else:  # not impl
         # multi item output
         print("MULTI ITEM OUTPUT", rail_stage.output_tags(), rail_stage.outputs)
@@ -764,6 +769,9 @@ def _attatch_interactive_function(
     )
     created_function.__doc__ = docstring
 
+    # INTERACTIVE_DO: testing
+    if function_name is None:
+        raise ValueError(f"{stage_name} has no interactive function name")
     setattr(virtual_module.module, function_name, created_function)
 
 
