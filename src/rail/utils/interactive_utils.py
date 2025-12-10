@@ -651,6 +651,55 @@ def _parse_annotation_string(
     return parameters
 
 
+def _validate_return_annotations(
+    stage_name: str,
+    stage_definition: type[RailStage],
+    return_elements: list[InteractiveParameter],
+) -> None:
+    # INTERACTIVE-DO: move this to the regular tests area
+    # grab the different return types
+    from_docstring = [r.annotation for r in return_elements]
+    from_inspect = inspect.signature(
+        getattr(stage_definition, stage_definition.entrypoint_function)
+    ).return_annotation
+    from_ceci = [i[1] for i in stage_definition.outputs]
+
+    warning_start = "Return type annotation for entrypoint function"
+
+    if from_inspect == inspect.Parameter.empty:
+        raise ValueError(f"{warning_start} is missing in {stage_name}")
+
+    if isinstance(
+        from_inspect, type
+    ):  # a class, rather than, say, dict[str, str] which is a GenericAlias
+
+        # if we have a single ceci output, make sure it matches the annotation
+        if (len(from_ceci) == 1) and (from_inspect != from_ceci[0]):
+            print(
+                f"WARNING: {warning_start} doesn't match the output property of {stage_name}"
+            )
+        if len(from_ceci) > 1:
+            print(
+                f"WARNING: {warning_start} cannot be checked against multiple ceci outputs"
+            )
+
+        from_inspect = str(from_inspect).split("'")[1]
+
+        # if we have a single docstring item, make sure it matches the annotation
+        if (len(from_docstring) == 1) and (
+            not from_inspect.endswith(from_docstring[0])
+        ):
+            raise ValueError(
+                f"{warning_start} doesn't match the docstring in {stage_name} (docstring={repr(from_docstring[0])}, annotation={from_inspect})"  # pylint: disable=line-too-long
+            )
+        if len(from_docstring) > 1:
+            print(
+                f"WARNING: {warning_start} cannot be checked against multiple docstring entries in {stage_name}"  # pylint: disable=line-too-long
+            )
+    else:
+        print(f"WARNING: {warning_start} is too complex to be checked in {stage_name}")
+
+
 def _create_interactive_docstring(stage_name: str) -> str:
     """Merge the relevant information from the class and entrypoint function of a RAIL
     stage to create a docstring for the interactive function
@@ -687,6 +736,7 @@ def _create_interactive_docstring(stage_name: str) -> str:
 
     # handle the return elements
     return_elements = _parse_annotation_string(epf_sections["Returns"])
+    _validate_return_annotations(stage_name, stage_definition, return_elements)
     for item in return_elements:
         if hasattr(rail.core.data, item.annotation):
             return_type = getattr(rail.core.data, item.annotation)

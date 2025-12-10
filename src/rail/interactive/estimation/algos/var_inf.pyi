@@ -39,7 +39,7 @@ def var_inf_stack_informer(**kwargs) -> Any:
 
     Returns
     -------
-    dict[str, DataHandle]
+    dict[str, ModelHandle]
         Handle providing access to trained model
     """
 

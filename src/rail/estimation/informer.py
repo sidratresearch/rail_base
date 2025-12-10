@@ -13,7 +13,7 @@ import qp
 import tables_io
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import DataHandle, ModelHandle, QPHandle, TableHandle, TableLike
+from rail.core.data import ModelHandle, QPHandle, TableHandle, TableLike
 from rail.core.stage import RailStage
 
 
@@ -48,7 +48,7 @@ class CatInformer(RailStage):
         super().__init__(args, **kwargs)
         self.model = None
 
-    def inform(self, training_data: TableLike, **kwargs) -> DataHandle:
+    def inform(self, training_data: TableLike, **kwargs) -> ModelHandle:
         """The main interface method for Informers
 
         This will attach the input_data to this `Informer`
@@ -161,7 +161,7 @@ class PzInformer(RailStage):
         training_data: qp.Ensemble | str = "None",
         truth_data: TableLike | str = "None",
         **kwargs,
-    ) -> dict[str, DataHandle]:
+    ) -> dict[str, ModelHandle]:
         """The main interface method for Informers
 
         This will attach the input_data to this `Informer`
@@ -185,7 +185,7 @@ class PzInformer(RailStage):
 
         Returns
         -------
-        dict[str, DataHandle]
+        dict[str, ModelHandle]
             Handle providing access to trained model
         """
         self.set_data("input", training_data)

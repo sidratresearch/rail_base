@@ -142,13 +142,14 @@ def hyperbolic_magnitudes(**kwargs) -> Any:
 
     Returns
     -------
-    output: `PqHandle`
+    pandas.core.frame.DataFrame
         Output table containting hyperbolic magnitudes and their uncertainties. If the
         columns
         in the input table contain a prefix `mag_`, this output tabel will replace the
         prefix
         with `hyp_mag_`, otherwise the column names will be identical to the input
         table.
+        Description of PqHandle
     """
 
 def hyperbolic_smoothing(**kwargs) -> Any:
