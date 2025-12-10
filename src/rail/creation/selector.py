@@ -33,7 +33,7 @@ class Selector(RailStage):
     inputs = [("input", PqHandle)]
     outputs = [("output", PqHandle)]
 
-    def __call__(self, sample: TableLike) -> PqHandle:
+    def __call__(self, sample: TableLike, **kwargs) -> PqHandle:
         """The main interface method for ``Selector``.
 
         Adds noise to the input catalog

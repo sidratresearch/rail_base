@@ -37,7 +37,9 @@ class Noisifier(RailStage):
     def _addNoise(self) -> None:  # pragma: no cover
         raise NotImplementedError("Noisifier._addNoise()")
 
-    def __call__(self, sample: TableLike, seed: int | None = None) -> PqHandle:
+    def __call__(
+        self, sample: TableLike, seed: int | None = None, **kwargs
+    ) -> PqHandle:
         """
         The main interface method for ``Noisifier``.
 

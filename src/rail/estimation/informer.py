@@ -48,7 +48,7 @@ class CatInformer(RailStage):
         super().__init__(args, **kwargs)
         self.model = None
 
-    def inform(self, training_data: TableLike) -> DataHandle:
+    def inform(self, training_data: TableLike, **kwargs) -> DataHandle:
         """The main interface method for Informers
 
         This will attach the input_data to this `Informer`
@@ -160,6 +160,7 @@ class PzInformer(RailStage):
         self,
         training_data: qp.Ensemble | str = "None",
         truth_data: TableLike | str = "None",
+        **kwargs,
     ) -> dict[str, DataHandle]:
         """The main interface method for Informers
 

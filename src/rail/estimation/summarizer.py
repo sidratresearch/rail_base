@@ -76,7 +76,7 @@ class PZSummarizer(RailStage):
     inputs = [("model", ModelHandle), ("input", QPHandle)]
     outputs = [("output", QPHandle)]
 
-    def summarize(self, input_data: qp.Ensemble) -> QPHandle:
+    def summarize(self, input_data: qp.Ensemble, **kwargs) -> QPHandle:
         """The main run method for the summarization, should be implemented
         in the specific subclass.
 

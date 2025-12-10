@@ -159,7 +159,7 @@ class NaiveStackMaskedSummarizer(NaiveStackSummarizer):
             yield start, end, pz_data, mask  # pylint: disable=possibly-used-before-assignment
 
     def summarize(
-        self, input_data: qp.Ensemble, tomo_bins: TableLike | None = None
+        self, input_data: qp.Ensemble, tomo_bins: TableLike | None = None, **kwargs
     ) -> QPHandle:
         """Override the Summarizer.summarize() method to take tomo bins
         as an additional input

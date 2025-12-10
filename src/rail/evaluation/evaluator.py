@@ -435,7 +435,7 @@ class OldEvaluator(RailStage):
     inputs = [("input", QPHandle), ("truth", Hdf5Handle)]
     outputs = [("output", Hdf5Handle)]
 
-    def evaluate(self, data: qp.Ensemble, truth: Any) -> Hdf5Handle:
+    def evaluate(self, data: qp.Ensemble, truth: Any, **kwargs) -> Hdf5Handle:
         """Evaluate the performance of an estimator
 
         This will attach the input data and truth to this `Evaluator`

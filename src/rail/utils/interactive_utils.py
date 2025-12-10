@@ -480,6 +480,10 @@ def _create_parameters_section(
         getattr(stage_definition, stage_definition.entrypoint_function)
     ).parameters.values()
 
+    # INTERACTIVE-DO: turn this into a proper test somewhere
+    if "kwargs" not in [i.name for i in epf_inspected_parameters]:
+        raise ValueError(f"Missing kwargs in interactive function of {stage_name}")
+
     # Handle positional parameters to EPF
     input_is_wrapped = (
         False  # flag for the interactive function, indicating whether "input" is a dict
