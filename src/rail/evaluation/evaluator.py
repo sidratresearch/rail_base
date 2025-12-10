@@ -97,7 +97,9 @@ class Evaluator(RailStage):  # pylint: disable=too-many-instance-attributes
         self._single_distribution_summary_data: dict = {}
         self._metric_config_dict: dict = {}
 
-    def evaluate(self, data: qp.Ensemble, truth: Any) -> dict[str, DataHandle]:
+    def evaluate(
+        self, data: qp.Ensemble, truth: Any, **kwargs
+    ) -> dict[str, DataHandle]:
         """Evaluate the performance of an estimator
 
         This will attach the input data and truth to this `Evaluator`

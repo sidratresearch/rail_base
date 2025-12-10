@@ -32,27 +32,33 @@ estimator_data = tables_io.read(
 informer_result = algos.random_gauss.random_gauss_informer(
     input=informer_data
 )  # makes model.pkl
-print("\n\nInformer Result")
-print(informer_result["model"])
+print("\n\nInformer Result:", informer_result["model"])
 
 estimator_result = algos.random_gauss.random_gauss_estimator(
     input=estimator_data, model=informer_result
 )  # makes output.hdf5
-print("\n\nEstimator Result")
-print(estimator_result["output"])
+print("\n\nEstimator Result:", estimator_result["output"])
+
+# classifier_result = algos.equal_count.equal_count_classifier(
+#     input=estimator_result["output"], output_mode="return"
+# )
+
+# data = np.random.normal(24, 3, size=(1000, 13))
+# data[:, 0] = np.random.uniform(low=0, high=0.03, size=1000)
+# data[:, 1] = np.random.uniform(low=0, high=0.03, size=1000)
+# data[:, 2] = np.random.uniform(low=0, high=2, size=1000)
+
+# data_df = pd.DataFrame(
+#     data=data,  # values
+#     columns=["ra", "dec", "z_true", "u", "g", "r", "i", "z", "y", "Y", "J", "H", "F"],
+# )
+# interactive_result = degraders.addRandom.add_column_of_random(
+#     input=data_df
+# )  # creates output.pq
+# print("\n\nDegrader Result:",interactive_result["output"])
 
 
-data = np.random.normal(24, 3, size=(1000, 13))
-data[:, 0] = np.random.uniform(low=0, high=0.03, size=1000)
-data[:, 1] = np.random.uniform(low=0, high=0.03, size=1000)
-data[:, 2] = np.random.uniform(low=0, high=2, size=1000)
-
-data_df = pd.DataFrame(
-    data=data,  # values
-    columns=["ra", "dec", "z_true", "u", "g", "r", "i", "z", "y", "Y", "J", "H", "F"],
+evaluator_output = interact.evaluation.dist_to_point_evaluator.dist_to_point_evaluator(
+    input={"data": {"photometry": estimator_result["output"]}, "truth": estimator_data},
+    force_exact=True,  # bypass some weird stuff with input iterators. not sure what's going on here
 )
-interactive_result = degraders.addRandom.add_column_of_random(
-    input=data_df
-)  # creates output.pq
-print("\n\nDegrader Result")
-print(interactive_result["output"])
