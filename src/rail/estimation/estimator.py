@@ -91,10 +91,16 @@ class CatEstimator(RailStage, PointEstimationMixin):
         self.validate()
         self.run()
         self.finalize()
-        results = self.get_handle("output")
-        if self.config.output_mode != "return":
-            # only read from file if it wrote to a file
-            results.read(force=True)
+        if len(self.outputs) == 1 or self.config.output_mode != "return":
+            results = self.get_handle("output")
+            if self.config.output_mode != "return":
+                # only read from file if it wrote to a file
+                results.read(force=True)
+        # if there is more than one output and output_mode = return, return them all as a dictionary
+        elif len(self.outputs) > 1 and self.config.output_mode == "return":
+            results = {}
+            for output in self.outputs:
+                results[output[0]] = self.get_handle(output[0])
         return results
 
     def run(self) -> None:
@@ -152,7 +158,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
         """Return the type of distribution that this estimator creates
 
         By default this is DistributionType.ad_hoc
-        But this can be overrided by sub-classes to return
+        But this can be overridden by sub-classes to return
         DistributionType.posterior or DistributionType.likelihood if appropriate
         """
         return DistributionType.ad_hoc
