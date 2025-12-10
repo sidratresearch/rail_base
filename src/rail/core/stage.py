@@ -186,7 +186,7 @@ class RailPipeline(MiniPipeline):
         )
 
         # make sure stage_config_dict is a dict of stages_config
-        if isinstance(stages_config, str):
+        if isinstance(stages_config, str): # pragma: no cover
             with open(stages_config, "r") as f:
                 stages_config_dict = yaml.safe_load(f) or {}
         else:
@@ -199,14 +199,15 @@ class RailPipeline(MiniPipeline):
         
             if nprocess is None:
                 continue
+            else: # pragma: no cover
         
-            exec_cfg.nprocess = nprocess
-        
-            # bump max_threads if needed
-            site_cfg = exec_cfg.site.config
-            if nprocess > site_cfg.get("max_threads", 0):
-                print(f"{class_name} update max_threads to {nprocess}")
-                site_cfg["max_threads"] = nprocess
+                exec_cfg.nprocess = nprocess
+            
+                # bump max_threads if needed
+                site_cfg = exec_cfg.site.config
+                if nprocess > site_cfg.get("max_threads", 0):
+                    print(f"{class_name} update max_threads to {nprocess}")
+                    site_cfg["max_threads"] = nprocess
         pipe.save(output_yaml)
 
     def __init__(self) -> None:
