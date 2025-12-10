@@ -49,7 +49,7 @@ class CatClassifier(RailStage):  # pragma: no cover
             args = vars(args)
         self.open_model(**args)
 
-    def classify(self, input_data: TableLike) -> TableHandle:
+    def classify(self, input_data: TableLike, **kwargs) -> TableHandle:
         """The main run method for the classifier, should be implemented
         in the specific subclass.
 
