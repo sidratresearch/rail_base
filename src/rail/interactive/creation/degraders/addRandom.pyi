@@ -49,10 +49,4 @@ def add_column_of_random(**kwargs) -> Any:
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
         Description of PqHandle
-
-
-    Notes
-    -----
-    Further commentary on stuff. If there isn't a header line above this, it looks
-    like the type of a second return value, and Numpydoc will catch that
     """

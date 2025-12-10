@@ -73,11 +73,6 @@ class Noisifier(RailStage):
         -------
         PqHandle
             A handle giving access to a table with degraded sample.
-
-        Notes
-        -----
-        Further commentary on stuff. If there isn't a header line above this, it looks
-        like the type of a second return value, and Numpydoc will catch that
         """
         if seed is not None:
             self.config.seed = seed
