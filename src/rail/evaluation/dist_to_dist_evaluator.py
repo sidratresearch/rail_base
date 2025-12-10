@@ -12,6 +12,7 @@ class DistToDistEvaluator(Evaluator):
 
     name = "DistToDistEvaluator"
     entrypoint_function = "evaluate"  # the user-facing science function for this class
+    interactive_function = "dist_to_dist_evaluator"
     config_options = Evaluator.config_options.copy()
     config_options.update(
         limits=Param(

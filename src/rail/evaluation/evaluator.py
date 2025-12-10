@@ -113,7 +113,6 @@ class Evaluator(RailStage):  # pylint: disable=too-many-instance-attributes
         ----------
         data : qp.Ensemble
             The sample to evaluate
-
         truth : Any
             Table with the truth information
 
@@ -417,6 +416,7 @@ class OldEvaluator(RailStage):
 
     name = "OldEvaluator"
     entrypoint_function = "evaluate"  # the user-facing science function for this class
+    interactive_function = "old_evaluator"
     config_options = RailStage.config_options.copy()
     config_options.update(
         zmin=Param(float, 0.0, msg="min z for grid"),
@@ -433,7 +433,7 @@ class OldEvaluator(RailStage):
     inputs = [("input", QPHandle), ("truth", Hdf5Handle)]
     outputs = [("output", Hdf5Handle)]
 
-    def evaluate(self, data: qp.Ensemble, truth: Any) -> DataHandle:
+    def evaluate(self, data: qp.Ensemble, truth: Any) -> Hdf5Handle:
         """Evaluate the performance of an estimator
 
         This will attach the input data and truth to this `Evaluator`
@@ -453,7 +453,7 @@ class OldEvaluator(RailStage):
 
         Returns
         -------
-        DataHandle
+        Hdf5Handle
             The evaluation metrics
         """
 

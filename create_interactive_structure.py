@@ -13,7 +13,7 @@ interactive_modules = [
     "creation.degraders",
     "creation.engines",
     "estimation.algos",
-    # "evaluation"
+    "evaluation",
     # "evaluation.metrics"
 ]
 interactive_path = Path("src/rail/interactive")

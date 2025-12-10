@@ -445,36 +445,49 @@ def _create_parameters_section(
     stage_definition: type[RailStage], stage_name: str, epf_parameter_string: str
 ) -> str:
 
+    # Read in parameters to both the class and EPF
     class_parameter_dict = {
         name: InteractiveParameter.from_ceci(name, ceci_param)
         for name, ceci_param in stage_definition.config_options.items()
     }
-
-    epf_parameters = inspect.signature(
+    epf_parameters = _parse_annotation_string(epf_parameter_string)
+    epf_inspected_parameters = inspect.signature(
         getattr(stage_definition, stage_definition.entrypoint_function)
     ).parameters.values()
+
+    # Handle positional parameters to EPF
     input_parameter_names = [
         i.name
-        for i in epf_parameters
+        for i in epf_inspected_parameters
         if i.name not in ["self", "kwargs"] and i.default == inspect.Parameter.empty
     ]
-    if len(input_parameter_names) > 1:
-        raise ValueError(
-            f"Stage {stage_name}'s EPF has multiple positional parameters: {input_parameter_names}"
+    input_parameters_indices = [
+        i
+        for i, param in enumerate(epf_parameters)
+        if param.name in input_parameter_names
+    ]
+    if len(input_parameters_indices) == 1:
+        input_parameter = epf_parameters.pop(input_parameters_indices[0])
+        input_parameter.name = "input"
+        epf_parameters.insert(0, input_parameter)
+    elif len(input_parameters_indices) > 1:
+        annotation_entries = []
+        description_entries = ["Dictionary of input data with the following keys:"]
+        for i, index in enumerate(input_parameters_indices):
+            param = epf_parameters.pop(index - i)  # adjust index as we shorten the list
+            annotation_entries.append(f'"{param.name}": {param.annotation}')
+            description_entries.append(
+                f"{param.name}: {param.annotation} - {param.description.replace('\n',' ')}"
+            )
+        annotation = f"dict[{', '.join(annotation_entries)}]"
+        input_parameter = InteractiveParameter(
+            name="input",
+            annotation=annotation,
+            description="\n".join(description_entries),
         )
+        epf_parameters.insert(0, input_parameter)
 
-    annotation_linenos = []
-    epf_parameter_string_lines = epf_parameter_string.splitlines()
-    for i, line in enumerate(epf_parameter_string_lines):
-        if len(line.lstrip()) == len(line):
-            annotation_linenos.append(i)
-
-    epf_parameters = _parse_annotation_string(epf_parameter_string)
-    for parameter in epf_parameters:
-        parameter.is_input = parameter.name in input_parameter_names
-        if parameter.is_input:
-            parameter.name = "input"
-
+    # Handle parameters duplicated in class config_options and epf
     existing_names = [p.name for p in epf_parameters]
     for parameter in class_parameter_dict.values():
         if parameter.name not in existing_names:

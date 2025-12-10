@@ -20,6 +20,7 @@ class SingleEvaluator(Evaluator):  # pylint: disable=too-many-instance-attribute
 
     name = "SingleEvaluator"
     entrypoint_function = "evaluate"  # the user-facing science function for this class
+    interactive_function = "single_evaluator"
     config_options = Evaluator.config_options.copy()
     config_options.update(
         point_estimates=Param(list, msg="List of point estimates to use", default=[]),
