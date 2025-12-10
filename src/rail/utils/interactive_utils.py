@@ -32,6 +32,9 @@ _stage_names = [
 ]
 _stage_names.sort()
 
+DOCSTRING_LINE_LENGTH = 88
+DOCSTRING_INDENTATION = 4
+
 
 @dataclass
 class VirtualModule:
@@ -409,9 +412,10 @@ class InteractiveParameter:
     is_input: bool = False
 
     def __str__(self) -> str:
+        description = textwrap.indent(self.description, " " * DOCSTRING_INDENTATION)
         if self.name is None:
-            return f"{self.annotation}\n{textwrap.indent(self.description, ' '*4)}"
-        return f"{self.name} : {self.annotation}\n{textwrap.indent(self.description, ' '*4)}"
+            return f"{self.annotation}\n{description}"
+        return f"{self.name} : {self.annotation}\n{description}"
 
     @classmethod
     def from_ceci(
@@ -434,7 +438,21 @@ class InteractiveParameter:
 
         if not ceci_param.required:
             annotation += ", optional"
-            description += f"\nDefault: {ceci_param.default}"
+            default_string = str(ceci_param.default)
+            max_default_length = (
+                DOCSTRING_LINE_LENGTH - DOCSTRING_INDENTATION - len("Default: ")
+            )
+            # truncate long default values
+            if (len(default_string) > max_default_length) and (
+                isinstance(ceci_param.default, (dict, list))
+            ):
+                end = default_string[-1]
+                shortened_string = textwrap.shorten(
+                    default_string, width=max_default_length - 2, placeholder="..."
+                )
+                default_string = f"{shortened_string}{end}"
+
+            description += f"\nDefault: {default_string}"
 
         return InteractiveParameter(
             name=name, annotation=annotation, description=description
@@ -614,16 +632,11 @@ def _create_interactive_docstring(stage_name: str) -> str:
         _param_annotion_wrap_filter, parameters_section_header, blank_lines
     )
 
-    # wrap and then re-indent the docstring
-    indent_size = 4
-    max_line_length = 88
-    docstring = textwrap.indent(
-        _wrap_docstring(
-            docstring.strip(),
-            max_line_length=max_line_length - indent_size,
-            line_filter=param_annotation_filter,
-        ),
-        "" * indent_size,
+    # wrap the docstring
+    docstring = _wrap_docstring(
+        docstring.strip(),
+        max_line_length=DOCSTRING_LINE_LENGTH - DOCSTRING_INDENTATION,
+        line_filter=param_annotation_filter,
     )
 
     return docstring
@@ -731,7 +744,7 @@ def _write_stubs(
         created_function = getattr(virtual_module, function_name)
 
         signature = inspect.signature(created_function)
-        buffer = " " * 4 + '"""'
+        buffer = " " * DOCSTRING_INDENTATION + '"""'
         docstring = f"{buffer}\n{created_function.__doc__}\n{buffer}"
 
         stub_path = _get_stub_path(
