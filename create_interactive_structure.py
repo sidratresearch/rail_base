@@ -11,6 +11,7 @@ python examples/interactive/interactive.py
 import collections
 import importlib
 import sys
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import black
@@ -36,50 +37,80 @@ _initialize_interactive_module(__name__)
 """
 
 
+@dataclass
+class InteractiveModule:
+    subfolder: str = ""
+    docstring: str = ""
+    absolute_imports: list[str] = field(default_factory=list)
+    relative_imports: list[str] = field(default_factory=list)
+    code: list[str] = field(default_factory=list)
+
+    @property
+    def path(self) -> Path:
+        return interactive_path / self.subfolder / "__init__.py"
+
+    def __str__(self) -> str:
+        docstring = ""
+        if len(self.docstring) > 0:
+            docstring += f'"""{self.docstring}"""\n'
+        imports = "\n".join(
+            self.absolute_imports
+            + [f"from . import {module}" for module in self.relative_imports]
+        )
+
+        return f"{docstring}{imports}\n\n" + "\n".join(self.code)
+
+
 def write_modules() -> None:
-    module_contents: collections.defaultdict[Path, list[str]] = collections.defaultdict(
-        list
-    )
-    interactive_init = interactive_path / "__init__.py"
-    module_contents[interactive_init].append(
-        '# Needed to run "import rail.interactive"\n'
+    all_modules: dict[str, InteractiveModule] = {}
+
+    all_modules["."] = InteractiveModule(
+        docstring="Needed to run `import rail.interactive",
     )
 
-    for module_name in interactive_modules:
+    # sort to make sure we do parents first
+    for module_name in sorted(interactive_modules):
         portions = module_name.split(".")
 
         # add import statement to rail.interactive
-        import_statement = f"from . import {portions[0]}"
-        if import_statement not in module_contents[interactive_init]:
-            module_contents[interactive_init].append(import_statement)
+        if portions[0] not in all_modules["."].relative_imports:
+            all_modules["."].relative_imports.append(portions[0])
 
-        # add import statements to rail.interactive.creation, ...estimation, etc.
-        import_statement = f"from . import {portions[-1]}"
-        for i in range(len(portions) - 1):
-            parent_name = "/".join(portions[: i + 1])
-            parent_path = interactive_path / parent_name / "__init__.py"
-            if not import_statement in module_contents[parent_path]:
-                module_contents[parent_path].append(import_statement)
+        # if this isn't a top level (i.e., there's one nesting, like
+        # creation.degraders), import degraders from creation
+        if len(portions) == 2:
+            if portions[0] not in all_modules:
+                all_modules[portions[0]] = InteractiveModule(subfolder=portions[0])
+            if portions[1] not in all_modules[portions[0]].relative_imports:
+                all_modules[portions[0]].relative_imports.append(portions[1])
 
-        # initialize the interactive functions that live in this module
-        module_path = interactive_path / module_name.replace(".", "/") / "__init__.py"
-        module_contents[module_path].append(
-            LOWEST_LEVEL_CONTENTS.format(name=portions[-1]).strip()
+        # create the lowest level initialization
+        all_modules[module_name] = InteractiveModule(
+            subfolder=module_name.replace(".", "/"),
+            docstring=f"Module docstring for interactive {portions[-1]}",
+            absolute_imports=[
+                "from rail.utils.interactive_utils import _initialize_interactive_module"
+            ],
+            code=["_initialize_interactive_module(__name__)"],
         )
 
-    for path, contents in module_contents.items():
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text("\n".join(contents))
+    for module in all_modules.values():
+        # print("\n\n", module.path)
+        # print(module)
 
+        module.path.parent.mkdir(parents=True, exist_ok=True)
+        module.path.write_text(str(module))
+
+        # INTERACTIVE-DO: Make this a utility since it's used here and in stubs
         black.format_file_in_place(
-            path,
+            module.path,
             fast=False,
             mode=black.Mode(is_pyi=True),
             write_back=black.WriteBack.YES,
         )
-        isort.api.sort_file(path, quiet=True, profile="black")
+        isort.api.sort_file(module.path, quiet=True, profile="black")
 
-        print(f"Created {str(path)}")
+        print(f"Created {str(module.path)}")
 
 
 def write_stubs() -> None:
