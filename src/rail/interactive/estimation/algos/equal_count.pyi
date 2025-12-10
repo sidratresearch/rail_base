@@ -36,9 +36,6 @@ def equal_count_classifier(**kwargs) -> Any:
     ----------
     input : qp.Ensemble
         Per-galaxy p(z), and any ancilary data associated with it
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
     chunk_size : int, optional
         Number of object per chunk for parallel processing
         Default: 10000

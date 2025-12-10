@@ -35,9 +35,6 @@ def quantity_cut(**kwargs) -> Any:
         The sample to be selected
     cuts : dict
         Cuts to apply
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
     drop_rows : bool, optional
         Drop selected rows from output table
         Default: True

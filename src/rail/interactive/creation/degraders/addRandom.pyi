@@ -37,9 +37,6 @@ def add_column_of_random(**kwargs) -> Any:
         The sample to be degraded.
     seed : int, optional
         An integer to set the numpy random seed, by default None.
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
     col_name : str, optional
         Name of the column with random numbers
         Default: chaos_bunny

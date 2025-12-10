@@ -35,6 +35,9 @@ _stage_names.sort()
 DOCSTRING_LINE_LENGTH = 88
 DOCSTRING_INDENTATION = 4
 
+# parameters that are passed to make_stage for all stages
+GLOBAL_INTERACTIVE_PARAMETERS = {"output_mode": "return", "force_exact": True}
+
 
 @dataclass
 class VirtualModule:
@@ -100,7 +103,11 @@ def _interactive_factory(
     # extract the input kwarg, and turn it into the appropriate DataHandle
     entrypoint_inputs = kwargs.pop("input")
 
-    instance = rail_stage.make_stage(**kwargs)
+    for key, value in GLOBAL_INTERACTIVE_PARAMETERS.items():
+        if key in kwargs:
+            raise ValueError(f"In rail.interactive, {key} is set to {value}")
+
+    instance = rail_stage.make_stage(**kwargs, **GLOBAL_INTERACTIVE_PARAMETERS)
     entrypoint_function_name = instance.entrypoint_function
     entrypoint_function: Callable = getattr(instance, entrypoint_function_name)
 
@@ -534,6 +541,11 @@ def _create_parameters_section(
             print(
                 f"Warning - parameter '{parameter.name}' is duplicated in config_options and EPF of {stage_name}"  # pylint: disable=line-too-long
             )
+
+    # remove the parameters that we force the values of
+    epf_parameters = [
+        p for p in epf_parameters if p.name not in GLOBAL_INTERACTIVE_PARAMETERS
+    ]
 
     return (
         "\n".join([str(i) for i in _sort_parameters(epf_parameters)]),

@@ -27,9 +27,6 @@ def train_z_estimator(**kwargs) -> Any:
     ----------
     input : TableLike
         A dictionary of all input data
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
     chunk_size : int, optional
         Number of object per chunk for parallel processing
         Default: 10000
@@ -97,9 +94,6 @@ def train_z_informer(**kwargs) -> Any:
     ----------
     input : TableLike
         dictionary of all input data, or a `TableHandle` providing access to it
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
     hdf5_groupname : str, optional
         name of hdf5 group for data, if None, then set to ''
         Default: photometry

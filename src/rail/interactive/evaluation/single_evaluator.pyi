@@ -28,9 +28,6 @@ def single_evaluator(**kwargs) -> Any:
         Dictionary of input data with the following keys:
         data: qp.Ensemble - The sample to evaluate
         truth: Any - Table with the truth information
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
     metrics : list, optional
         The metrics you want to evaluate.
         Default: []
@@ -46,9 +43,6 @@ def single_evaluator(**kwargs) -> Any:
     _random_state : float, optional
         Random seed value to use for reproducible results.
         Default: None
-    force_exact : bool, optional
-        Force the exact calculation.  This will not allow parallelization
-        Default: False
     point_estimates : list, optional
         List of point estimates to use
         Default: []

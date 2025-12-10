@@ -25,9 +25,6 @@ def column_mapper(**kwargs) -> Any:
         The data to be renamed
     columns : dict
         Map of columns to rename
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
     inplace : bool, optional
         Update file in place
         Default: False
@@ -65,9 +62,6 @@ def row_selector(**kwargs) -> Any:
         Starting row number
     stop : int
         Stoppig row number
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
 
     Returns
     -------
@@ -98,9 +92,6 @@ def table_converter(**kwargs) -> Any:
         The data to be converted
     output_format : str
         Format of output table
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
 
     Returns
     -------

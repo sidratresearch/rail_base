@@ -30,9 +30,6 @@ def var_inf_stack_informer(**kwargs) -> Any:
         Per-galaxy p(z), and any ancilary data associated with it, by default "None"
     truth_data : TableLike | str, optional
         Table with the true redshifts, by default "None"
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
     hdf5_groupname : str, optional
         name of hdf5 group for data, if None, then set to ''
         Default: photometry
@@ -77,9 +74,6 @@ def var_inf_stack_summarizer(**kwargs) -> Any:
     ----------
     input : qp.Ensemble
         Per-galaxy p(z), and any ancilary data associated with it
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
     chunk_size : int, optional
         Number of object per chunk for parallel processing
         Default: 10000

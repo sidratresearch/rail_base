@@ -26,9 +26,6 @@ def old_evaluator(**kwargs) -> Any:
         Dictionary of input data with the following keys:
         data: qp.Ensemble - The sample to evaluate
         truth: Any - Table with the truth information
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
     zmin : float, optional
         min z for grid
         Default: 0.0
