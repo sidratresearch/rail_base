@@ -8,7 +8,6 @@ pytest tests/interactive
 python examples/interactive/interactive.py
 """
 
-import collections
 import importlib
 import sys
 from dataclasses import dataclass, field
@@ -28,13 +27,6 @@ interactive_modules = [
     # "evaluation.metrics"
 ]
 interactive_path = Path("src/rail/interactive")
-LOWEST_LEVEL_CONTENTS = """
-\"\"\"Module docstring for interactive {name}\"\"\"
-
-from rail.utils.interactive_utils import _initialize_interactive_module
-
-_initialize_interactive_module(__name__)
-"""
 
 
 @dataclass
@@ -95,9 +87,6 @@ def write_modules() -> None:
         )
 
     for module in all_modules.values():
-        # print("\n\n", module.path)
-        # print(module)
-
         module.path.parent.mkdir(parents=True, exist_ok=True)
         module.path.write_text(str(module))
 
@@ -123,5 +112,6 @@ def write_stubs() -> None:
 if __name__ == "__main__":
     if pytest.main(["tests/interactive"]) != 0:
         sys.exit()
+    # add function to delete everything in interactive?
     write_modules()
     write_stubs()
