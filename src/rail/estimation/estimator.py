@@ -56,13 +56,13 @@ class CatEstimator(RailStage, PointEstimationMixin):
     )
     inputs = [("model", ModelHandle), ("input", TableHandle)]
     outputs = [("output", QPHandle)]
-    _partial_output = {}  # TODO: make this an ordered dict?
 
     def __init__(self, args: Any, **kwargs: Any) -> None:
         """Initialize Estimator"""
         super().__init__(args, **kwargs)
         self._output_handle: QPHandle | None = None
         self.model = None
+        self._partial_output = {}  # TODO: make this an ordered dict?
 
     def estimate(self, input_data: TableLike) -> DataHandle:
         """The main interface method for the photo-z estimation
