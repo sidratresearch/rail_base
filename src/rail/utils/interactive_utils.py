@@ -272,7 +272,7 @@ def _split_docstring(docstring: str) -> collections.defaultdict[str, str]:
     current_section = 0
     while line_no < len(docstring_lines) - 1:
         if _is_section_header(line_no, docstring_lines):
-            current_section += 1
+            current_section = SECTION_HEADERS.index(docstring_lines[line_no])
             line_no += 2
         else:
             result[SECTION_HEADERS[current_section]].append(docstring_lines[line_no])
@@ -620,6 +620,9 @@ def _parse_annotation_string(
         # get the item type and name (if supplied)
         if " : " in lines[lineno]:
             param_name, param_type = lines[lineno].split(" : ")
+
+            if param_name.startswith("*"):
+                continue
         else:
             param_name = None
             param_type = lines[lineno]
