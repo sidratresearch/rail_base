@@ -38,6 +38,7 @@ repos:
     rev: 25.9.0
     hooks:
       - id: black
+      - id: black-jupyter
 
   # use the isort code formatter
   - repo: https://github.com/pycqa/isort
