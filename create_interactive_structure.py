@@ -25,6 +25,7 @@ interactive_modules = [
     "estimation.algos",
     "evaluation",
     "evaluation.metrics",
+    "tools",
 ]
 interactive_path = Path("src/rail/interactive")
 

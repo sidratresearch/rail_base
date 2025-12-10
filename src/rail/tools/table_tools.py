@@ -3,7 +3,7 @@
 import tables_io
 from ceci.config import StageParameter as Param
 
-from rail.core.data import DataHandle, Hdf5Handle, PqHandle, TableLike
+from rail.core.data import Hdf5Handle, PqHandle, TableLike
 from rail.core.stage import RailStage
 
 
@@ -19,6 +19,7 @@ class ColumnMapper(RailStage):
 
     name = "ColumnMapper"
     entrypoint_function = "__call__"  # the user-facing science function for this class
+    interactive_function = "column_mapper"
     config_options = RailStage.config_options.copy()
     config_options.update(
         columns=Param(dict, required=True, msg="Map of columns to rename"),
@@ -39,17 +40,17 @@ class ColumnMapper(RailStage):
         printMsg += "f{str(self.config.columns)}"
         return printMsg
 
-    def __call__(self, data: TableLike) -> DataHandle:
+    def __call__(self, data: TableLike, **kwargs) -> PqHandle:
         """Return a table with the columns names changed
 
         Parameters
         ----------
-        data : Table-like
+        data : TableLike
             The data to be renamed
 
         Returns
         -------
-        Table-like
+        PqHandle
             The degraded sample
         """
         self.set_data("input", data)
@@ -70,6 +71,7 @@ class RowSelector(RailStage):
 
     name = "RowSelector"
     entrypoint_function = "__call__"  # the user-facing science function for this class
+    interactive_function = "row_selector"
     config_options = RailStage.config_options.copy()
     config_options.update(
         start=Param(int, required=True, msg="Starting row number"),
@@ -88,7 +90,7 @@ class RowSelector(RailStage):
         printMsg += "f{str(self.config.columns)}"
         return printMsg
 
-    def __call__(self, data: TableLike) -> DataHandle:
+    def __call__(self, data: TableLike, **kwargs) -> PqHandle:
         """Return a table with the columns names changed
 
         Parameters
@@ -98,7 +100,7 @@ class RowSelector(RailStage):
 
         Returns
         -------
-        DataHandle
+        PqHandle
             The degraded sample
         """
         self.set_data("input", data)
@@ -116,6 +118,7 @@ class TableConverter(RailStage):
 
     name = "TableConverter"
     entrypoint_function = "__call__"  # the user-facing science function for this class
+    interactive_function = "table_converter"
     config_options = RailStage.config_options.copy()
     config_options.update(
         output_format=Param(str, required=True, msg="Format of output table"),
@@ -129,7 +132,7 @@ class TableConverter(RailStage):
         out_data = tables_io.convert(data, out_fmt)
         self.add_data("output", out_data)
 
-    def __call__(self, data: TableLike) -> DataHandle:
+    def __call__(self, data: TableLike, **kwargs) -> Hdf5Handle:
         """Return a converted table
 
         Parameters
@@ -139,7 +142,7 @@ class TableConverter(RailStage):
 
         Returns
         -------
-        DataHandle
+        Hdf5Handle
             The converted version of the table
         """
         self.set_data("input", data)
