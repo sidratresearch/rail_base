@@ -416,7 +416,7 @@ class InteractiveParameter:
     name: str | None
     annotation: str
     description: str
-    is_input: bool = False
+    is_required: bool = True
 
     def __str__(self) -> str:
         description = textwrap.indent(self.description, " " * DOCSTRING_INDENTATION)
@@ -462,7 +462,10 @@ class InteractiveParameter:
             description += f"\nDefault: {default_string}"
 
         return InteractiveParameter(
-            name=name, annotation=annotation, description=description
+            name=name,
+            annotation=annotation,
+            description=description,
+            is_required=ceci_param.required,
         )
 
 
@@ -471,14 +474,16 @@ def _create_parameters_section(
 ) -> str:
 
     # Read in parameters to both the class and EPF
-    class_parameter_dict = {
-        name: InteractiveParameter.from_ceci(name, ceci_param)
+    class_parameters = [
+        InteractiveParameter.from_ceci(name, ceci_param)
         for name, ceci_param in stage_definition.config_options.items()
-    }
-    epf_parameters = _parse_annotation_string(epf_parameter_string)
+    ]
     epf_inspected_parameters = inspect.signature(
         getattr(stage_definition, stage_definition.entrypoint_function)
     ).parameters.values()
+    epf_parameters = _parse_annotation_string(
+        epf_parameter_string, epf_inspected_parameters
+    )
 
     # INTERACTIVE-DO: turn this into a proper test somewhere
     if "kwargs" not in [i.name for i in epf_inspected_parameters]:
@@ -520,9 +525,9 @@ def _create_parameters_section(
         )
         epf_parameters.insert(0, input_parameter)
 
-    # Handle parameters duplicated in class config_options and epf
+    # Class parameters
     existing_names = [p.name for p in epf_parameters]
-    for parameter in class_parameter_dict.values():
+    for parameter in class_parameters:
         if parameter.name not in existing_names:
             epf_parameters.append(parameter)
         else:
@@ -530,10 +535,30 @@ def _create_parameters_section(
                 f"Warning - parameter '{parameter.name}' is duplicated in config_options and EPF of {stage_name}"  # pylint: disable=line-too-long
             )
 
-    return "\n".join([str(i) for i in epf_parameters]), input_is_wrapped
+    return (
+        "\n".join([str(i) for i in _sort_parameters(epf_parameters)]),
+        input_is_wrapped,
+    )
 
 
-def _parse_annotation_string(text: str) -> list[InteractiveParameter]:
+def _sort_parameters(
+    parameters: list[InteractiveParameter],
+) -> list[InteractiveParameter]:
+    input_parameter = None
+    if parameters[0].name == "input":
+        input_parameter = parameters.pop(0)
+
+    remaining = sorted(parameters, key=lambda p: not p.is_required)
+
+    if input_parameter is not None:
+        remaining.insert(0, input_parameter)
+
+    return remaining
+
+
+def _parse_annotation_string(
+    text: str, inspected_parameters: list[inspect.Parameter] | None = None
+) -> list[InteractiveParameter]:
     lines = text.replace("\n\n", "\n").splitlines()
     annotation_linenos = []
     for i, line in enumerate(lines):
@@ -556,11 +581,20 @@ def _parse_annotation_string(text: str) -> list[InteractiveParameter]:
         else:
             description_lines = lines[lineno + 1 :]
 
+        # check if there is a default
+        is_required = False
+        if inspected_parameters is not None:
+            inspect_parameter = [
+                p for p in inspected_parameters if p.name == param_name
+            ][0]
+            is_required = inspect_parameter.default == inspect.Parameter.empty
+
         parameters.append(
             InteractiveParameter(
                 name=param_name,
                 annotation=param_type,
                 description="\n".join([j.strip() for j in description_lines]),
+                is_required=is_required,
             )
         )
 

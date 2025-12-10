@@ -33,6 +33,8 @@ def quantity_cut(**kwargs) -> Any:
     ----------
     input : TableLike
         The sample to be selected
+    cuts : dict
+        Cuts to apply
     output_mode : str, optional
         What to do with the outputs
         Default: default
@@ -42,8 +44,6 @@ def quantity_cut(**kwargs) -> Any:
     seed : unknown type, optional
         Set to an `int` to force reproducible results.
         Default: None
-    cuts : dict
-        Cuts to apply
 
     Returns
     -------

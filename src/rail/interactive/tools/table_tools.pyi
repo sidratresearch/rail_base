@@ -23,11 +23,11 @@ def column_mapper(**kwargs) -> Any:
     ----------
     input : TableLike
         The data to be renamed
+    columns : dict
+        Map of columns to rename
     output_mode : str, optional
         What to do with the outputs
         Default: default
-    columns : dict
-        Map of columns to rename
     inplace : bool, optional
         Update file in place
         Default: False
@@ -61,13 +61,13 @@ def row_selector(**kwargs) -> Any:
     ----------
     input : TableLike
         The data to be renamed
-    output_mode : str, optional
-        What to do with the outputs
-        Default: default
     start : int
         Starting row number
     stop : int
         Stoppig row number
+    output_mode : str, optional
+        What to do with the outputs
+        Default: default
 
     Returns
     -------
@@ -96,11 +96,11 @@ def table_converter(**kwargs) -> Any:
     ----------
     input : TableLike
         The data to be converted
+    output_format : str
+        Format of output table
     output_mode : str, optional
         What to do with the outputs
         Default: default
-    output_format : str
-        Format of output table
 
     Returns
     -------
