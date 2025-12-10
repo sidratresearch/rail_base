@@ -30,9 +30,20 @@ def write_modules() -> None:
     module_contents: collections.defaultdict[Path, list[str]] = collections.defaultdict(
         list
     )
+    interactive_init = interactive_path / "__init__.py"
+    module_contents[interactive_init].append(
+        '# Needed to run "import rail.interactive"\n'
+    )
 
     for module_name in interactive_modules:
         portions = module_name.split(".")
+
+        # add import statement to rail.interactive
+        import_statement = f"from . import {portions[0]}"
+        if import_statement not in module_contents[interactive_init]:
+            module_contents[interactive_init].append(import_statement)
+
+        # add import statements to rail.interactive.creation, ...estimation, etc.
         import_statement = f"from . import {portions[-1]}"
         for i in range(len(portions) - 1):
             parent_name = "/".join(portions[: i + 1])
