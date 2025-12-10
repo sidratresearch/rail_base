@@ -459,16 +459,22 @@ class InteractiveParameter:
         return f"{self.name} : {self.annotation}\n{description}"
 
     @classmethod
-    def from_ceci(
-        cls, name: str, ceci_param: StageConfig | StageParameter
-    ) -> "InteractiveParameter":
+    def from_ceci(cls, name: str, ceci_param: Any) -> "InteractiveParameter":
         if isinstance(ceci_param, StageParameter):
             return cls.from_ceci_parameter(name, ceci_param)
-        return cls.from_ceci_parameter(name, dict.__getitem__(ceci_param, name))
+        if isinstance(ceci_param, StageConfig):
+            return cls.from_ceci_parameter(name, dict.__getitem__(ceci_param, name))
+
+        return cls(
+            name=name,
+            annotation="unknown type, optional",
+            description=f"Default: {ceci_param}",
+            is_required=False,
+        )
 
     @classmethod
     def from_ceci_parameter(
-        cls, name: str, ceci_param: StageConfig
+        cls, name: str, ceci_param: StageParameter
     ) -> "InteractiveParameter":
         dtype_name = "unknown type"
         if ceci_param.dtype is not None:
