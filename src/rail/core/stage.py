@@ -414,12 +414,18 @@ class RailStage(PipelineStage):
 
         if isinstance(data, DataHandle):
             # If we were passed a DataHandle, we use that
-            aliased_tag = data.tag
+            if tag in self._aliases:
+                # use this alias instead of the Data handle tag
+                aliased_tag = self.get_aliased_tag(tag)
+            else:
+                aliased_tag = data.tag
             if tag in self.input_tags():
-                self._aliases[tag] = aliased_tag
+                if aliased_tag != "output":
+                    self._aliases[tag] = aliased_tag
 
-                # make sure the aliased tag exists in the inputs dictionary
-                self._inputs[aliased_tag] = self._inputs[tag]
+                    # make sure the aliased tag exists in the inputs dictionary
+                    if not aliased_tag in self._inputs:
+                        self._inputs[aliased_tag] = self._inputs[tag]
 
                 handle = self.get_handle(tag, path=path, allow_missing=True)
                 if data.has_path:
