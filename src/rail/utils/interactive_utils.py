@@ -77,13 +77,19 @@ SECTION_HEADERS = [
 ]  # very small subset of numpydoc.validate.ALLOWED_SECTIONS
 
 
-def _interactive_factory(rail_stage: type[RailStage], **kwargs) -> Any:
+def _interactive_factory(
+    rail_stage: type[RailStage], function_input_is_wrapped: bool, **kwargs
+) -> Any:
     """Create the actual interactive function for a RAIL stage
 
     Parameters
     ----------
     rail_stage : type[RailStage]
         The stage being operated on
+    function_input_is_wrapped : bool
+        Whether or not the interactive version of the entrypoint function has wrapped up
+        multiple positional parameters into a dictionary, that needs to be unwrapped
+        when passing it onwards
 
     Returns
     -------
@@ -91,17 +97,17 @@ def _interactive_factory(rail_stage: type[RailStage], **kwargs) -> Any:
         This function returns the result of calling the stage's entrypoint function
         (after calling make_stage)
     """
-    # extract the input kwarg, and turn it into the appropriate DataHandle, need to
-    # handle multiple inputs - each input should become a kwarg based on it's name/tag
+    # extract the input kwarg, and turn it into the appropriate DataHandle
     entrypoint_inputs = kwargs.pop("input")
 
     instance = rail_stage.make_stage(**kwargs)
     entrypoint_function_name = instance.entrypoint_function
     entrypoint_function: Callable = getattr(instance, entrypoint_function_name)
 
-    # input tags don't actually correspond to the *positional* arguments of the
-    # entrypoint function
-    output = entrypoint_function(entrypoint_inputs, **kwargs)
+    if function_input_is_wrapped:
+        output = entrypoint_function(**entrypoint_inputs, **kwargs)
+    else:
+        output = entrypoint_function(entrypoint_inputs, **kwargs)
 
     # convert output FROM a DataHandle into pure data, need to handle the case of
     # multiple outputs - use each tag as dict key
@@ -123,9 +129,10 @@ def _interactive_factory(rail_stage: type[RailStage], **kwargs) -> Any:
 
     else:  # not impl
         # multi item output
-        print(rail_stage.output_tags(), rail_stage.outputs)
+        print("MULTI ITEM OUTPUT", rail_stage.output_tags(), rail_stage.outputs)
         for tag, class_ in rail_stage.outputs:
             pass
+        return rail_stage.outputs
 
     return interactive_output
 
@@ -474,6 +481,9 @@ def _create_parameters_section(
     ).parameters.values()
 
     # Handle positional parameters to EPF
+    input_is_wrapped = (
+        False  # flag for the interactive function, indicating whether "input" is a dict
+    )
     input_parameter_names = [
         i.name
         for i in epf_inspected_parameters
@@ -489,6 +499,7 @@ def _create_parameters_section(
         input_parameter.name = "input"
         epf_parameters.insert(0, input_parameter)
     elif len(input_parameters_indices) > 1:
+        input_is_wrapped = True
         annotation_entries = []
         description_entries = ["Dictionary of input data with the following keys:"]
         for i, index in enumerate(input_parameters_indices):
@@ -515,7 +526,7 @@ def _create_parameters_section(
                 f"Warning - parameter '{parameter.name}' is duplicated in config_options and EPF of {stage_name}"  # pylint: disable=line-too-long
             )
 
-    return "\n".join([str(i) for i in epf_parameters])
+    return "\n".join([str(i) for i in epf_parameters]), input_is_wrapped
 
 
 def _parse_annotation_string(text: str) -> list[InteractiveParameter]:
@@ -566,7 +577,6 @@ def _create_interactive_docstring(stage_name: str) -> str:
     str
         The final docstring for the interactive function
     """
-    # print(stage_name)
     stage_definition = _get_stage_definition(stage_name)
 
     # get the raw docstrings
@@ -582,6 +592,12 @@ def _create_interactive_docstring(stage_name: str) -> str:
         [stage_definition.__module__, stage_name, stage_definition.entrypoint_function]
     )
 
+    # handle the parameters
+    parameters_content, input_is_wrapped = _create_parameters_section(
+        stage_definition, stage_name, epf_sections["Parameters"]
+    )
+
+    # handle the return elements
     return_elements = _parse_annotation_string(epf_sections["Returns"])
     for item in return_elements:
         if hasattr(rail.core.data, item.annotation):
@@ -593,6 +609,7 @@ def _create_interactive_docstring(stage_name: str) -> str:
                 # INTERACTIVE_DO: move this to be a generic dev side test
     returns_content = "\n".join([str(i) for i in return_elements])
 
+    # handle any other content
     extra_documentation = ""
     for section_name, section_content in class_sections.items():
         if section_name not in ["Summary", "Parameters", "Returns"]:
@@ -610,9 +627,7 @@ def _create_interactive_docstring(stage_name: str) -> str:
         class_summary=class_sections["Summary"],
         function_summary=epf_sections["Summary"],
         source_file=source_file,
-        parameters=_create_parameters_section(
-            stage_definition, stage_name, epf_sections["Parameters"]
-        ),
+        parameters=parameters_content,
         returns=returns_content,
         extra_documentation=extra_documentation,
     )
@@ -639,7 +654,7 @@ def _create_interactive_docstring(stage_name: str) -> str:
         line_filter=param_annotation_filter,
     )
 
-    return docstring
+    return docstring, input_is_wrapped
 
 
 def _attatch_interactive_function(
@@ -660,10 +675,11 @@ def _attatch_interactive_function(
     virtual_module = stage_module_dict[virtual_module_name]
 
     # create the function
+    docstring, function_input_is_wrapped = _create_interactive_docstring(stage_name)
     created_function: Callable = functools.partial(
-        _interactive_factory, stage_definition
+        _interactive_factory, stage_definition, function_input_is_wrapped
     )
-    created_function.__doc__ = _create_interactive_docstring(stage_name)
+    created_function.__doc__ = docstring
 
     setattr(virtual_module.module, function_name, created_function)
 
@@ -803,7 +819,7 @@ def _initialize_interactive_module(
     virtual_module_dict = _create_virtual_submodules(calling_module, relevant_stages)
 
     for stage_name in relevant_stages:
-        print(f"Working on stage {stage_name}")
+        # print(f"Working on stage {stage_name}")
         _attatch_interactive_function(virtual_module_dict, stage_name)
 
     if write_stubs:
