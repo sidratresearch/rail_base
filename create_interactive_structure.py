@@ -1,3 +1,13 @@
+"""
+When running this you may also want to run:
+
+python wumpydoc.py
+pytest tests/interactive
+[this file]
+
+python examples/interactive/interactive.py
+"""
+
 import collections
 import importlib
 import sys
@@ -51,6 +61,7 @@ def write_modules() -> None:
             if not import_statement in module_contents[parent_path]:
                 module_contents[parent_path].append(import_statement)
 
+        # initialize the interactive functions that live in this module
         module_path = interactive_path / module_name.replace(".", "/") / "__init__.py"
         module_contents[module_path].append(
             LOWEST_LEVEL_CONTENTS.format(name=portions[-1]).strip()
