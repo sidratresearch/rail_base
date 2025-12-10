@@ -454,7 +454,7 @@ class InteractiveParameter:
             annotation += ", optional"
             default_string = str(ceci_param.default)
             max_default_length = (
-                DOCSTRING_LINE_LENGTH - DOCSTRING_INDENTATION - len("Default: ")
+                DOCSTRING_LINE_LENGTH - DOCSTRING_INDENTATION * 2 - len("Default: ")
             )
             # truncate long default values
             if (len(default_string) > max_default_length) and (
