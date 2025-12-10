@@ -36,13 +36,13 @@ class Modeler(RailStage):  # pragma: no cover
         super().__init__(args, **kwargs)
         self.model = None
 
-    def fit_model(self) -> ModelHandle:
+    def fit_model(self, **kwargs) -> ModelHandle:
         """Produce a creation model from which photometry and redshifts can be
         generated.
 
         Returns
         -------
-        ModelHandle:
+        ModelHandle
             This will definitely be a wrapper around a File,
             but the filetype and format depend entirely on the
             modeling approach
