@@ -469,7 +469,11 @@ class InteractiveParameter:
         if ceci_param.dtype is not None:
             dtype_name = ceci_param.dtype.__name__
 
-        description = ceci_param.msg
+        description = " ".join(
+            textwrap.wrap(
+                ceci_param.msg, width=DOCSTRING_LINE_LENGTH - DOCSTRING_INDENTATION * 2
+            )
+        )
         annotation = dtype_name
 
         if not ceci_param.required:
