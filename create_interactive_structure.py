@@ -70,6 +70,7 @@ def check_rail_packages() -> list[str]:
         "rail.gpz": "pz-rail-gpz-v1",
         "rail.inception": "pz-rail-inception",
         "rail.lephare": "pz-rail-lephare",
+        "rail.lib_gp_comp": "pz-rail-lib_gp_comp",
         "rail.pzflow": "pz-rail-pzflow",
         "rail.sklearn": "pz-rail-sklearn",
         # "rail.":"pz-rail-",
