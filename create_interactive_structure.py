@@ -62,6 +62,12 @@ def check_rail_packages() -> list[str]:
         "rail.bpz": "pz-rail-bpz",
         "rail.calib": "pz-rail-calib",  # requires sompz
         "rail.cmnn": "pz-rail-cmnn",
+        "rail.delight": "pz-rail-delight",
+        "rail.dnf": "pz-rail-dnf",
+        "rail.dsps": "pz-rail-dsps",
+        "rail.flexzboost": "pz-rail-flexzboost",
+        "rail.fsps": "pz-rail-fsps",
+        "rail.gpz": "pz-rail-gpz-v1",
         "rail.pzflow": "pz-rail-pzflow",
         "rail.sklearn": "pz-rail-sklearn",
         # "rail.":"pz-rail-",
