@@ -61,7 +61,7 @@ def check_rail_packages() -> list[str]:
         "rail": "pz-rail",
         "rail.astro_tools": "pz-rail-astro-tools",
         "rail.bpz": "pz-rail-bpz",
-        "rail.calib": "pz-rail-calib",  # requires sompz
+        "rail.calib": "pz-rail-calib",
         "rail.cmnn": "pz-rail-cmnn",
         "rail.delight": "pz-rail-delight",
         "rail.dnf": "pz-rail-dnf",
@@ -69,15 +69,16 @@ def check_rail_packages() -> list[str]:
         "rail.flexzboost": "pz-rail-flexzboost",
         "rail.fsps": "pz-rail-fsps",
         "rail.gpz": "pz-rail-gpz-v1",
-        "rail.inception": "pz-rail-inception",
+        # "rail.inception": "pz-rail-inception", # not ready for general use
         "rail.lephare": "pz-rail-lephare",
         "rail.lib_gp_comp": "pz-rail-lib_gp_comp",
         "rail.pzflow": "pz-rail-pzflow",
+        # "rail.shire": "pz-rail-shire", # not ready for general use
         "rail.sklearn": "pz-rail-sklearn",
         "rail.som": "pz-rail-som",
         "rail.sompz": "pz-rail-sompz",
         "rail.rail_tpz": "pz-rail-tpz",
-        "rail.yaw_rail": "pz-rail-yaw",
+        "rail.yaw_rail": "pz-rail-yaw",  # needs to be manually imported?
     }
     package_info = RailEnv.list_rail_packages()
     del package_info["rail.hub"]
