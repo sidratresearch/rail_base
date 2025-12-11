@@ -1,3 +1,3 @@
 """Needed to run `import rail.interactive"""
 
-from . import creation, estimation, evaluation, tools
+from . import calib, creation, estimation, evaluation, tools

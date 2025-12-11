@@ -21,6 +21,7 @@ from rail.core.introspection import RailEnv
 from rail.utils.interactive_utils import _initialize_interactive_module
 
 interactive_modules = [
+    "calib",
     "creation.degraders",
     "creation.engines",
     "estimation.algos",
