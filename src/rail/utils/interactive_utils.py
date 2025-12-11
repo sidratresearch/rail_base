@@ -695,13 +695,18 @@ def _validate_return_annotations(
         from_inspect = str(from_inspect).split("'")[1]
 
         # if we have a single docstring item, make sure it matches the annotation
-        if (len(from_docstring) == 1) and (
-            not from_inspect.endswith(from_docstring[0])
-        ):
+        if len(from_docstring) == 1:
+            from_docstring = from_docstring[0]
+            if from_inspect.endswith(from_docstring):  # Ensemble & Ensemble
+                return
+            if "." in from_docstring:  # Ensemble and qp.Ensemble
+                docstring_final = from_docstring[from_docstring.rindex(".") + 1 :]
+                if from_inspect.endswith(docstring_final):
+                    return
             raise ValueError(
                 f"{warning_start} doesn't match the docstring in {stage_name} (docstring={repr(from_docstring[0])}, annotation={from_inspect})"  # pylint: disable=line-too-long
             )
-        if len(from_docstring) > 1:
+        elif len(from_docstring) > 1:
             print(
                 f"WARNING: {warning_start} cannot be checked against multiple docstring entries in {stage_name}"  # pylint: disable=line-too-long
             )
