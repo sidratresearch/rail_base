@@ -17,6 +17,7 @@ import black
 import isort
 import pytest
 
+from rail.core.introspection import RailEnv
 from rail.utils.interactive_utils import _initialize_interactive_module
 
 interactive_modules = [
@@ -52,6 +53,28 @@ class InteractiveModule:
         )
 
         return f"{docstring}{imports}\n\n" + "\n".join(self.code)
+
+
+def check_rail_packages() -> list[str]:
+    module_to_package = {
+        "rail": "pz-rail",
+        "rail.astro_tools": "pz-rail-astro-tools",
+        "rail.bpz": "pz-rail-bpz",
+        "rail.calib": "pz-rail-calib",  # requires sompz
+        "rail.cmnn": "pz-rail-cmnn",
+        "rail.pzflow": "pz-rail-pzflow",
+        "rail.sklearn": "pz-rail-sklearn",
+        # "rail.":"pz-rail-",
+    }
+    package_info = RailEnv.list_rail_packages()
+    del package_info["rail.hub"]
+    rail_base_path = package_info["rail.core"][0].path
+
+    return ["pz-rail"] + [
+        module_to_package[name]
+        for name, info in package_info.items()
+        if info[0].path != rail_base_path
+    ]
 
 
 def write_modules() -> None:
@@ -111,6 +134,8 @@ def write_stubs() -> None:
 
 
 if __name__ == "__main__":
+    print("Running for rail packages:\n\t" + "\n\t".join(check_rail_packages()))
+
     if pytest.main(["tests/interactive"]) != 0:
         sys.exit()
     # add function to delete everything in interactive?
