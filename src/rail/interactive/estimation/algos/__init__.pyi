@@ -7,6 +7,7 @@ from . import (
     flexzboost,
     gpz,
     k_nearneigh,
+    lephare,
     naive_stack,
     nz_dir,
     point_est_hist,

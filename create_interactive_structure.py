@@ -69,6 +69,7 @@ def check_rail_packages() -> list[str]:
         "rail.fsps": "pz-rail-fsps",
         "rail.gpz": "pz-rail-gpz-v1",
         "rail.inception": "pz-rail-inception",
+        "rail.lephare": "pz-rail-lephare",
         "rail.pzflow": "pz-rail-pzflow",
         "rail.sklearn": "pz-rail-sklearn",
         # "rail.":"pz-rail-",
