@@ -689,7 +689,7 @@ def _validate_return_annotations(
             )
         if len(from_ceci) > 1:
             print(
-                f"WARNING: {warning_start} cannot be checked against multiple ceci outputs"
+                f"WARNING: {warning_start} cannot be checked against multiple ceci outputs defined in {stage_name}"  # pylint: disable=line-too-long
             )
 
         from_inspect = str(from_inspect).split("'")[1]
