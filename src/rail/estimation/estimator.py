@@ -9,9 +9,15 @@ from typing import Any, Optional
 import numpy as np
 import qp
 
-from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import (DataHandle, ModelHandle, ModelLike, QPHandle,
-                            TableHandle, TableLike)
+from rail.core.common_params import SHARED_PARAMS, SharedParams
+from rail.core.data import (
+    DataHandle,
+    ModelHandle,
+    ModelLike,
+    QPHandle,
+    TableHandle,
+    TableLike,
+)
 from rail.core.point_estimation import PointEstimationMixin
 from rail.core.stage import RailStage
 from rail.core.enums import DistributionType
@@ -35,15 +41,16 @@ class CatEstimator(RailStage, PointEstimationMixin):
     name = "CatEstimator"
     config_options = RailStage.config_options.copy()
     config_options.update(
-        chunk_size=SHARED_PARAMS,
-        hdf5_groupname=SHARED_PARAMS,
-        zmin=SHARED_PARAMS,
-        zmax=SHARED_PARAMS,
-        nzbins=SHARED_PARAMS,
-        id_col=SHARED_PARAMS,
-        redshift_col=SHARED_PARAMS,
-        calc_summary_stats=SHARED_PARAMS,
+        chunk_size=SharedParams.copy_param("chunk_size"),
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),
+        zmin=SharedParams.copy_param("zmin"),
+        zmax=SharedParams.copy_param("zmax"),
+        nzbins=SharedParams.copy_param("nzbins"),
+        id_col=SharedParams.copy_param("id_col"),
+        redshift_col=SharedParams.copy_param("redshift_col"),
+        calc_summary_stats=SharedParams.copy_param("calc_summary_stats"),
     )
+
     config_options.update(
         **PointEstimationMixin.config_options.copy(),
     )
@@ -137,7 +144,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
             qp_dstn.set_ancil(ancil_dict)
 
         quantiles = [0.025, 0.16, 0.5, 0.85, 0.975]
-        quant_names = ['q2p5', 'q16', 'median', 'q84', '97p5']
+        quant_names = ["q2p5", "q16", "median", "q84", "97p5"]
 
         locs = qp_dstn.ppf(quantiles)
         for name_, vals_ in zip(quant_names, locs.T):
@@ -145,13 +152,13 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
         grid: np.ndarray | None = None
 
-        if 'z_mode' not in qp_dstn.ancil:
+        if "z_mode" not in qp_dstn.ancil:
             grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
-            qp_dstn.ancil['z_mode'] = qp_dstn.mode(grid)
+            qp_dstn.ancil["z_mode"] = qp_dstn.mode(grid)
 
         try:
-            qp_dstn.ancil['z_mean'] = qp_dstn.mean()
-            qp_dstn.ancil['z_std'] = qp_dstn.std()
+            qp_dstn.ancil["z_mean"] = qp_dstn.mean()
+            qp_dstn.ancil["z_std"] = qp_dstn.std()
         except IndexError:  # pragma: no cover
             # this is needed b/c qp.MixMod pdf sometimes fails to compute moments
             grid = np.linspace(self.config.zmin, self.config.zmax, self.config.nzbins)
@@ -160,9 +167,9 @@ class CatEstimator(RailStage, PointEstimationMixin):
             means = np.sum(pdfs * grid, axis=1) / norms
             diffs = (np.expand_dims(grid, -1) - means).T
             wt_diffs = diffs * diffs * pdfs
-            stds = np.sqrt((wt_diffs).sum(axis=1)/norms)
-            qp_dstn.ancil['z_mean'] = np.expand_dims(means, -1)
-            qp_dstn.ancil['z_std'] = np.expand_dims(stds, -1)
+            stds = np.sqrt((wt_diffs).sum(axis=1) / norms)
+            qp_dstn.ancil["z_mean"] = np.expand_dims(means, -1)
+            qp_dstn.ancil["z_std"] = np.expand_dims(stds, -1)
 
         return qp_dstn
 
@@ -192,8 +199,12 @@ class CatEstimator(RailStage, PointEstimationMixin):
             if self.config.redshift_col in data.keys():  # pragma: no cover
                 qp_dstn.ancil.update(redshift=data[self.config.redshift_col])
 
-            if 'distribution_type' not in qp_dstn.ancil:
-                qp_dstn.ancil.update(distribution_type=np.repeat(self.default_distribution_type().value, end-start))
+            if "distribution_type" not in qp_dstn.ancil:
+                qp_dstn.ancil.update(
+                    distribution_type=np.repeat(
+                        self.default_distribution_type().value, end - start
+                    )
+                )
 
         if first:
             the_handle = self.add_handle("output", data=qp_dstn)
@@ -209,15 +220,16 @@ class CatEstimator(RailStage, PointEstimationMixin):
             self._output_handle.write_chunk(start, end)
         return qp_dstn
 
-
-    def _convert_table_format(self, data: TableLike, out_fmt_str: str="numpyDict") -> TableLike: # pragma: no cover
+    def _convert_table_format(
+        self, data: TableLike, out_fmt_str: str = "numpyDict"
+    ) -> TableLike:  # pragma: no cover
         """
         Utility function to convert existing Tabular data to a numpy dictionary,
         ingestable for most informer and estimators.
         To be called in _process_chunk().
         """
         # required format for informer/estimator
-        out_fmt = tables_io.types.TABULAR_FORMAT_NAMES[out_fmt_str] 
+        out_fmt = tables_io.types.TABULAR_FORMAT_NAMES[out_fmt_str]
         out_data = tables_io.convert(data, out_fmt)
         # overwrite set_data
         return out_data
