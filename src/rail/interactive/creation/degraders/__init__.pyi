@@ -6,5 +6,6 @@ from . import (
     quantityCut,
     spectroscopic_degraders,
     spectroscopic_selections,
+    specz_som,
     unrec_bl_model,
 )

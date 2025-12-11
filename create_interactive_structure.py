@@ -73,7 +73,7 @@ def check_rail_packages() -> list[str]:
         "rail.lib_gp_comp": "pz-rail-lib_gp_comp",
         "rail.pzflow": "pz-rail-pzflow",
         "rail.sklearn": "pz-rail-sklearn",
-        # "rail.":"pz-rail-",
+        "rail.som": "pz-rail-som",
     }
     package_info = RailEnv.list_rail_packages()
     del package_info["rail.hub"]
