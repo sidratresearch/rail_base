@@ -595,9 +595,9 @@ class RailStage(PipelineStage):
             handle.path = final_name
             return final_name
         elif self.config.output_mode == "return":
-            handle.path = (
-                None  # TODO: or should this be a test, i.e. assert handle.path == None?
-            )
+            # TODO: or should this be a test, i.e. assert handle.path == None
+            handle.path = None
+
             return
 
     def _check_column_names(

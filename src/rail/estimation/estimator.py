@@ -422,7 +422,8 @@ class PzEstimator(RailStage, PointEstimationMixin):
 
     def _finalize_run(self) -> None:
         assert self._output_handle is not None
-        self._output_handle.finalize_write()
+        if self.config.output_mode != "return":
+            self._output_handle.finalize_write()
 
     def _process_chunk(
         self, start: int, end: int, data: qp.Ensemble, first: bool
