@@ -705,6 +705,8 @@ def _validate_return_annotations(
             print(
                 f"WARNING: {warning_start} cannot be checked against multiple docstring entries in {stage_name}"  # pylint: disable=line-too-long
             )
+    elif from_inspect is None:
+        return
     else:
         print(f"WARNING: {warning_start} is too complex to be checked in {stage_name}")
 
@@ -747,6 +749,7 @@ def _create_interactive_docstring(stage_name: str) -> str:
     return_elements = _parse_annotation_string(epf_sections["Returns"])
     _validate_return_annotations(stage_name, stage_definition, return_elements)
     for item in return_elements:
+        # Handle return annotations that are DataHandles
         if hasattr(rail.core.data, item.annotation):
             return_type = getattr(rail.core.data, item.annotation)
             item.annotation = return_type.interactive_type
@@ -754,6 +757,8 @@ def _create_interactive_docstring(stage_name: str) -> str:
             if item.annotation is None or item.description is None:
                 raise ValueError(f"{return_type} is missing interactive details")
                 # INTERACTIVE_DO: move this to be a generic dev side test
+    if len(return_elements) == 0:
+        return_elements = ["None"]
     returns_content = "\n".join([str(i) for i in return_elements])
 
     # handle any other content
