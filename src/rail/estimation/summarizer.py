@@ -154,7 +154,9 @@ class SZPZSummarizer(RailStage):  # pragma: no cover
         # `open_model` call explicitly in the run method for
         # each summarizer.
 
-    def summarize(self, input_data: qp.Ensemble, spec_data: np.ndarray) -> qp.Ensemble:
+    def summarize(
+        self, input_data: qp.Ensemble, spec_data: np.ndarray, **kwargs
+    ) -> qp.Ensemble:
         """The main run method for the summarization, should be implemented
         in the specific subclass.
 
