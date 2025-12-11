@@ -704,9 +704,9 @@ def _validate_return_annotations(
                 if from_inspect.endswith(docstring_final):
                     return
             raise ValueError(
-                f"{warning_start} doesn't match the docstring in {stage_name} (docstring={repr(from_docstring[0])}, annotation={from_inspect})"  # pylint: disable=line-too-long
+                f"{warning_start} doesn't match the docstring in {stage_name} (docstring={repr(from_docstring)}, annotation={from_inspect})"  # pylint: disable=line-too-long
             )
-        elif len(from_docstring) > 1:
+        if len(from_docstring) > 1:
             print(
                 f"WARNING: {warning_start} cannot be checked against multiple docstring entries in {stage_name}"  # pylint: disable=line-too-long
             )
