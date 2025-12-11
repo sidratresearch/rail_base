@@ -75,6 +75,7 @@ def check_rail_packages() -> list[str]:
         "rail.sklearn": "pz-rail-sklearn",
         "rail.som": "pz-rail-som",
         "rail.sompz": "pz-rail-sompz",
+        "rail.rail_tpz": "pz-rail-tpz",
     }
     package_info = RailEnv.list_rail_packages()
     del package_info["rail.hub"]

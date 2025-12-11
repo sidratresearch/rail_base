@@ -17,6 +17,7 @@ from . import (
     random_gauss,
     sklearn_neurnet,
     somoclu_som,
+    tpz_lite,
     train_z,
     uniform_binning,
     var_inf,
