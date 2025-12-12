@@ -240,7 +240,11 @@ class RailStage(PipelineStage):
     """
 
     config_options = dict(
-        output_mode=Param(str, "default", msg="What to do with the outputs")
+        output_mode=Param(
+            str,
+            "default",
+            msg="What to do with the outputs. The options are 'default', where outputs will be written to files and some returned, and 'return', where outputs will only be returned and not written.",
+        )
     )
 
     def __init__(self, args: Any, **kwargs: Any) -> None:
