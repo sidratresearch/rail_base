@@ -183,7 +183,7 @@ def _get_stage_module(stage_name: str, interactive: bool = False) -> str:
     """
     module = _get_stage_definition(stage_name).__module__
     if interactive:
-        return module.replace("rail.", "rail.interactive.", count=1)
+        return module.replace("rail.", "rail.interactive.", 1)
     return module
 
 
@@ -272,7 +272,7 @@ def _split_docstring(docstring: str) -> collections.defaultdict[str, str]:
     current_section = 0
     while line_no < len(docstring_lines) - 1:
         if _is_section_header(line_no, docstring_lines):
-            current_section = SECTION_HEADERS.index(docstring_lines[line_no])
+            current_section = SECTION_HEADERS.index(docstring_lines[line_no].strip())
             line_no += 2
         else:
             result[SECTION_HEADERS[current_section]].append(docstring_lines[line_no])
