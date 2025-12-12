@@ -10,7 +10,7 @@ from typing import Any
 import numpy as np
 import qp
 
-from rail.core.common_params import SHARED_PARAMS
+from rail.core.common_params import SHARED_PARAMS, SharedParams
 from rail.core.data import TableLike
 from rail.estimation.estimator import CatEstimator
 from rail.estimation.informer import CatInformer
@@ -34,10 +34,10 @@ class TrainZInformer(CatInformer):
     name = "TrainZInformer"
     config_options = CatInformer.config_options.copy()
     config_options.update(
-        zmin=SHARED_PARAMS,
-        zmax=SHARED_PARAMS,
-        nzbins=SHARED_PARAMS,
-        redshift_col=SHARED_PARAMS,
+        zmin=SharedParams.copy_param("zmin"),
+        zmax=SharedParams.copy_param("zmax"),
+        nzbins=SharedParams.copy_param("nzbins"),
+        redshift_col=SharedParams.copy_param("redshift_col"),
     )
 
     def run(self) -> None:
@@ -75,7 +75,11 @@ class TrainZEstimator(CatEstimator):
 
     name = "TrainZEstimator"
     config_options = CatEstimator.config_options.copy()
-    config_options.update(zmin=SHARED_PARAMS, zmax=SHARED_PARAMS, nzbins=SHARED_PARAMS)
+    config_options.update(
+        zmin=SharedParams.copy_param("zmin"),
+        zmax=SharedParams.copy_param("zmax"),
+        nzbins=SharedParams.copy_param("nzbins"),
+    )
 
     def __init__(self, args: Any, **kwargs: Any) -> None:
         self.zgrid: np.ndarray | None = None

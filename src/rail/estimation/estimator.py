@@ -248,8 +248,8 @@ class PzEstimator(RailStage, PointEstimationMixin):
     name = "PzEstimator"
     config_options = RailStage.config_options.copy()
     config_options.update(
-        chunk_size=SHARED_PARAMS,
-        hdf5_groupname=SHARED_PARAMS,
+        chunk_size=SharedParams.copy_param("chunk_size"),
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),
     )
     config_options.update(
         **PointEstimationMixin.config_options.copy(),

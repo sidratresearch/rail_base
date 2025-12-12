@@ -13,14 +13,16 @@ from ceci.stage import PipelineStage
 from qp.metrics.base_metric_classes import BaseMetric, MetricOutputType
 from qp.metrics.pit import PIT
 
-from rail.core.common_params import SHARED_PARAMS
+from rail.core.common_params import SHARED_PARAMS, SharedParams
 from rail.core.data import DataHandle, Hdf5Handle, QPDictHandle, QPHandle
 from rail.core.stage import RailStage
 from rail.evaluation.metrics.cdeloss import CDELoss
-from rail.evaluation.metrics.pointestimates import (PointBias,
-                                                    PointOutlierRate,
-                                                    PointSigmaIQR,
-                                                    PointSigmaMAD)
+from rail.evaluation.metrics.pointestimates import (
+    PointBias,
+    PointOutlierRate,
+    PointSigmaIQR,
+    PointSigmaMAD,
+)
 
 
 def _all_subclasses(a_class: type[BaseMetric]) -> set[type[BaseMetric]]:
@@ -415,8 +417,8 @@ class OldEvaluator(RailStage):
     name = "OldEvaluator"
     config_options = RailStage.config_options.copy()
     config_options.update(
-        zmin=Param(float, 0.0, msg="min z for grid"),
-        zmax=Param(float, 3.0, msg="max z for grid"),
+        zmin=SharedParams.copy_param("zmin"),
+        zmax=SharedParams.copy_param("zmax"),
         nzbins=Param(int, 301, msg="# of bins in zgrid"),
         pit_metrics=Param(str, "all", msg="PIT-based metrics to include"),
         point_metrics=Param(str, "all", msg="Point-estimate metrics to include"),
@@ -424,7 +426,7 @@ class OldEvaluator(RailStage):
             str, "", msg="Name of group in hdf5 where redshift data is located"
         ),
         do_cde=Param(bool, True, msg="Evaluate CDE Metric"),
-        redshift_col=SHARED_PARAMS,
+        redshift_col=SharedParams.copy_param("redshift_col"),
     )
     inputs = [("input", QPHandle), ("truth", Hdf5Handle)]
     outputs = [("output", Hdf5Handle)]

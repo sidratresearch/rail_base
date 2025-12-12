@@ -8,7 +8,7 @@ import numpy as np
 import qp
 from ceci.config import StageParameter as Param
 
-from rail.core.common_params import SHARED_PARAMS
+from rail.core.common_params import SHARED_PARAMS, SharedParams
 from rail.core.data import DataHandle, QPHandle, TableHandle, TableLike
 from rail.core.stage import RailStage
 
@@ -19,13 +19,13 @@ class TrueNZHistogrammer(RailStage):
     name = "TrueNZHistogrammer"
     config_options = RailStage.config_options.copy()
     config_options.update(
-        zmin=SHARED_PARAMS,
-        zmax=SHARED_PARAMS,
-        nzbins=SHARED_PARAMS,
-        redshift_col=SHARED_PARAMS,
+        zmin=SharedParams.copy_param("zmin"),
+        zmax=SharedParams.copy_param("zmax"),
+        nzbins=SharedParams.copy_param("nzbins"),
+        redshift_col=SharedParams.copy_param("redshift_col"),
         selected_bin=Param(int, -1, msg="Which tomography bin to consider"),
-        chunk_size=SHARED_PARAMS,
-        hdf5_groupname=SHARED_PARAMS,
+        chunk_size=SharedParams.copy_param("chunk_size"),
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),
     )
     inputs = [("input", TableHandle), ("tomography_bins", TableHandle)]
     outputs = [("true_NZ", QPHandle)]

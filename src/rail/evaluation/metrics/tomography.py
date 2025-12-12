@@ -2,7 +2,7 @@ import numpy as np
 from scipy import stats
 from ceci.config import StageParameter as Param
 
-from rail.core.common_params import SHARED_PARAMS
+from rail.core.common_params import SHARED_PARAMS, SharedParams
 from rail.core.data import TableLike, DataHandle, Hdf5Handle, TableHandle
 from rail.core.stage import RailStage
 
@@ -17,7 +17,7 @@ class KDEBinOverlap(RailStage):
         hdf5_groupname=Param(
             str, "", required=False, msg="HDF5 Groupname for truth table."
         ),
-        redshift_col=SHARED_PARAMS,
+        redshift_col=SharedParams.copy_param("redshift_col"),
         bin_name=Param(
             str,
             "class_id",
@@ -35,11 +35,11 @@ class KDEBinOverlap(RailStage):
         return self.get_handle("output")
 
     def run(self) -> None:
-        if self.config.hdf5_groupname is None: # pragma: no cover
+        if self.config.hdf5_groupname is None:  # pragma: no cover
             true_redshifts = self.get_handle("truth").data[
                 self.config.redshift_col
             ]  # 1D array of redshifts
-        else: 
+        else:
             true_redshifts = self.get_handle("truth").data[self.config.hdf5_groupname][
                 self.config.redshift_col
             ]  # 1D array of redshifts
