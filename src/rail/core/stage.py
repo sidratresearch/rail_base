@@ -240,7 +240,11 @@ class RailStage(PipelineStage):
     """
 
     config_options = dict(
-        output_mode=Param(str, "default", msg="What to do with the outputs")
+        output_mode=Param(
+            str,
+            "default",
+            msg="What to do with the outputs. The options are 'default', where outputs will be written to files and some returned, and 'return', where outputs will only be returned and not written.",
+        )
     )
 
     def __init__(self, args: Any, **kwargs: Any) -> None:
@@ -414,12 +418,18 @@ class RailStage(PipelineStage):
 
         if isinstance(data, DataHandle):
             # If we were passed a DataHandle, we use that
-            aliased_tag = data.tag
+            if tag in self._aliases:
+                # use this alias instead of the Data handle tag
+                aliased_tag = self.get_aliased_tag(tag)
+            else:
+                aliased_tag = data.tag
             if tag in self.input_tags():
-                self._aliases[tag] = aliased_tag
+                if aliased_tag != "output":
+                    self._aliases[tag] = aliased_tag
 
-                # make sure the aliased tag exists in the inputs dictionary
-                self._inputs[aliased_tag] = self._inputs[tag]
+                    # make sure the aliased tag exists in the inputs dictionary
+                    if not aliased_tag in self._inputs:
+                        self._inputs[aliased_tag] = self._inputs[tag]
 
                 handle = self.get_handle(tag, path=path, allow_missing=True)
                 if data.has_path:
@@ -528,7 +538,7 @@ class RailStage(PipelineStage):
         # If data is in memory and not in a file, it means is small enough to process it
         # in a single chunk.
         elif in_memory:  # pragma: no cover
-            if self.config.hdf5_groupname:
+            if "hdf5_groupname" in self.config and self.config.hdf5_groupname:
                 test_data = self.get_data(tag)[self.config.hdf5_groupname]
                 self._input_length = self.get_handle(tag).data_size(
                     groupname=self.config.hdf5_groupname
@@ -585,9 +595,14 @@ class RailStage(PipelineStage):
             assert handle.path is not None
             if not os.path.exists(handle.path) or not handle.partial:
                 handle.write()
-        final_name = PipelineStage._finalize_tag(self, tag)
-        handle.path = final_name
-        return final_name
+            final_name = PipelineStage._finalize_tag(self, tag)
+            handle.path = final_name
+            return final_name
+        elif self.config.output_mode == "return":
+            # TODO: or should this be a test, i.e. assert handle.path == None
+            handle.path = None
+
+            return
 
     def _check_column_names(
         self, data: Any, columns_to_check: list[str], **kwargs: Any
