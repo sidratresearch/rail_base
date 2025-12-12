@@ -108,9 +108,6 @@ SHARED_PARAMS = StageConfig(
         msg="list of filter files names (with no '.sed' suffix). Filters must be"
         "in FILTER dir.  MUST BE IN SAME ORDER as 'bands'",
     ),
-    data_path=Param(
-        dtype=str, default="", msg="The base path to data files for RAIL algorithms."
-    ),
     leaf_size=Param(dtype=int, default=15, msg="The leaf size for tree algorithms."),
     max_wavelength=Param(
         dtype=float, default=12000, msg="The maximum rest-frame wavelength"
