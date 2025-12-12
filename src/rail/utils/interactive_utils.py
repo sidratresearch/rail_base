@@ -2,7 +2,7 @@
 Utility functions for the rail.interactive module.
 """
 
-# pylint: disable=fixme
+# pylint: disable=too-many-lines
 
 import collections
 import functools
@@ -187,6 +187,43 @@ def _get_stage_module(stage_name: str, interactive: bool = False) -> str:
     return module
 
 
+def _get_virtual_submodule_names(
+    module: types.ModuleType, stage_names: list[str]
+) -> list[str]:
+    """Get a list of all of the submodules of `module` that interactive will have
+
+    Parameters
+    ----------
+    module : types.ModuleType
+        The module to get children of
+    stage_names : list[str]
+        The stages that we need locations for
+
+    Returns
+    -------
+    list[str]
+        A sorted, unique list of module names, including intermediaries between `module`
+        and the definition of each stage
+    """
+    stage_module_names = [
+        _get_stage_module(stage, interactive=True) for stage in stage_names
+    ]
+    stage_module_names = sorted(list(set(stage_module_names)))
+
+    # get a recursive version of the names
+    recursive_module_names = []
+    for module_name in stage_module_names:
+        relative_name = module_name.replace(module.__name__, "")[1:]
+        parts = relative_name.split(".")
+
+        for depth in range(len(parts)):
+            relative_name = ".".join(parts[: depth + 1])
+            if relative_name not in recursive_module_names:
+                recursive_module_names.append(module.__name__ + "." + relative_name)
+
+    return sorted(list(set(recursive_module_names)))
+
+
 def _create_virtual_submodules(
     module: types.ModuleType, stage_names: list[str]
 ) -> dict[str, VirtualModule]:
@@ -205,20 +242,7 @@ def _create_virtual_submodules(
     dict[str, VirtualModule]
         All of the created namespaces
     """
-    stage_module_names = [
-        _get_stage_module(stage, interactive=True) for stage in stage_names
-    ]
-    stage_module_names = sorted(list(set(stage_module_names)))
-
-    # get a recursive version of the names
-    recursive_module_names = []
-    for module_name in stage_module_names:
-        relative_name = module_name.replace(module.__name__, "")[1:]
-        parts = relative_name.split(".")
-        for depth in range(len(parts)):
-            relative_name = ".".join(parts[: depth + 1])
-            if relative_name not in recursive_module_names:
-                recursive_module_names.append(module.__name__ + "." + relative_name)
+    recursive_module_names = _get_virtual_submodule_names(module, stage_names)
 
     # populate a dictionary of virtual modules, keeping track of relationships
     virtual_modules = {}
