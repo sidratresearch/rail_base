@@ -33,6 +33,7 @@ class RailEnv:
         "rail.plotting",
         "rail.cli.rail_plot",
         "rail.cli.rail_project",
+        "rail.interactive",  # custom api generation
     ]
 
     _base_packages: list[str] = [
@@ -492,7 +493,7 @@ Algorithm Packages
             pass
 
         base_packages = ""
-        namespaces = ""
+        namespaces = "   api/rail.interactive\n"
         algorithm_packages = ""
 
         for key, val in cls._tree.items():
