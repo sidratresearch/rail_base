@@ -14,7 +14,7 @@ class DistToPointEvaluator(Evaluator):
     name = "DistToPointEvaluator"
     config_options = Evaluator.config_options.copy()
     config_options.update(
-        limits=Param(
+        metric_integration_limits=Param(
             list,
             [0.0, 3.0],
             required=False,

@@ -1,6 +1,6 @@
 """
 A classifier that uses pz point estimate to assign
-tomographic bins with uniform binning. 
+tomographic bins with uniform binning.
 """
 
 import numpy as np
@@ -25,7 +25,7 @@ class EqualCountClassifier(PZClassifier):
         point_estimate=Param(str, "zmode", msg="Which point estimate to use"),
         zmin=Param(float, 0.0, msg="Minimum redshift of the sample"),
         zmax=Param(float, 3.0, msg="Maximum redshift of the sample"),
-        nbins=Param(int, 5, msg="Number of tomographic bins"),
+        n_tom_bins=Param(int, 5, msg="Number of tomographic bins"),
         no_assign=Param(int, -99, msg="Value for no assignment flag"),
     )
     outputs = [("output", Hdf5Handle)]
@@ -46,9 +46,9 @@ class EqualCountClassifier(PZClassifier):
         sortind = np.argsort(zb)
         cum = np.arange(1, (len(zb) + 1))
         bin_index = np.zeros(len(zb))
-        for ii in range(self.config.nbins):
-            perc1 = ii / self.config.nbins
-            perc2 = (ii + 1) / self.config.nbins
+        for ii in range(self.config.n_tom_bins):
+            perc1 = ii / self.config.n_tom_bins
+            perc2 = (ii + 1) / self.config.n_tom_bins
             ind = (cum / cum[-1] > perc1) & (cum / cum[-1] <= perc2)
             useind = sortind[ind]
             bin_index[useind] = int(ii + 1)

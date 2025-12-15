@@ -61,7 +61,7 @@ class Evaluator(RailStage):  # pylint: disable=too-many-instance-attributes
             required=False,
             msg="The default number of PDFs to evaluate per loop.",
         ),
-        _random_state=Param(
+        seed=Param(
             float,
             default=None,
             required=False,
@@ -397,8 +397,8 @@ class Evaluator(RailStage):  # pylint: disable=too-many-instance-attributes
                 )
                 continue
             sub_dict = {}
-            if "limits" in self.config:
-                sub_dict["limits"] = self.config.limits
+            if "metric_integration_limits" in self.config:
+                sub_dict["limits"] = self.config.metric_integration_limits
             sub_dict.update(self.config.metric_config.get("general", {}))
             sub_dict.update(self.config.metric_config.get(metric_name_, {}))
             self._metric_config_dict[metric_name_] = sub_dict

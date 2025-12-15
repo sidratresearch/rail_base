@@ -12,7 +12,9 @@ from rail.evaluation.dist_to_point_evaluator import DistToPointEvaluator
 from rail.evaluation.evaluator import OldEvaluator
 from rail.evaluation.metrics.tomography import KDEBinOverlap
 from rail.evaluation.point_to_point_evaluator import (
-    PointToPointBinnedEvaluator, PointToPointEvaluator)
+    PointToPointBinnedEvaluator,
+    PointToPointEvaluator,
+)
 from rail.evaluation.single_evaluator import SingleEvaluator
 
 
@@ -89,7 +91,7 @@ def test_dist_to_dist_evaluator(get_evaluation_files: tuple[str, str]) -> None:
     stage_dict = dict(
         # metrics=['cvm', 'ks', 'rmse', 'kld', 'ad'],
         metrics=["rmse"],
-        _random_state=None,
+        seed=None,
     )
 
     ensemble = DS.read_file(key="pdfs_data", handle_class=QPHandle, path=pdfs_file)
@@ -115,11 +117,11 @@ def test_dist_to_point_evaluator(get_evaluation_files: tuple[str, str]) -> None:
     DS.__class__.allow_overwrite = True
     stage_dict = dict(
         metrics=["cdeloss", "pit", "brier"],
-        _random_state=None,
+        seed=None,
         metric_config={
             "brier": {"limits": (0, 3.1)},
         },
-        limits=[0.0, 3.1],
+        metric_integration_limits=[0.0, 3.1],
     )
 
     ensemble = DS.read_file(key="pdfs_data", handle_class=QPHandle, path=pdfs_file)
@@ -170,7 +172,7 @@ def test_point_to_point_evaluator(get_evaluation_files: tuple[str, str]) -> None
             "point_outlier_rate",
             "point_stats_sigma_mad",
         ],
-        _random_state=None,
+        seed=None,
         hdf5_groupname="photometry",
         point_estimate_key="zmode",
         chunk_size=10000,
@@ -193,7 +195,7 @@ def test_point_to_point_evaluator(get_evaluation_files: tuple[str, str]) -> None
 
 
 def test_point_to_point_binning_evaluator(
-    get_evaluation_files: tuple[str, str]
+    get_evaluation_files: tuple[str, str],
 ) -> None:
     pdfs_file, ztrue_file = get_evaluation_files
     assert pdfs_file
@@ -208,7 +210,7 @@ def test_point_to_point_binning_evaluator(
             "point_outlier_rate",
             "point_stats_sigma_mad",
         ],
-        _random_state=None,
+        seed=None,
         hdf5_groupname="photometry",
         point_estimate_key="zmode",
         chunk_size=10000,
@@ -243,7 +245,7 @@ def test_single_evaluator(get_evaluation_files: tuple[str, str]) -> None:
             "point_stats_ez",
             "point_stats_iqr",
         ],
-        _random_state=None,
+        seed=None,
         hdf5_groupname="photometry",
         point_estimates=["zmode"],
         truth_point_estimates=["redshift"],

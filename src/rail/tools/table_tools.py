@@ -1,4 +1,4 @@
-""" Stages that implement utility functions """
+"""Stages that implement utility functions"""
 
 import tables_io
 from ceci.config import StageParameter as Param
@@ -13,7 +13,7 @@ class ColumnMapper(RailStage):
     1. This operates on pandas dataframs in parquet files.
 
     2. In short, this does:
-    `output_data = input_data.rename(columns=self.config.columns, inplace=self.config.inplace)`
+    `output_data = input_data.rename(columns=self.config.columns, in_place=self.config.in_place)`
 
     """
 
@@ -21,15 +21,17 @@ class ColumnMapper(RailStage):
     config_options = RailStage.config_options.copy()
     config_options.update(
         columns=Param(dict, required=True, msg="Map of columns to rename"),
-        inplace=Param(bool, default=False, msg="Update file in place"),
+        in_place=Param(bool, default=False, msg="Update file in place"),
     )
     inputs = [("input", PqHandle)]
     outputs = [("output", PqHandle)]
 
     def run(self) -> None:
         data = self.get_data("input", allow_missing=True)
-        out_data = data.rename(columns=self.config.columns, inplace=self.config.inplace)
-        if self.config.inplace:  # pragma: no cover
+        out_data = data.rename(
+            columns=self.config.columns, in_place=self.config.in_place
+        )
+        if self.config.in_place:  # pragma: no cover
             out_data = data
         self.add_data("output", out_data)
 

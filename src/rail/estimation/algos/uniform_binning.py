@@ -1,6 +1,6 @@
 """
 A classifier that uses pz point estimate to assign
-tomographic bins with uniform binning. 
+tomographic bins with uniform binning.
 """
 
 import numpy as np
@@ -33,7 +33,7 @@ class UniformBinningClassifier(PZClassifier):
         ),
         zmin=Param(float, 0.0, msg="Minimum redshift of the sample"),
         zmax=Param(float, 3.0, msg="Maximum redshift of the sample"),
-        nbins=Param(int, 5, msg="Number of tomographic bins"),
+        n_tom_bins=Param(int, 5, msg="Number of tomographic bins"),
         no_assign=Param(int, -99, msg="Value for no assignment flag"),
     )
     outputs = [("output", Hdf5Handle)]
@@ -76,20 +76,22 @@ class UniformBinningClassifier(PZClassifier):
         # binning options
         if len(self.config.zbin_edges) >= 2:
             # this overwrites all other key words
-            # linear binning defined by zmin, zmax, and nbins
+            # linear binning defined by zmin, zmax, and n_tom_bins
             bin_index = np.digitize(zb, self.config.zbin_edges)
             # assign -99 to objects not in any bin:
             bin_index[bin_index == 0] = self.config.no_assign
             bin_index[bin_index == len(self.config.zbin_edges)] = self.config.no_assign
         else:
-            # linear binning defined by zmin, zmax, and nbins
+            # linear binning defined by zmin, zmax, and n_tom_bins
             bin_index = np.digitize(
                 zb,
-                np.linspace(self.config.zmin, self.config.zmax, self.config.nbins + 1),
+                np.linspace(
+                    self.config.zmin, self.config.zmax, self.config.n_tom_bins + 1
+                ),
             )
             # assign -99 to objects not in any bin:
             bin_index[bin_index == 0] = self.config.no_assign
-            bin_index[bin_index == (self.config.nbins + 1)] = self.config.no_assign
+            bin_index[bin_index == (self.config.n_tom_bins + 1)] = self.config.no_assign
 
         if self.config.id_name != "":
             # below is commented out and replaced by a redundant line
