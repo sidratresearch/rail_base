@@ -608,14 +608,6 @@ def create_interactive_docstring(stage_name: str) -> str:
         # Handle return annotations that are DataHandles
         if hasattr(rail.core.data, item.annotation):
             return_type = getattr(rail.core.data, item.annotation)
-            if (
-                return_type.interactive_type is None
-                or return_type.interactive_description is None
-            ):
-                raise ValueError(
-                    f"{return_type} used in {stage_name} is missing interactive details"
-                )
-                # INTERACTIVE_DO: move this to be a generic dev side test
             item.annotation = return_type.interactive_type
             item.description += "\n" + return_type.interactive_description
     if len(return_elements) == 0:

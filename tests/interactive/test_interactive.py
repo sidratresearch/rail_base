@@ -5,6 +5,7 @@ Not sure about the placement of this file
 import collections
 import inspect
 
+import rail.core.data
 from rail.core.stage import RailStage
 from rail.utils.interactive.docstring_utils import (
     InteractiveParameter,
@@ -110,6 +111,22 @@ def validate_return_annotation(
         print(f"WARNING: {warning_start} is too complex to be checked in {stage_name}")
 
 
+def check_returned_datahandle(
+    stage_name: str, return_elements: list[InteractiveParameter]
+) -> None:
+    for item in return_elements:
+        # Handle return annotations that are DataHandles
+        if hasattr(rail.core.data, item.annotation):
+            return_type = getattr(rail.core.data, item.annotation)
+            if (
+                return_type.interactive_type is None
+                or return_type.interactive_description is None
+            ):
+                raise ValueError(
+                    f"{return_type} used in {stage_name} is missing interactive details"
+                )
+
+
 def test_return_annotations() -> None:
     for stage_name in STAGE_NAMES:
         stage_definition = _get_stage_definition(stage_name)
@@ -120,3 +137,4 @@ def test_return_annotations() -> None:
         return_elements = _parse_annotation_string(epf_sections["Returns"])
 
         validate_return_annotation(stage_name, stage_definition, return_elements)
+        check_returned_datahandle(stage_name, return_elements)
