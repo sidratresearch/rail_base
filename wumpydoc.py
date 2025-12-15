@@ -25,7 +25,7 @@ import numpydoc.validate
 import rail.stages
 from rail.core.introspection import RailEnv
 from rail.core.stage import RailStage
-from rail.utils.interactive_utils import (
+from rail.utils.interactive.initialize_utils import (
     STAGE_NAMES,
     _get_stage_definition,
 )

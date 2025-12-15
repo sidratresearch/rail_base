@@ -4,7 +4,7 @@ Not sure about the placement of this file
 
 import collections
 
-from rail.utils.interactive_utils import STAGE_NAMES, _get_stage_definition
+from rail.utils.interactive.initialize_utils import STAGE_NAMES, _get_stage_definition
 
 
 def test_interactive_function_names() -> None:

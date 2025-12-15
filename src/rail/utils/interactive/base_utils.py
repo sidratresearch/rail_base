@@ -1,5 +1,7 @@
 """Low-level utility functions used by the rest of the interactive utils"""
 
+from types import ModuleType
+
 import rail.stages
 from rail.core import RailEnv
 from rail.core.stage import RailStage
@@ -57,13 +59,13 @@ def _get_stage_module(stage_name: str, interactive: bool = False) -> str:
 
 
 def _get_virtual_submodule_names(
-    module: types.ModuleType, stage_names: list[str]
+    module: ModuleType, stage_names: list[str]
 ) -> list[str]:
     """Get a list of all of the submodules of `module` that interactive will have
 
     Parameters
     ----------
-    module : types.ModuleType
+    module : ModuleType
         The module to get children of
     stage_names : list[str]
         The stages that we need locations for

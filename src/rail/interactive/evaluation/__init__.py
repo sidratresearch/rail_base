@@ -1,6 +1,6 @@
 """Module docstring for interactive evaluation"""
 
-from rail.utils.interactive_utils import _initialize_interactive_module
+from rail.utils.interactive.initialize_utils import _initialize_interactive_module
 
 from . import metrics
 

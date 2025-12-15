@@ -14,7 +14,7 @@ from ceci.config import StageConfig, StageParameter
 
 import rail.core.data
 from rail.core.stage import RailStage
-from rail.utils.interactive_base_utils import (
+from rail.utils.interactive.base_utils import (
     GLOBAL_INTERACTIVE_PARAMETERS,
     _get_stage_definition,
 )

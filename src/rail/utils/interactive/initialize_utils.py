@@ -2,8 +2,6 @@
 Utility functions for the rail.interactive module.
 """
 
-# pylint: disable=too-many-lines
-
 import collections
 import functools
 import inspect
@@ -16,16 +14,16 @@ from typing import Any
 
 from rail.core.data import ModelHandle, PqHandle, QPHandle
 from rail.core.stage import RailStage
-from rail.utils.interactive_base_utils import (
+from rail.utils.interactive.base_utils import (
     GLOBAL_INTERACTIVE_PARAMETERS,
     STAGE_NAMES,
     _get_stage_definition,
     _get_stage_module,
     _get_virtual_submodule_names,
 )
-from rail.utils.interactive_docstring_utils import (
-    create_interactive_docstring,
+from rail.utils.interactive.docstring_utils import (
     DOCSTRING_INDENTATION,
+    create_interactive_docstring,
 )
 
 

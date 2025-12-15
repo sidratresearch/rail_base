@@ -6,7 +6,7 @@ from pathlib import Path
 
 import rail
 import rail.interactive
-from rail.utils.interactive_utils import STAGE_NAMES, _get_virtual_submodule_names
+from rail.utils.interactive.base_utils import STAGE_NAMES, _get_virtual_submodule_names
 
 NAMESPACE_RST = """
 {name} namespace
