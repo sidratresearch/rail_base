@@ -24,7 +24,7 @@ class UniformBinningClassifier(PZClassifier):
             "",
             msg="Column name for the object ID in the input data, if empty the row index is used as the ID.",
         ),
-        point_estimate=Param(str, "zmode", msg="Which point estimate to use"),
+        point_estimate_key=Param(str, "zmode", msg="Which point estimate to use"),
         zbin_edges=Param(
             list,
             [],
@@ -58,10 +58,10 @@ class UniformBinningClassifier(PZClassifier):
             True if this is the first chunk, False otherwise.
         """
         try:
-            zb = data.ancil[self.config.point_estimate]
+            zb = data.ancil[self.config.point_estimate_key]
         except KeyError as missing_key:
             raise KeyError(
-                f"{self.config.point_estimate} is not contained "
+                f"{self.config.point_estimate_key} is not contained "
                 "in the data ancil, you will need to compute it explicitly."
             ) from missing_key
 

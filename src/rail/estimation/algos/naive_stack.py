@@ -34,7 +34,7 @@ class NaiveStackSummarizer(PZSummarizer):
         zmax=Param(float, 3.0, msg="The maximum redshift of the z grid"),
         nzbins=Param(int, 301, msg="The number of gridpoints in the z grid"),
         seed=Param(int, 87, msg="random seed"),
-        nsamples=Param(int, 1000, msg="Number of sample distributions to create"),
+        n_samples=Param(int, 1000, msg="Number of sample distributions to create"),
     )
     inputs = [("input", QPHandle)]
     outputs = [("output", QPHandle), ("single_NZ", QPHandle)]
@@ -58,7 +58,7 @@ class NaiveStackSummarizer(PZSummarizer):
         assert self.zgrid is not None
         # Initiallizing the stacking pdf's
         yvals = np.zeros((1, len(self.zgrid)))
-        bvals = np.zeros((self.config.nsamples, len(self.zgrid)))
+        bvals = np.zeros((self.config.n_samples, len(self.zgrid)))
         bootstrap_matrix = self._broadcast_bootstrap_matrix()
 
         first = True
@@ -103,7 +103,7 @@ class NaiveStackSummarizer(PZSummarizer):
             0,
         )
         # qp_d is the normalized probability of the stack, we need to know how many galaxies were
-        for i in range(self.config.nsamples):
+        for i in range(self.config.n_samples):
             bootstrap_draws = bootstrap_matrix[:, i]
             # Neither all of the bootstrap_draws are in this chunk nor the index starts at "start"
             chunk_mask = (bootstrap_draws >= start) & (bootstrap_draws < end)

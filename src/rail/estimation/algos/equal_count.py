@@ -22,7 +22,7 @@ class EqualCountClassifier(PZClassifier):
             "",
             msg="Column name for the object ID in the input data, if empty the row index is used as the ID.",
         ),
-        point_estimate=Param(str, "zmode", msg="Which point estimate to use"),
+        point_estimate_key=Param(str, "zmode", msg="Which point estimate to use"),
         zmin=Param(float, 0.0, msg="Minimum redshift of the sample"),
         zmax=Param(float, 3.0, msg="Maximum redshift of the sample"),
         n_tom_bins=Param(int, 5, msg="Number of tomographic bins"),
@@ -35,10 +35,10 @@ class EqualCountClassifier(PZClassifier):
         npdf = test_data.npdf
 
         try:
-            zb = np.squeeze(test_data.ancil[self.config.point_estimate])
+            zb = np.squeeze(test_data.ancil[self.config.point_estimate_key])
         except KeyError as msg:
             raise KeyError(
-                f"{self.config.point_estimate} is not contained in the data ancil, "
+                f"{self.config.point_estimate_key} is not contained in the data ancil, "
                 "you will need to compute it explicitly."
             ) from msg
 

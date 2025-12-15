@@ -110,7 +110,7 @@ class PZSummarizer(RailStage):
         ngal = self._input_length
         if self.rank == 0:
             bootstrap_matrix = rng.integers(
-                low=0, high=ngal, size=(ngal, self.config.nsamples)
+                low=0, high=ngal, size=(ngal, self.config.n_samples)
             )
         else:  # pragma: no cover
             bootstrap_matrix = None

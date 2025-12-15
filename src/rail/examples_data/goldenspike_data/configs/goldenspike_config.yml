@@ -295,7 +295,7 @@ point_estimate_test:
   name: point_estimate_test
   nzbins: 301
   output_mode: default
-  point_estimate: zmode
+  point_estimate_key: zmode
   zmax: 3.0
   zmin: 0.0
 quantity_cut:

@@ -28,7 +28,7 @@ def test_UniformBinningClassifier(input_param: dict) -> None:
     input_data = DS.read_file("input_data", QPHandle, inputdata)
 
     tomo = UniformBinningClassifier.make_stage(
-        point_estimate="zmode",
+        point_estimate_key="zmode",
         no_assign=-99,
         **input_param,
     )
@@ -42,7 +42,7 @@ def test_UniformBinningClassifier_binsize() -> None:
     input_data = DS.read_file("input_data", QPHandle, inputdata)
 
     tomo = UniformBinningClassifier.make_stage(
-        point_estimate="zmode",
+        point_estimate_key="zmode",
         no_assign=-99,
         zmin=0.0,
         zmax=2.0,
@@ -81,7 +81,7 @@ def test_UniformBinningClassifier_ancil() -> None:
     input_data = DS.read_file("input_data", QPHandle, inputdata)
 
     tomo = UniformBinningClassifier.make_stage(
-        point_estimate="zmedian",
+        point_estimate_key="zmedian",
         no_assign=-99,
         zmin=0.0,
         zmax=2.0,
@@ -103,7 +103,7 @@ def test_EqualCountClassifier(input_param: dict) -> None:
     input_data = DS.read_file("input_data", QPHandle, inputdata)
 
     tomo = EqualCountClassifier.make_stage(
-        point_estimate="zmode",
+        point_estimate_key="zmode",
         no_assign=-99,
         **input_param,
     )
@@ -117,7 +117,7 @@ def test_EqualCountClassifier_nobj() -> None:
     input_data = DS.read_file("input_data", QPHandle, inputdata)
 
     tomo = EqualCountClassifier.make_stage(
-        point_estimate="zmode",
+        point_estimate_key="zmode",
         no_assign=-99,
         zmin=0.0,
         zmax=2.0,
@@ -151,7 +151,7 @@ def test_EqualCountClassifier_ancil() -> None:
     input_data = DS.read_file("input_data", QPHandle, inputdata)
 
     tomo = EqualCountClassifier.make_stage(
-        point_estimate="zmedian",
+        point_estimate_key="zmedian",
         no_assign=-99,
         zmin=0.0,
         zmax=2.0,

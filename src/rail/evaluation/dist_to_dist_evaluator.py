@@ -25,7 +25,7 @@ class DistToDistEvaluator(Evaluator):
             required=False,
             msg="The default step size when calculating metrics on a grid.",
         ),
-        num_samples=Param(
+        n_samples=Param(
             int,
             100,
             required=False,

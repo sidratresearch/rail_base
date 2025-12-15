@@ -65,22 +65,22 @@ class RowSelector(RailStage):
     1. This operates on pandas dataframs in parquet files.
 
     2. In short, this does:
-    `output_data = input_data[self.config.start:self.config.stop]`
+    `output_data = input_data[self.config.start_row:self.config.stop_row]`
 
     """
 
     name = "RowSelector"
     config_options = RailStage.config_options.copy()
     config_options.update(
-        start=Param(int, required=True, msg="Starting row number"),
-        stop=Param(int, required=True, msg="Stoppig row number"),
+        start_row=Param(int, required=True, msg="starting row number"),
+        stop_row=Param(int, required=True, msg="Stoppig row number"),
     )
     inputs = [("input", PqHandle)]
     outputs = [("output", PqHandle)]
 
     def run(self) -> None:
         data = self.get_data("input", allow_missing=True)
-        out_data = data.iloc[self.config.start : self.config.stop]
+        out_data = data.iloc[self.config.start_row : self.config.stop_row]
         self.add_data("output", out_data)
 
     def __repr__(self) -> str:  # pragma: no cover

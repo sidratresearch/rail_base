@@ -33,7 +33,7 @@ def test_util_stages() -> None:
 
     table_conv = TableConverter.make_stage(name="conv", output_format="numpyDict")
     col_map = ColumnMapper.make_stage(name="col_map", columns={})
-    row_sel = RowSelector.make_stage(name="row_sel", start=1, stop=15)
+    row_sel = RowSelector.make_stage(name="row_sel", start_row=1, stop_row=15)
 
     with pytest.raises(KeyError) as _errinfo:
         table_conv.get_handle("nope", allow_missing=False)
@@ -42,12 +42,12 @@ def test_util_stages() -> None:
     mapped_data = col_map(data)
     _sel_data = row_sel(mapped_data)
 
-    row_sel_2 = RowSelector.make_stage(name="row_sel_2", start=1, stop=15)
+    row_sel_2 = RowSelector.make_stage(name="row_sel_2", start_row_row=1, stop_row=15)
     row_sel_2.set_data("input", mapped_data.data)
     handle = row_sel_2.get_handle("input")
 
     row_sel_3 = RowSelector.make_stage(
-        name="row_sel_3", input=handle.path, start=1, stop=15
+        name="row_sel_3", input=handle.path, start_row=1, stop_row=15
     )
     row_sel_3.set_data("input", None, do_read=True)
 
