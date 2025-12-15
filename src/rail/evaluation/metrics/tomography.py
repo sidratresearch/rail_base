@@ -14,9 +14,7 @@ class KDEBinOverlap(RailStage):
 
     config_options = RailStage.config_options.copy()
     config_options.update(
-        hdf5_groupname=Param(
-            str, "", required=False, msg="HDF5 Groupname for truth table."
-        ),
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),  # for truth table
         redshift_col=SharedParams.copy_param("redshift_col"),
         bin_name=Param(
             str,

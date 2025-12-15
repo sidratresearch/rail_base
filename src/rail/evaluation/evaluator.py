@@ -55,12 +55,9 @@ class Evaluator(RailStage):  # pylint: disable=too-many-instance-attributes
         metric_config=Param(
             dict, msg="configuration of individual_metrics", default={}
         ),
-        chunk_size=Param(
-            int,
-            10000,
-            required=False,
-            msg="The default number of PDFs to evaluate per loop.",
-        ),
+        chunk_size=SharedParams.copy_param(
+            "chunk_size"
+        ),  # number of PDFs to evaluate per loop
         seed=Param(
             float,
             default=None,
@@ -422,9 +419,7 @@ class OldEvaluator(RailStage):
         nzbins=Param(int, 301, msg="# of bins in zgrid"),
         pit_metrics=Param(str, "all", msg="PIT-based metrics to include"),
         point_metrics=Param(str, "all", msg="Point-estimate metrics to include"),
-        hdf5_groupname=Param(
-            str, "", msg="Name of group in hdf5 where redshift data is located"
-        ),
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),
         do_cde=Param(bool, True, msg="Evaluate CDE Metric"),
         redshift_col=SharedParams.copy_param("redshift_col"),
     )

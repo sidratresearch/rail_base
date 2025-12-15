@@ -8,6 +8,7 @@ from ceci.config import StageParameter as Param
 
 from rail.core.data import Hdf5Handle
 from rail.estimation.classifier import PZClassifier
+from rail.core.common_params import SharedParams
 
 
 class EqualCountClassifier(PZClassifier):
@@ -17,17 +18,16 @@ class EqualCountClassifier(PZClassifier):
     name = "EqualCountClassifier"
     config_options = PZClassifier.config_options.copy()
     config_options.update(
-        id_name=Param(
-            str,
-            "",
-            msg="Column name for the object ID in the input data, if empty the row index is used as the ID.",
-        ),
+        object_id_col=SharedParams.copy_param("object_id_col"),
         point_estimate_key=Param(str, "zmode", msg="Which point estimate to use"),
-        zmin=Param(float, 0.0, msg="Minimum redshift of the sample"),
-        zmax=Param(float, 3.0, msg="Maximum redshift of the sample"),
+        zmin=SharedParams.copy_param("zmin"),  # minimum redshift of the sample
+        zmax=SharedParams.copy_param("zmax"),  # Maximum redshift of the sample
         n_tom_bins=Param(int, 5, msg="Number of tomographic bins"),
         no_assign=Param(int, -99, msg="Value for no assignment flag"),
     )
+
+    # update the default object id column name in the input data to be empty, which uses the row index as the ID
+    config_options["object_id_col"].set_default("")
     outputs = [("output", Hdf5Handle)]
 
     def run(self) -> None:
@@ -53,15 +53,15 @@ class EqualCountClassifier(PZClassifier):
             useind = sortind[ind]
             bin_index[useind] = int(ii + 1)
 
-        if self.config.id_name != "":
+        if self.config.object_id_col != "":
             # below is commented out and replaced by a redundant line
             # because the data doesn't have ID yet
-            # obj_id = test_data[self.config.id_name]
+            # obj_id = test_data[self.config.object_id_col]
             obj_id = np.arange(npdf)
-        elif self.config.id_name == "":
+        elif self.config.object_id_col == "":
             # ID set to row index
             obj_id = np.arange(npdf)
-            self.config.id_name = "row_index"
+            self.config.object_id_col = "row_index"
 
-        class_id = {self.config.id_name: obj_id, "class_id": bin_index}
+        class_id = {self.config.object_id_col: obj_id, "class_id": bin_index}
         self.add_data("output", class_id)

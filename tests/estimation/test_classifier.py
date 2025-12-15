@@ -20,7 +20,7 @@ inputdata = os.path.join(RAILDIR, "rail/examples_data/testdata/output_BPZ_lite.h
     [
         {"zbin_edges": [0.0, 0.3]},
         {"zmin": 0.0, "zmax": 0.3, "n_tom_bins": 1},
-        {"zbin_edges": [0.0, 0.3], "id_name": "CATAID"},
+        {"zbin_edges": [0.0, 0.3], "object_id_col": "CATAID"},
     ],
 )
 def test_UniformBinningClassifier(input_param: dict) -> None:
@@ -95,7 +95,7 @@ def test_UniformBinningClassifier_ancil() -> None:
     "input_param",
     [
         {"zmin": 0.0, "zmax": 0.3, "n_tom_bins": 1},
-        {"zmin": 0.0, "zmax": 0.3, "n_tom_bins": 1, "id_name": "CATAID"},
+        {"zmin": 0.0, "zmax": 0.3, "n_tom_bins": 1, "object_id_col": "CATAID"},
     ],
 )
 def test_EqualCountClassifier(input_param: dict) -> None:

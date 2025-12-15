@@ -5,6 +5,7 @@ from ceci.config import StageParameter as Param
 from qp.metrics.concrete_metric_classes import DistToPointMetric
 
 from rail.core.data import QPHandle, TableHandle
+from rail.core.common_params import SharedParams
 from rail.evaluation.evaluator import Evaluator
 
 
@@ -38,9 +39,7 @@ class DistToPointEvaluator(Evaluator):
             required=False,
             msg="The x-value grid at which to evaluate the pdf values.",
         ),
-        hdf5_groupname=Param(
-            str, "photometry", required=False, msg="HDF5 Groupname for truth table."
-        ),
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),  # for truth table
         reference_dictionary_key=Param(
             str,
             "redshift",
