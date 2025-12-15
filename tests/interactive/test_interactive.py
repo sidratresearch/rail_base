@@ -172,6 +172,55 @@ def test_railstage_docstrings() -> None:
 ###################################
 
 
+def test_entrypoint_kwargs() -> None:
+    for stage_name in STAGE_NAMES:
+        stage_definition = _get_stage_definition(stage_name)
+        epf_inspected_parameters = inspect.signature(
+            getattr(stage_definition, stage_definition.entrypoint_function)
+        ).parameters.values()
+
+        if "kwargs" not in [i.name for i in epf_inspected_parameters]:
+            raise ValueError(f"Missing kwargs in interactive function of {stage_name}")
+
+
+###################################
+
+
+def check_duplicate_parameters(stage_name) -> None:
+    stage_definition = _get_stage_definition(stage_name)
+
+    epf_inspected_parameters = inspect.signature(
+        getattr(stage_definition, stage_definition.entrypoint_function)
+    ).parameters.values()
+    epf_docstring = getattr(
+        stage_definition, stage_definition.entrypoint_function
+    ).__doc__
+    epf_sections = _split_docstring(epf_docstring)
+    epf_parameters = _parse_annotation_string(
+        epf_sections["Parameters"], epf_inspected_parameters
+    )
+
+    class_parameters = [
+        InteractiveParameter.from_ceci(name, ceci_param)
+        for name, ceci_param in stage_definition.config_options.items()
+    ]
+
+    existing_names = [p.name for p in epf_parameters]
+    for parameter in class_parameters:
+        if parameter.name in existing_names:
+            warn(
+                f"WARNING - parameter '{parameter.name}' is duplicated in config_options and EPF of {stage_name}"  # pylint: disable=line-too-long
+            )
+
+
+def test_duplicate_parameters() -> None:
+    for stage_name in STAGE_NAMES:
+        check_duplicate_parameters(stage_name)
+
+
+###################################
+
+
 def validate_return_annotation(
     stage_name: str,
     stage_definition: type[RailStage],

@@ -29,7 +29,7 @@ class KDEBinOverlap(RailStage):
     )
     # metric_base_class = Evaluator
 
-    def evaluate(self, bin_index: TableLike, truth: TableLike) -> Hdf5Handle:
+    def evaluate(self, bin_index: TableLike, truth: TableLike, **kwargs) -> Hdf5Handle:
         """Evaluate function for KDEBinOverlap
 
         Parameters

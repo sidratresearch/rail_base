@@ -395,10 +395,6 @@ def _create_parameters_section(
         epf_parameter_string, epf_inspected_parameters
     )
 
-    # INTERACTIVE-DO: turn this into a proper test somewhere
-    if "kwargs" not in [i.name for i in epf_inspected_parameters]:
-        raise ValueError(f"Missing kwargs in interactive function of {stage_name}")
-
     # Handle positional parameters to EPF
     input_is_wrapped = (
         False  # flag for the interactive function, indicating whether "input" is a dict
@@ -440,10 +436,6 @@ def _create_parameters_section(
     for parameter in class_parameters:
         if parameter.name not in existing_names:
             epf_parameters.append(parameter)
-        else:
-            print(
-                f"Warning - parameter '{parameter.name}' is duplicated in config_options and EPF of {stage_name}"  # pylint: disable=line-too-long
-            )
 
     # remove the parameters that we force the values of
     epf_parameters = [

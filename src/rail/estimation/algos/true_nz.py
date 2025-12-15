@@ -102,7 +102,7 @@ class TrueNZHistogrammer(RailStage):
         assert self.zgrid is not None
         single_hist += np.histogram(zb, bins=self.zgrid)[0]
 
-    def histogram(self, catalog: TableLike, tomo_bins: TableLike) -> PqHandle:
+    def histogram(self, catalog: TableLike, tomo_bins: TableLike, **kwargs) -> PqHandle:
         """The main interface method for ``TrueNZHistogrammer``.
 
         Creates histogram of N of Z_true.

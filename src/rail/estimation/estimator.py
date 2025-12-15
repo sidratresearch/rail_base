@@ -127,7 +127,8 @@ class CatEstimator(RailStage, PointEstimationMixin):
         if self.config.output_mode != "return":
             self._output_handle.finalize_write()
         elif self.config.output_mode == "return":
-            # turn this into an ordered list by sorting the keys and then appending the data into a sorted list
+            # turn this into an ordered list by sorting the keys and then appending the
+            # data into a sorted list
             # TODO: should we skip this bit and create a list from the start
             gathered_data = []
             start = 0
@@ -370,7 +371,7 @@ class PzEstimator(RailStage, PointEstimationMixin):
         self._output_handle: QPHandle | None = None
         self.model = None
 
-    def estimate(self, input_data: QPHandle) -> QPHandle:
+    def estimate(self, input_data: QPHandle, **kwargs) -> QPHandle:
         """The main interface method for the photo-z estimation
 
         This will attach the input data (defined in ``inputs`` as "input") to this
