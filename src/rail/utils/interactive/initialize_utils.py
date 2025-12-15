@@ -97,6 +97,7 @@ def _interactive_factory(
         )
 
     else:  # not impl
+        # INTERACTIVE_DO: multiple outputs
         # multi item output
         print("MULTI ITEM OUTPUT", rail_stage.output_tags(), rail_stage.outputs)
         for tag, class_ in rail_stage.outputs:
@@ -177,10 +178,8 @@ def _attatch_interactive_function(
         _interactive_factory, stage_definition, function_input_is_wrapped
     )
     created_function.__doc__ = docstring
+    created_function.__module__ = virtual_module.module
 
-    # INTERACTIVE_DO: testing
-    if function_name is None:
-        raise ValueError(f"{stage_name} has no interactive function name")
     setattr(virtual_module.module, function_name, created_function)
 
 
@@ -319,7 +318,6 @@ def _initialize_interactive_module(
     virtual_module_dict = _create_virtual_submodules(calling_module, relevant_stages)
 
     for stage_name in relevant_stages:
-        # print(f"Working on stage {stage_name}")
         _attatch_interactive_function(virtual_module_dict, stage_name)
 
     if write_stubs:
