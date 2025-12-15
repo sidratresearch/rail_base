@@ -215,3 +215,35 @@ def test_gaussian_pz() -> None:
     estimate_gauss_pz = gaussian_pz.GaussianPzEstimator.make_stage(model=model)
     outdata = estimate_gauss_pz.estimate(input_data)
     assert outdata.data.npdf == 10
+
+
+def test_train_pz_with_output_mode_return():
+    """Tests that output_mode = return works for estimation algorithms"""
+    train_config_dict = dict(
+        zmin=0.0,
+        zmax=3.0,
+        nzbins=301,
+        hdf5_groupname="photometry",
+        model="model_train_z.tmp",
+    )
+    estim_config_dict = dict(
+        hdf5_groupname="photometry", model="model_train_z.tmp", output_mode="return"
+    )
+
+    zb_expected = np.repeat(0.1445183, 10)
+    pdf_expected = np.zeros(shape=(301,))
+    pdf_expected[10:16] = [7, 23, 8, 23, 26, 13]
+    train_algo = train_z.TrainZInformer
+    pz_algo = train_z.TrainZEstimator
+    results, rerun_results, _ = one_algo(
+        "TrainZ", train_algo, pz_algo, train_config_dict, estim_config_dict
+    )
+
+    assert (results.ancil["distribution_type"] == 0).all()
+    assert np.isclose(results.ancil["zmode"], zb_expected).all()
+    assert np.isclose(results.ancil["zmode"], rerun_results.ancil["zmode"]).all()
+
+    try:
+        os.remove("model.pkl")
+    except FileNotFoundError:  # pragma: no cover
+        pass

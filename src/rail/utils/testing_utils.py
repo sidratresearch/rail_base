@@ -73,12 +73,21 @@ def one_algo(
         elif is_classifier:  # pragma: no cover
             estim_3 = pz_3.classify(validation_data)
 
-    os.remove(pz.get_output(pz.get_aliased_tag("output"), final_name=True))
+    try:
+        os.remove(pz.get_output(pz.get_aliased_tag("output"), final_name=True))
+    except FileNotFoundError:
+        pass
     if pz_2 is not None:
-        os.remove(pz_2.get_output(pz_2.get_aliased_tag("output"), final_name=True))
+        try:
+            os.remove(pz_2.get_output(pz_2.get_aliased_tag("output"), final_name=True))
+        except FileNotFoundError:
+            pass
 
     if pz_3 is not None:
-        os.remove(pz_3.get_output(pz_3.get_aliased_tag("output"), final_name=True))
+        try:
+            os.remove(pz_3.get_output(pz_3.get_aliased_tag("output"), final_name=True))
+        except FileNotFoundError:
+            pass
     model_file = estim_kwargs.get("model", "None")
     if model_file != "None":
         try:

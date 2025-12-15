@@ -94,6 +94,7 @@ class PZClassifier(RailStage):
     config_options.update(chunk_size=SHARED_PARAMS)
     inputs = [("input", QPHandle)]
     outputs = [("output", Hdf5Handle)]
+    _partial_output = {}
 
     def __init__(self, args: Any, **kwargs: Any) -> None:
         """Initialize the PZClassifier."""
@@ -140,7 +141,11 @@ class PZClassifier(RailStage):
     def _finalize_run(self) -> None:
         """Finalize the classification process after processing all chunks."""
         assert self._output_handle is not None
-        self._output_handle.finalize_write()
+        if self.config.output_mode != "return":
+            self._output_handle.finalize_write()
+        elif self.config.output_mode == "return":
+            # update output handle assuming that the data is in a dictionary format
+            self._output_handle.set_data(self._partial_output)
 
     def _process_chunk(
         self, start: int, end: int, data: qp.Ensemble, first: bool
@@ -190,12 +195,18 @@ class PZClassifier(RailStage):
         if first:
             self._output_handle = self.add_handle("output", data=class_id)
             assert self._output_handle is not None
-            self._output_handle.initialize_write(
-                self._input_length, communicator=self.comm
-            )
+            if self.config.output_mode != "return":
+                self._output_handle.initialize_write(
+                    self._input_length, communicator=self.comm
+                )
         assert self._output_handle is not None
         self._output_handle.set_data(class_id, partial=True)
-        self._output_handle.write_chunk(start, end)
+        if self.config.output_mode != "return":
+            self._output_handle.write_chunk(start, end)
+        elif self.config.output_mode == "return":
+            self._partial_output.update(
+                class_id
+            )  # TODO: this is assuming the output data handle is a dictionary, check this is valid
 
     def run(self) -> None:
         """Processes the input data in chunks and performs classification.

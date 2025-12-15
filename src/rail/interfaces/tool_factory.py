@@ -120,6 +120,6 @@ class ToolFactory:
         data_handle: DataHandle
             Object that can give access to the data
         """
-        RailStage.data_store.clear()
+        # RailStage.data_store.clear()
         handle = stage_obj.get_handle("input", path=data_path, allow_missing=True)
         return stage_obj(handle)

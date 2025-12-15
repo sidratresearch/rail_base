@@ -54,7 +54,7 @@ class CatSummarizer(RailStage):  # pragma: no cover
         Returns
         -------
         QPHandle
-            Ensemble with n(z), and any ancilary data
+            Ensemble with n(z), and any ancillary data
         """
         self.set_data("input", input_data)
         self.run()
@@ -94,12 +94,12 @@ class PZSummarizer(RailStage):
         Parameters
         ----------
         input_data : qp.Ensemble
-            Per-galaxy p(z), and any ancilary data associated with it
+            Per-galaxy p(z), and any ancillary data associated with it
 
         Returns
         -------
         QPHandle
-            Ensemble with n(z), and any ancilary data
+            Ensemble with n(z), and any ancillary data
         """
         self.set_data("input", input_data)
         self.run()
@@ -174,18 +174,24 @@ class SZPZSummarizer(RailStage):  # pragma: no cover
         Parameters
         ----------
         input_data : qp.Ensemble
-            Per-galaxy p(z), and any ancilary data associated with it
-
+            Per-galaxy p(z), and any ancillary data associated with it
         spec_data : np.ndarray
             Spectroscopic data
 
         Returns
         -------
         qp.Ensemble
-            Ensemble with n(z), and any ancilary data
+            Ensemble with n(z), and any ancillary data
         """
         self.set_data("input", input_data)
         self.set_data("spec_input", spec_data)
         self.run()
         self.finalize()
-        return self.get_handle("output")
+        if len(self.outputs) == 1 or self.config.output_mode != "return":
+            return self.get_handle("output")
+        # if there is more than one output and output_mode = return, return them all as a dictionary
+        elif len(self.outputs) > 1 and self.config.output_mode == "return":
+            results = {}
+            for output in self.outputs:
+                results[output[0]] = self.get_handle(output[0])
+            return results

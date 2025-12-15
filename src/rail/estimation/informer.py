@@ -218,7 +218,8 @@ class PzInformer(RailStage):
         self.add_data("model", self.model)
         self._model_handle = self.get_handle("model")
         assert self._model_handle is not None
-        self._model_handle.write()
+        if self.config.output_mode != "return":
+            self._model_handle.write()
 
     def _process_chunk(
         self,
