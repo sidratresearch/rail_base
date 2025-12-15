@@ -9,7 +9,7 @@ import qp
 from ceci.config import StageParameter as Param
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import PqHandle, TableLike
+from rail.core.data import PqHandle, QPHandle, TableHandle, TableLike
 from rail.core.stage import RailStage
 
 
@@ -18,6 +18,7 @@ class TrueNZHistogrammer(RailStage):
 
     name = "TrueNZHistogrammer"
     entrypoint_function = "histogram"  # the user-facing science function for this class
+    interactive_function = "true_nz_histogrammer"
     config_options = RailStage.config_options.copy()
     config_options.update(
         zmin=SHARED_PARAMS,
@@ -30,8 +31,8 @@ class TrueNZHistogrammer(RailStage):
     )
     # INTERACTIVE-DO: this stage has multiple positional arguments to it's EPF
     # not sure how to handle this, so making it an "incomplete" stage for now
-    # inputs = [("input", TableHandle), ("tomography_bins", TableHandle)]
-    # outputs = [("true_NZ", QPHandle)]
+    inputs = [("input", TableHandle), ("tomography_bins", TableHandle)]
+    outputs = [("true_NZ", QPHandle)]
 
     def __init__(self, args: Any, **kwargs: Any) -> None:
         super().__init__(args, **kwargs)
@@ -120,10 +121,10 @@ class TrueNZHistogrammer(RailStage):
 
         Parameters
         ----------
-        catalog
+        catalog : TableLike
             The sample with the true NZ column
 
-        tomo_bins
+        tomo_bins : TableLike
             Tomographic bin assignemnets
 
         Returns
