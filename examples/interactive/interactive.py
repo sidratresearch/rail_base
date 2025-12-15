@@ -60,5 +60,4 @@ print("\n\nEstimator Result:", estimator_result["output"])
 
 evaluator_output = interact.evaluation.dist_to_point_evaluator.dist_to_point_evaluator(
     input={"data": {"photometry": estimator_result["output"]}, "truth": estimator_data},
-    force_exact=True,  # bypass some weird stuff with input iterators. not sure what's going on here
 )
