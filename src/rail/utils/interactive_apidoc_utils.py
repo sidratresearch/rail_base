@@ -6,7 +6,7 @@ from pathlib import Path
 
 import rail
 import rail.interactive
-from rail.utils.interactive_utils import _get_virtual_submodule_names, _stage_names
+from rail.utils.interactive_utils import STAGE_NAMES, _get_virtual_submodule_names
 
 NAMESPACE_RST = """
 {name} namespace
@@ -85,7 +85,7 @@ def write_interactive_api_rst(docs_path: str) -> None:
         docs directory where Sphinx is run from
     """
     docs_path = Path(docs_path)
-    module_names = _get_virtual_submodule_names(rail.interactive, _stage_names)
+    module_names = _get_virtual_submodule_names(rail.interactive, STAGE_NAMES)
     for name in module_names:
         add_to_recursive(name)
 

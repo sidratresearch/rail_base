@@ -4,7 +4,7 @@ Not sure about the placement of this file
 
 import collections
 
-from rail.utils.interactive_utils import _get_stage_definition, _stage_names
+from rail.utils.interactive_utils import STAGE_NAMES, _get_stage_definition
 
 
 def test_interactive_function_names() -> None:
@@ -16,7 +16,7 @@ def test_interactive_function_names() -> None:
     exists_name_with_multiple_uses = False
 
     # initial loop through stages
-    for stage_name in _stage_names:
+    for stage_name in STAGE_NAMES:
         # get and store the name
         interactive_function_name = getattr(
             _get_stage_definition(stage_name), if_name_attribute

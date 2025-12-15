@@ -26,8 +26,8 @@ import rail.stages
 from rail.core.introspection import RailEnv
 from rail.core.stage import RailStage
 from rail.utils.interactive_utils import (
+    STAGE_NAMES,
     _get_stage_definition,
-    _stage_names,
 )
 
 RELEVANT_ERRORCODES = [
@@ -91,7 +91,7 @@ def get_entrypoint_function_paths() -> list[str]:
         make_import_path(getattr(rail.stages, base_stage), base_stage)
         for base_stage in RailEnv._base_stages_names  # pylint: disable=protected-access
     ]
-    for stage_name in _stage_names:
+    for stage_name in STAGE_NAMES:
         stage_definition = _get_stage_definition(stage_name)
         paths.append(make_import_path(stage_definition, stage_name))
     return paths
