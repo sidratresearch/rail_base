@@ -4,6 +4,7 @@ Not sure about the placement of this file
 
 import collections
 import inspect
+from warnings import warn
 
 import numpydoc.validate
 
@@ -196,11 +197,11 @@ def validate_return_annotation(
 
         # if we have a single ceci output, make sure it matches the annotation
         if (len(from_ceci) == 1) and (from_inspect != from_ceci[0]):
-            print(
+            warn(
                 f"WARNING: {warning_start} doesn't match the output property of {stage_name}"
             )
         if len(from_ceci) > 1:
-            print(
+            warn(
                 f"WARNING: {warning_start} cannot be checked against multiple ceci outputs defined in {stage_name}"  # pylint: disable=line-too-long
             )
 
@@ -219,13 +220,13 @@ def validate_return_annotation(
                 f"{warning_start} doesn't match the docstring in {stage_name} (docstring={repr(from_docstring)}, annotation={from_inspect})"  # pylint: disable=line-too-long
             )
         if len(from_docstring) > 1:
-            print(
+            warn(
                 f"WARNING: {warning_start} cannot be checked against multiple docstring entries in {stage_name}"  # pylint: disable=line-too-long
             )
     elif from_inspect is None:
         return
     else:
-        print(f"WARNING: {warning_start} is too complex to be checked in {stage_name}")
+        warn(f"WARNING: {warning_start} is too complex to be checked in {stage_name}")
 
 
 def check_returned_datahandle(
