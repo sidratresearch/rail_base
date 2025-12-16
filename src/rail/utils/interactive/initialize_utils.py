@@ -80,16 +80,20 @@ def _interactive_factory(
     # convert output FROM a DataHandle into pure data
     output_info = rail_stage.outputs  # list of (tag, class)
 
-    if len(output_info) == 1:  # single item output
+    # one ceci output
+    if len(output_info) == 1:
         tag, class_ = output_info[0]
-        interactive_output = {tag: _unpack_output_handle(class_, output)}
-    else:  # multi item output
-        interactive_output = {
-            tag: _unpack_output_handle(class_, output[tag])
-            for tag, class_ in rail_stage.outputs
-        }
+        return {tag: _unpack_output_handle(class_, output)}
 
-    return interactive_output
+    # multiple ceci outputs, but only one actual output
+    if isinstance(output, DataHandle):
+        return {"output": _unpack_output_handle(DataHandle, output)}
+
+    # multiple ceci outputs
+    return {
+        tag: _unpack_output_handle(class_, output[tag])
+        for tag, class_ in rail_stage.outputs
+    }
 
 
 def _unpack_output_handle(
