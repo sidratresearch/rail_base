@@ -11,6 +11,7 @@ from scipy.special import digamma
 from scipy.stats import dirichlet
 
 from rail.core.data import QPHandle
+from rail.core.common_params import SharedParams
 from rail.estimation.informer import PzInformer
 from rail.estimation.summarizer import PZSummarizer
 
@@ -38,9 +39,9 @@ class VarInfStackSummarizer(PZSummarizer):
     name = "VarInfStackSummarizer"
     config_options = PZSummarizer.config_options.copy()
     config_options.update(
-        zmin=Param(float, 0.0, msg="The minimum redshift of the z grid"),
-        zmax=Param(float, 3.0, msg="The maximum redshift of the z grid"),
-        nzbins=Param(int, 301, msg="The number of gridpoints in the z grid"),
+        zmin=SharedParams.copy_param("zmin"),
+        zmax=SharedParams.copy_param("zmax"),
+        nzbins=SharedParams.copy_param("nzbins"),
         seed=Param(int, 87, msg="random seed"),
         n_iter=Param(
             int, 100, msg="The number of iterations in the variational inference"

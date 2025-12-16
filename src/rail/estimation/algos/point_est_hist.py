@@ -9,6 +9,7 @@ import qp
 from ceci.config import StageParameter as Param
 
 from rail.core.data import DataHandle, QPHandle, TableHandle, TableLike
+from rail.core.common_params import SharedParams
 from rail.estimation.informer import PzInformer
 from rail.estimation.summarizer import PZSummarizer
 
@@ -30,9 +31,9 @@ class PointEstHistSummarizer(PZSummarizer):
     name = "PointEstHistSummarizer"
     config_options = PZSummarizer.config_options.copy()
     config_options.update(
-        zmin=Param(float, 0.0, msg="The minimum redshift of the z grid"),
-        zmax=Param(float, 3.0, msg="The maximum redshift of the z grid"),
-        nzbins=Param(int, 301, msg="The number of gridpoints in the z grid"),
+        zmin=SharedParams.copy_param("zmin"),
+        zmax=SharedParams.copy_param("zmax"),
+        nzbins=SharedParams.copy_param("nzbins"),
         seed=Param(int, 87, msg="random seed"),
         point_estimate_key=Param(str, "zmode", msg="Which point estimate to use"),
         n_samples=Param(int, 1000, msg="Number of sample distributions to return"),

@@ -416,7 +416,7 @@ class OldEvaluator(RailStage):
     config_options.update(
         zmin=SharedParams.copy_param("zmin"),
         zmax=SharedParams.copy_param("zmax"),
-        nzbins=Param(int, 301, msg="# of bins in zgrid"),
+        nzbins=SharedParams.copy_param("nzbins"),
         pit_metrics=Param(str, "all", msg="PIT-based metrics to include"),
         point_metrics=Param(str, "all", msg="Point-estimate metrics to include"),
         hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),
