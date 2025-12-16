@@ -21,6 +21,7 @@ from . import (
     sompz,
     tpz_lite,
     train_z,
+    true_nz,
     uniform_binning,
     var_inf,
 )

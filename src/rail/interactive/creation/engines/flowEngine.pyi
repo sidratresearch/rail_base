@@ -18,10 +18,8 @@ def flow_creator(**kwargs) -> Any:
 
     Parameters
     ----------
-    input : int
-        The number of samples to draw
     n_samples : int
-        Number of samples to create
+        The number of samples to draw, by default None
     seed : int, optional
         The random seed to control sampling, by default None
 
@@ -60,6 +58,8 @@ def flow_modeler(**kwargs) -> Any:
 
     Parameters
     ----------
+    input : DataHandle
+        ???
     seed : int, optional
         The random seed for training.
         Default: 0

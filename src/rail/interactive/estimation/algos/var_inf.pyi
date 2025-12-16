@@ -73,7 +73,7 @@ def var_inf_stack_summarizer(**kwargs) -> Any:
     Parameters
     ----------
     input : qp.Ensemble
-        Per-galaxy p(z), and any ancilary data associated with it
+        Per-galaxy p(z), and any ancillary data associated with it
     chunk_size : int, optional
         Number of object per chunk for parallel processing
         Default: 10000
@@ -99,6 +99,6 @@ def var_inf_stack_summarizer(**kwargs) -> Any:
     Returns
     -------
     qp.core.ensemble.Ensemble
-        Ensemble with n(z), and any ancilary data
         A QP Ensemble
+        Ensemble with n(z), and any ancillary data
     """

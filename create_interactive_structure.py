@@ -18,6 +18,7 @@ import isort
 import pytest
 
 from rail.core.introspection import RailEnv
+from rail.estimation.algos.cc_yaw import *  # workaround for yaw not otherwise showing up
 from rail.utils.interactive.initialize_utils import _initialize_interactive_module
 
 interactive_modules = [
@@ -95,7 +96,7 @@ def write_modules() -> None:
     all_modules: dict[str, InteractiveModule] = {}
 
     all_modules["."] = InteractiveModule(
-        docstring="Needed to run `import rail.interactive",
+        docstring="Needed to run `import rail.interactive`",
     )
 
     # sort to make sure we do parents first
@@ -119,7 +120,7 @@ def write_modules() -> None:
             subfolder=module_name.replace(".", "/"),
             docstring=f"Module docstring for interactive {portions[-1]}",
             absolute_imports=[
-                "from rail.utils.interactive_utils import _initialize_interactive_module"
+                "from rail.utils.interactive.initialize_utils import _initialize_interactive_module"
             ],
             code=["_initialize_interactive_module(__name__)"],
         )

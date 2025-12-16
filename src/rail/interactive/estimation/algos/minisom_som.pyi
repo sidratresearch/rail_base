@@ -173,8 +173,8 @@ def mini_som_summarizer(**kwargs) -> Any:
     ----------
     input : dict["input_data": qp.Ensemble, "spec_data": np.ndarray]
         Dictionary of input data with the following keys:
-        input_data: qp.Ensemble - Per-galaxy p(z), and any ancilary data associated with
-        it
+        input_data: qp.Ensemble - Per-galaxy p(z), and any ancillary data associated
+        with it
         spec_data: np.ndarray - Spectroscopic data
     chunk_size : int, optional
         Number of object per chunk for parallel processing
@@ -222,5 +222,5 @@ def mini_som_summarizer(**kwargs) -> Any:
     Returns
     -------
     qp.Ensemble
-        Ensemble with n(z), and any ancilary data
+        Ensemble with n(z), and any ancillary data
     """
