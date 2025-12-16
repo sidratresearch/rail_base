@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from rail.core.data import ModelHandle, PqHandle, QPHandle
+from rail.core.data import DataHandle
 from rail.core.stage import RailStage
 from rail.utils.interactive.base_utils import (
     GLOBAL_INTERACTIVE_PARAMETERS,
@@ -73,38 +73,52 @@ def _interactive_factory(
     else:
         output = entrypoint_function(entrypoint_inputs, **kwargs)
 
-    # convert output FROM a DataHandle into pure data, need to handle the case of
-    # multiple outputs - use each tag as dict key
-    interactive_output = {}
+    # convert output FROM a DataHandle into pure data
+    output_info = rail_stage.outputs  # list of (tag, class)
 
-    # single item output
-    if len(rail_stage.outputs) == 1:
-        tag, class_ = rail_stage.outputs[0]
-
-        if class_ == PqHandle:
-            interactive_output[tag] = output.data
-        elif class_ == ModelHandle:
-            interactive_output[tag] = output.data
-        elif class_ == QPHandle:
-            interactive_output[tag] = output.data
-        else:  # not impl
-            print(class_)
-            interactive_output[tag] = "Output class not impl"
-
-        # INTERACTIVE_DO: Testing line
-        print(
-            f"{rail_stage} output type is {class_}, output.data has type {type(output.data)}"
-        )
-
-    else:  # not impl
-        # INTERACTIVE_DO: multiple outputs
-        # multi item output
-        print("MULTI ITEM OUTPUT", rail_stage.output_tags(), rail_stage.outputs)
-        for tag, class_ in rail_stage.outputs:
-            pass
-        return rail_stage.outputs
+    if len(output_info) == 1:  # single item output
+        tag, class_ = output_info[0]
+        interactive_output = {tag: _unpack_output_handle(class_, output)}
+    else:  # multi item output
+        interactive_output = {
+            tag: _unpack_output_handle(class_, output[tag])
+            for tag, class_ in rail_stage.outputs
+        }
 
     return interactive_output
+
+
+def _unpack_output_handle(
+    output_class: type[DataHandle], output_content: DataHandle
+) -> Any:
+    """Unpack the DataHandle returned by a RailStage's entrypoint function to access the
+    actual data behind it. Functionized for potential expansion if ever a stage returns
+    something other than a DataHandle, or a new type of Handle that needs to be
+    specially unpacked.
+
+    Parameters
+    ----------
+    output_class : type[DataHandle]
+        The type of handle being returned, as specified in the ceci `outputs` property
+        of a RailStage class
+    output_content : DataHandle
+        Whatever part of the RailStage outputs is matched to this `output_class` (see
+        usage in `_interactive_factory`)
+
+    Returns
+    -------
+    Any
+        The unpacked data
+
+    Raises
+    ------
+    ValueError
+        Raised if the `output_class` is not explicitly handled
+    """
+    if isinstance(output_content, DataHandle):
+        return output_content.data
+
+    raise ValueError(f"Class {output_class} not implemented")
 
 
 def _create_virtual_submodules(
