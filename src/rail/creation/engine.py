@@ -36,9 +36,14 @@ class Modeler(RailStage):  # pragma: no cover
         super().__init__(args, **kwargs)
         self.model = None
 
-    def fit_model(self, **kwargs) -> ModelHandle:
+    def fit_model(self, input_data: DataHandle, **kwargs) -> ModelHandle:
         """Produce a creation model from which photometry and redshifts can be
         generated.
+
+        Parameters
+        ----------
+        input_data : DataHandle
+            ???
 
         Returns
         -------
@@ -47,6 +52,7 @@ class Modeler(RailStage):  # pragma: no cover
             but the filetype and format depend entirely on the
             modeling approach
         """
+        self.set_data("input", input_data)
         self.validate()
         self.run()
         self.finalize()
