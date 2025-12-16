@@ -86,7 +86,7 @@ class Creator(RailStage):  # pragma: no cover
         self.open_model(**args)
 
     def sample(
-        self, n_samples: int, seed: int | None = None, **kwargs: Any
+        self, n_samples: int | None = None, seed: int | None = None, **kwargs: Any
     ) -> TableHandle:
         """Draw samples from the model specified in the configuration.
 
@@ -95,12 +95,10 @@ class Creator(RailStage):  # pragma: no cover
 
         Parameters
         ----------
-        n_samples : int
-            The number of samples to draw
-
+        n_samples : int, optional
+            The number of samples to draw, by default None
         seed : int, optional
             The random seed to control sampling, by default None
-
         **kwargs : Any
             Used to update the configuration
 
