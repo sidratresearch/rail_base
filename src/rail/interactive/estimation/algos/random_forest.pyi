@@ -50,7 +50,6 @@ def random_forest_classifier(**kwargs) -> Any:
     -------
     A tablesio-compatible table
         Class assignment for each galaxy.
-        Description for TableHandle
     """
 
 def random_forest_informer(**kwargs) -> Any:
@@ -106,5 +105,4 @@ def random_forest_informer(**kwargs) -> Any:
     -------
     numpy.ndarray
         Handle providing access to trained model
-        A trained model
     """

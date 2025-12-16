@@ -99,6 +99,5 @@ def var_inf_stack_summarizer(**kwargs) -> Any:
     Returns
     -------
     qp.core.ensemble.Ensemble
-        A QP Ensemble
         Ensemble with n(z), and any ancillary data
     """

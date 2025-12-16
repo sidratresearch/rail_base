@@ -55,5 +55,4 @@ def old_evaluator(**kwargs) -> Any:
     -------
     dict
         The evaluation metrics
-        Hdf5 dict?
     """

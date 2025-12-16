@@ -612,7 +612,6 @@ def create_interactive_docstring(stage_name: str) -> str:
         if hasattr(rail.core.data, item.annotation):
             return_type = getattr(rail.core.data, item.annotation)
             item.annotation = return_type.interactive_type
-            item.description += "\n" + return_type.interactive_description
     if len(return_elements) == 0:
         return_elements = ["None"]
     returns_content = "\n".join([str(i) for i in return_elements])

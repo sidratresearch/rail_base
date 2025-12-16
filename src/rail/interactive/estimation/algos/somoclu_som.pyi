@@ -129,7 +129,6 @@ def somoclu_informer(**kwargs) -> Any:
     -------
     numpy.ndarray
         Handle providing access to trained model
-        A trained model
     """
 
 def somoclu_summarizer(**kwargs) -> Any:

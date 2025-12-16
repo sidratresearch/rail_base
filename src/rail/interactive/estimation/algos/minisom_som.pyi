@@ -106,7 +106,6 @@ def mini_som_informer(**kwargs) -> Any:
     -------
     numpy.ndarray
         Handle providing access to trained model
-        A trained model
     """
 
 def mini_som_summarizer(**kwargs) -> Any:

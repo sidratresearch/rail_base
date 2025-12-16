@@ -82,7 +82,6 @@ def fsps_photometry_creator(**kwargs) -> Any:
     -------
     dict
         Hdf5Handle storing the apparent magnitudes and redshifts of galaxies.
-        Hdf5 dict?
 
 
     Notes

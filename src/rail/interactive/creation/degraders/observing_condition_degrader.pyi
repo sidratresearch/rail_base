@@ -101,5 +101,4 @@ def obs_condition(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """

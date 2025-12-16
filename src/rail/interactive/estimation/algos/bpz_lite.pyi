@@ -127,7 +127,6 @@ def bpz_lite_estimator(**kwargs) -> Any:
     -------
     qp.core.ensemble.Ensemble
         Handle providing access to QP ensemble with output data
-        A QP Ensemble
     """
 
 def bpz_lite_informer(**kwargs) -> Any:
@@ -255,5 +254,4 @@ def bpz_lite_informer(**kwargs) -> Any:
     -------
     numpy.ndarray
         Handle providing access to trained model
-        A trained model
     """

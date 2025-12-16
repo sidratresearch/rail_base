@@ -45,5 +45,4 @@ def add_column_of_random(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """

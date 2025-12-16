@@ -47,5 +47,4 @@ def diff_sky_galaxy_population_modeler(**kwargs) -> Any:
     -------
     dict
         Hdf5 table storing the population parameters.
-        Hdf5 dict?
     """

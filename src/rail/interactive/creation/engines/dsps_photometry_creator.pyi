@@ -85,7 +85,6 @@ def dsps_photometry_creator(**kwargs) -> Any:
     -------
     dict
         Hdf5Handle storing the absolute and apparent magnitudes.
-        Hdf5 dict?
 
 
     Notes

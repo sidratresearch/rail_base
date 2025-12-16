@@ -65,7 +65,6 @@ def spec_selection(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with selected sample
-        Description of PqHandle
     """
 
 def spec_selection_BOSS(**kwargs) -> Any:
@@ -142,7 +141,6 @@ def spec_selection_BOSS(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with selected sample
-        Description of PqHandle
     """
 
 def spec_selection_DEEP2(**kwargs) -> Any:
@@ -216,7 +214,6 @@ def spec_selection_DEEP2(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with selected sample
-        Description of PqHandle
     """
 
 def spec_selection_GAMA(**kwargs) -> Any:
@@ -288,7 +285,6 @@ def spec_selection_GAMA(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with selected sample
-        Description of PqHandle
     """
 
 def spec_selection_HSC(**kwargs) -> Any:
@@ -358,7 +354,6 @@ def spec_selection_HSC(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with selected sample
-        Description of PqHandle
     """
 
 def spec_selection_VVDSf02(**kwargs) -> Any:
@@ -430,7 +425,6 @@ def spec_selection_VVDSf02(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with selected sample
-        Description of PqHandle
     """
 
 def spec_selection_zCOSMOS(**kwargs) -> Any:
@@ -502,5 +496,4 @@ def spec_selection_zCOSMOS(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with selected sample
-        Description of PqHandle
     """

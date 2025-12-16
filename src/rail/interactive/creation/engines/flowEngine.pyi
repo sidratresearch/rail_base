@@ -27,7 +27,6 @@ def flow_creator(**kwargs) -> Any:
     -------
     A tablesio-compatible table
         TableHandle wrapping the newly created samples
-        Description for TableHandle
 
 
     Notes
@@ -89,7 +88,6 @@ def flow_modeler(**kwargs) -> Any:
         This will definitely be a wrapper around a File,
         but the filetype and format depend entirely on the
         modeling approach
-        A trained model
     """
 
 def flow_posterior(**kwargs) -> Any:
@@ -184,7 +182,6 @@ def flow_posterior(**kwargs) -> Any:
     -------
     qp.core.ensemble.Ensemble
         Posterior Estimate
-        A QP Ensemble
 
 
     Notes

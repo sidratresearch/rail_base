@@ -73,7 +73,6 @@ def diff_sky_galaxy_population_creator(**kwargs) -> Any:
     -------
     dict
         Hdf5 Handle storing the sampled galaxy properties.
-        Hdf5 dict?
 
 
     Notes

@@ -287,10 +287,7 @@ def check_returned_datahandle(
         # Handle return annotations that are DataHandles
         if hasattr(rail.core.data, item.annotation):
             return_type = getattr(rail.core.data, item.annotation)
-            if (
-                return_type.interactive_type is None
-                or return_type.interactive_description is None
-            ):
+            if return_type.interactive_type is None:
                 raise ValueError(
                     f"{return_type} used in {stage_name} is missing interactive details"
                 )

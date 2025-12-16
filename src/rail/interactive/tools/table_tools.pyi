@@ -33,7 +33,6 @@ def column_mapper(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         The degraded sample
-        Description of PqHandle
     """
 
 def row_selector(**kwargs) -> Any:
@@ -67,7 +66,6 @@ def row_selector(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         The degraded sample
-        Description of PqHandle
     """
 
 def table_converter(**kwargs) -> Any:
@@ -97,5 +95,4 @@ def table_converter(**kwargs) -> Any:
     -------
     dict
         The converted version of the table
-        Hdf5 dict?
     """

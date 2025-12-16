@@ -92,7 +92,6 @@ def point_est_hist_masked_summarizer(**kwargs) -> Any:
     -------
     qp.core.ensemble.Ensemble
         Ensemble with n(z), and any ancilary data
-        A QP Ensemble
     """
 
 def point_est_hist_summarizer(**kwargs) -> Any:
@@ -149,6 +148,5 @@ def point_est_hist_summarizer(**kwargs) -> Any:
     Returns
     -------
     qp.core.ensemble.Ensemble
-        A QP Ensemble
         Ensemble with n(z), and any ancillary data
     """

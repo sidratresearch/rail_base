@@ -45,7 +45,6 @@ def dereddener(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         The converted version of the table
-        Description of PqHandle
     """
 
 def dust_map_base(**kwargs) -> Any:
@@ -96,7 +95,6 @@ def dust_map_base(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         The converted version of the table
-        Description of PqHandle
     """
 
 def hyperbolic_magnitudes(**kwargs) -> Any:
@@ -149,7 +147,6 @@ def hyperbolic_magnitudes(**kwargs) -> Any:
         prefix
         with `hyp_mag_`, otherwise the column names will be identical to the input
         table.
-        Description of PqHandle
     """
 
 def hyperbolic_smoothing(**kwargs) -> Any:
@@ -197,7 +194,6 @@ def hyperbolic_smoothing(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         Table with smoothing parameters per photometric band and additional meta data.
-        Description of PqHandle
     """
 
 def lsst_flux_to_mag_converter(**kwargs) -> Any:
@@ -246,7 +242,6 @@ def lsst_flux_to_mag_converter(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         The converted version of the table
-        Description of PqHandle
     """
 
 def reddener(**kwargs) -> Any:
@@ -294,5 +289,4 @@ def reddener(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         The converted version of the table
-        Description of PqHandle
     """

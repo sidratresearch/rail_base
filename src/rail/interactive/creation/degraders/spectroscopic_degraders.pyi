@@ -48,7 +48,6 @@ def inv_redshift_incompleteness(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with selected sample
-        Description of PqHandle
     """
 
 def line_confusion(**kwargs) -> Any:
@@ -114,5 +113,4 @@ def line_confusion(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """

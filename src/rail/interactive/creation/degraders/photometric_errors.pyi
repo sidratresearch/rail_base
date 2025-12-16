@@ -43,7 +43,6 @@ def euclid_deep_error_model(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """
 
 def euclid_error_model(**kwargs) -> Any:
@@ -88,7 +87,6 @@ def euclid_error_model(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """
 
 def euclid_wide_error_model(**kwargs) -> Any:
@@ -134,7 +132,6 @@ def euclid_wide_error_model(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """
 
 def lsst_error_model(**kwargs) -> Any:
@@ -179,7 +176,6 @@ def lsst_error_model(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """
 
 def photo_error_model(**kwargs) -> Any:
@@ -227,7 +223,6 @@ def photo_error_model(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """
 
 def roman_deep_error_model(**kwargs) -> Any:
@@ -273,7 +268,6 @@ def roman_deep_error_model(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """
 
 def roman_error_model(**kwargs) -> Any:
@@ -318,7 +312,6 @@ def roman_error_model(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """
 
 def roman_medium_error_model(**kwargs) -> Any:
@@ -364,7 +357,6 @@ def roman_medium_error_model(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """
 
 def roman_ultra_deep_error_model(**kwargs) -> Any:
@@ -410,7 +402,6 @@ def roman_ultra_deep_error_model(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """
 
 def roman_wide_error_model(**kwargs) -> Any:
@@ -456,5 +447,4 @@ def roman_wide_error_model(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with degraded sample.
-        Description of PqHandle
     """

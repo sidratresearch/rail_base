@@ -91,7 +91,6 @@ def dsps_population_sed_modeler(**kwargs) -> Any:
     -------
     dict
         Hdf5 table storing the rest-frame SED model
-        Hdf5 dict?
     """
 
 def dsps_single_sed_modeler(**kwargs) -> Any:
@@ -182,5 +181,4 @@ def dsps_single_sed_modeler(**kwargs) -> Any:
     -------
     dict
         Hdf5 table storing the rest-frame SED model
-        Hdf5 dict?
     """

@@ -86,5 +86,4 @@ def som_spec_selector(**kwargs) -> Any:
     -------
     pandas.core.frame.DataFrame
         A handle giving access to a table with selected sample
-        Description of PqHandle
     """

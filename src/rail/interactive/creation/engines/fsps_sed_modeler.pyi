@@ -312,5 +312,4 @@ def fsps_sed_modeler(**kwargs) -> Any:
     -------
     dict
         ModelHandle storing the rest-frame SED models
-        Hdf5 dict?
     """
