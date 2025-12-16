@@ -318,8 +318,6 @@ class PzEstimator(RailStage, PointEstimationMixin):
         -------
         QPHandle
             Handle providing access to QP ensemble with output data
-            Interactive update note: this doesn't actually return the handle, it returns
-            the data
         """
         self.set_data("input", input_data)
         self.validate()
