@@ -362,7 +362,7 @@ def _parse_annotation_string(
 
 
 def _create_parameters_section(
-    stage_definition: type[RailStage], stage_name: str, epf_parameter_string: str
+    stage_definition: type[RailStage], epf_parameter_string: str
 ) -> str:
     """Create the parameters section of the docstring for the interactive section.
     Abstracted into a dedicated function because of the volume of parsing required in
@@ -432,9 +432,20 @@ def _create_parameters_section(
         epf_parameters.insert(0, input_parameter)
 
     # Class parameters
-    existing_names = [p.name for p in epf_parameters]
     for parameter in class_parameters:
-        if parameter.name not in existing_names:
+        matching_parameter_indices = [
+            i for (i, p) in enumerate(epf_parameters) if p.name == parameter.name
+        ]
+        if len(matching_parameter_indices) > 0:
+            # don't add it to the list, since it'll be a duplicate, but check if this is
+            # a make_stage required, entrypoint_function optional parameter
+            i = matching_parameter_indices[0]
+            if (not epf_parameters[i].is_required) and (parameter.is_required):
+                epf_parameters[i].is_required = True
+                epf_parameters[i].annotation = epf_parameters[
+                    i
+                ].annotation.removesuffix(", optional")
+        else:
             epf_parameters.append(parameter)
 
     # remove the parameters that we force the values of
@@ -591,7 +602,7 @@ def create_interactive_docstring(stage_name: str) -> str:
 
     # handle the parameters
     parameters_content, input_is_wrapped = _create_parameters_section(
-        stage_definition, stage_name, epf_sections["Parameters"]
+        stage_definition, epf_sections["Parameters"]
     )
 
     # handle the return elements
