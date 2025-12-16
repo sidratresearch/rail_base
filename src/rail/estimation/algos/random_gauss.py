@@ -34,7 +34,7 @@ class RandomGaussEstimator(CatEstimator):
     inputs = [("input", TableHandle), ("model", ModelHandle)]
     config_options = CatEstimator.config_options.copy()
     config_options.update(
-        rand_width=Param(float, 0.025, "ad hock width of PDF"),
+        rand_width=Param(float, 0.025, msg="ad hock width of PDF"),
         zmin=SharedParams.copy_param("zmin"),
         zmax=SharedParams.copy_param("zmax"),
         nzbins=SharedParams.copy_param("nzbins"),

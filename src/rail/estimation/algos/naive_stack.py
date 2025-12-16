@@ -57,7 +57,7 @@ class NaiveStackSummarizer(PZSummarizer):
             self.config.zmin, self.config.zmax, self.config.nzbins + 1
         )
         assert self.zgrid is not None
-        # Initiallizing the stacking pdf's
+        # Initializing the stacking pdf's
         yvals = np.zeros((1, len(self.zgrid)))
         bvals = np.zeros((self.config.n_samples, len(self.zgrid)))
         bootstrap_matrix = self._broadcast_bootstrap_matrix()
@@ -159,7 +159,7 @@ class NaiveStackMaskedSummarizer(NaiveStackSummarizer):
         Parameters
         ----------
         input_data
-            Per-galaxy p(z), and any ancilary data associated with it
+            Per-galaxy p(z), and any ancillary data associated with it
 
         tomo_bins
             Tomographic bins file
@@ -167,7 +167,7 @@ class NaiveStackMaskedSummarizer(NaiveStackSummarizer):
         Returns
         -------
         DataHandle
-            Ensemble with n(z), and any ancilary data
+            Ensemble with n(z), and any ancillary data
         """
         self.set_data("input", input_data)
         if tomo_bins is None:
