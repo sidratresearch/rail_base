@@ -58,7 +58,9 @@ def _interactive_factory(
         (after calling make_stage)
     """
     # extract the input kwarg, and turn it into the appropriate DataHandle
-    entrypoint_inputs = kwargs.pop("input")
+    stage_has_input = "input" in kwargs
+    if stage_has_input:
+        entrypoint_inputs = kwargs.pop("input")
 
     for key, value in GLOBAL_INTERACTIVE_PARAMETERS.items():
         if key in kwargs:
@@ -68,10 +70,12 @@ def _interactive_factory(
     entrypoint_function_name = instance.entrypoint_function
     entrypoint_function: Callable = getattr(instance, entrypoint_function_name)
 
-    if function_input_is_wrapped:
+    if function_input_is_wrapped:  # INTERACTIVE-DO: implies stage_has_input?
         output = entrypoint_function(**entrypoint_inputs, **kwargs)
-    else:
+    elif stage_has_input:
         output = entrypoint_function(entrypoint_inputs, **kwargs)
+    else:
+        output = entrypoint_function(**kwargs)
 
     # convert output FROM a DataHandle into pure data
     output_info = rail_stage.outputs  # list of (tag, class)
