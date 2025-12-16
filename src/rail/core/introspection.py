@@ -448,6 +448,20 @@ class RailEnv:
             cls.build_rail_namespace_tree()
 
         apitoc = """
+######################
+RAIL API Documentation
+######################
+
+***********
+Interactive
+***********
+
+.. toctree::
+   :maxdepth: 4
+   :caption: Interactive
+
+   api/rail.interactive
+
 
 *************
 Base Packages
@@ -493,7 +507,7 @@ Algorithm Packages
             pass
 
         base_packages = ""
-        namespaces = "   api/rail.interactive\n"
+        namespaces = ""
         algorithm_packages = ""
 
         for key, val in cls._tree.items():
