@@ -28,20 +28,7 @@ def som_spec_selector(**kwargs) -> Any:
 
     ---
 
-    The main interface method for ``Selector``.
-
-    Adds noise to the input catalog
-
-    This will attach the input to this `Selector`
-
-    Then it will call the select() which add a flag column to the catalog. flag=1 means
-    selected, 0 means dropped.
-
-    If dropRows = True, the dropped rows will not be presented in the output catalog,
-    otherwise, all rows will be presented.
-
-    Finally, this will return a PqHandle providing access to that output
-    data.
+    Entrypoint function for SomSpecSelector
 
     ---
 
@@ -50,8 +37,10 @@ def som_spec_selector(**kwargs) -> Any:
 
     Parameters
     ----------
-    input : TableLike
-        The sample to be selected
+    input : dict["input_data": TableLike, "spec_data": TableLike]
+        Dictionary of input data with the following keys:
+        input_data: TableLike - The sample to be selected
+        spec_data: TableLike - A reference/spectroscopic data set
     drop_rows : bool, optional
         Drop selected rows from output table
         Default: True

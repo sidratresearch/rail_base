@@ -18,7 +18,7 @@ def find_rail_file(relpath: str) -> str:
         fullpath = os.path.abspath(os.path.join(path_, relpath))
         if os.path.exists(fullpath):
             return fullpath
-    raise ValueError(f"Could not file {relpath} in {rail.__path__}")
+    raise ValueError(f"Could not find file {relpath} in {rail.__path__}")
 
 
 def unfind_rail_file(abspath: str) -> str:
