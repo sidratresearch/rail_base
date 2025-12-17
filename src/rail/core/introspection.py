@@ -504,7 +504,7 @@ Algorithm Packages
                 if nsname in cls._skip_packages:  # pragma: no cover
                     continue
                 if nsname in cls._base_packages:
-                    base_packages += f"    {nsfile}\n"
+                    base_packages += f"   {nsfile}\n"
                     cls.do_pkg_api_rst(
                         basedir,
                         key,
