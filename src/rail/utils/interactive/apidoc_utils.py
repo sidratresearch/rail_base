@@ -12,6 +12,8 @@ NAMESPACE_RST = """
 {name} namespace
 {underline}==========
 
+{extra_content}
+
 .. py:module:: {name}
 
 .. toctree::
@@ -23,6 +25,8 @@ NAMESPACE_RST = """
 MODULE_RST = """
 {name} module
 {underline}-------
+
+{extra_content}
 
 .. automodule:: {name}
    :members:
@@ -54,17 +58,35 @@ def get_children(parts: list[str]) -> list[str]:
     return list(children.keys())
 
 
+def get_extra_content(name: str, docs_path: Path) -> str:
+    """Fetch any descriptive rst content written for this module"""
+    extra_content_dir = docs_path / "source/interactive_api_content"
+    content_path = extra_content_dir / (name + ".rst")
+    if content_path.exists():
+        return content_path.read_text()
+
+    return ""
+
+
 def make_rst(name: str, children: list[str], docs_path: Path) -> None:
     """Write an rst file for a rail.interactive module"""
 
     path = docs_path / f"api/{name}.rst"
 
     if len(children) > 0:
+
         rst = NAMESPACE_RST.format(
-            name=name, underline="=" * len(name), children="\n   ".join(children)
+            name=name,
+            underline="=" * len(name),
+            children="\n   ".join(children),
+            extra_content=get_extra_content(name, docs_path),
         )
     else:
-        rst = MODULE_RST.format(name=name, underline="-" * len(name))
+        rst = MODULE_RST.format(
+            name=name,
+            underline="-" * len(name),
+            extra_content=get_extra_content(name, docs_path),
+        )
 
     path.parent.mkdir(parents=True, exist_ok=True)
     print(f"Writing {name}.rst")
