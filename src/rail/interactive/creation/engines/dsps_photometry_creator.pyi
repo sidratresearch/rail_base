@@ -28,10 +28,10 @@ def dsps_photometry_creator(**kwargs) -> Any:
 
     Parameters
     ----------
+    input : str
+        Filepath to the hdf5 table containing the galaxy rest-frame SEDs.
     seed : int
         The random seed to control sampling
-    input_data : str
-        Filepath to the hdf5 table containing the galaxy rest-frame SEDs.
     Om0 : float
         Omega matter: density of non-relativistic matter in units of the critical
         density at z=0.

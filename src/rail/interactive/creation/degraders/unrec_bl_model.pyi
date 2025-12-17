@@ -9,6 +9,10 @@ def unrec_bl_model(**kwargs) -> Any:
     Take avergaged Ra and Dec for blended source, and sum up fluxes in each band. May
     implement merged shapes in the future.
 
+    Requires gcc, which depending on your installation, may be difficult for the caller
+    (FoFCatalogMatching dependency fast3tree) to find. Conda-installed gcc seems to fix
+    this.
+
     ---
 
     The main interface method for ``Degrader``.
