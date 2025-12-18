@@ -458,7 +458,6 @@ Interactive
 
 .. toctree::
    :maxdepth: 4
-   :caption: Interactive
 
    api/rail.interactive
 
