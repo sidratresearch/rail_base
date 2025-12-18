@@ -47,7 +47,9 @@ class NaiveStackSummarizer(PZSummarizer):
         super().__init__(args, **kwargs)
         self.zgrid: np.ndarray | None = None
 
-    def summarize(self, input_data: qp.Ensemble, **kwargs) -> QPHandle:
+    def summarize(
+        self, input_data: qp.Ensemble, **kwargs
+    ) -> QPHandle | dict[str, QPHandle]:
         """Summarizer for NaiveStack which returns multiple items
 
         Parameters
@@ -57,8 +59,9 @@ class NaiveStackSummarizer(PZSummarizer):
 
         Returns
         -------
-        dict[str, QPHandle]
+        QPHandle | dict[str, QPHandle]
             Ensemble with n(z), and any ancillary data
+            Return type depends on `output_mode`
         """
         self.set_data("input", input_data)
         self.run()

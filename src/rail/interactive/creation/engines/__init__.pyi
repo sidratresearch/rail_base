@@ -4,4 +4,6 @@ from . import (
     flowEngine,
     fsps_photometry_creator,
     fsps_sed_modeler,
+    galaxy_population_components_creator,
+    galaxy_population_components_modeler,
 )

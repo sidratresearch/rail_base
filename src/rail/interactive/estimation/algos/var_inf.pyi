@@ -51,19 +51,7 @@ def var_inf_stack_summarizer(**kwargs) -> Any:
 
     ---
 
-    The main run method for the summarization, should be implemented
-    in the specific subclass.
-
-    This will attach the input_data to this `PZtoNZSummarizer`
-    (for introspection and provenance tracking).
-
-    Then it will call the run() and finalize() methods, which need to
-    be implemented by the sub-classes.
-
-    The run() method will need to register the data that it creates to this Estimator
-    by using `self.add_data('output', output_data)`.
-
-    Finally, this will return a QPHandle providing access to that output data.
+    Summarizer for VarInfStack which returns multiple items
 
     ---
 
@@ -98,6 +86,7 @@ def var_inf_stack_summarizer(**kwargs) -> Any:
 
     Returns
     -------
-    qp.core.ensemble.Ensemble
+    QPHandle | dict[str, QPHandle]
         Ensemble with n(z), and any ancillary data
+        Return type depends on `output_mode`
     """
