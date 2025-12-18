@@ -2,13 +2,9 @@
 A summarizer that simple makes a histogram of a point estimate
 """
 
-from typing import Any, Generator
-
 import numpy as np
 import qp
-from ceci.config import StageParameter as Param
 
-from rail.core.data import DataHandle, QPHandle, TableHandle, TableLike
 from rail.estimation.estimator import PzEstimator
 from rail.estimation.informer import PzInformer
 
@@ -18,6 +14,7 @@ class GaussianPzInformer(PzInformer):
 
     name = "GaussianPzInformer"
     entrypoint_function = "inform"  # the user-facing science function for this class
+    interactive_function = "gaussian_pz_informer"
     config_options = PzInformer.config_options.copy()
 
     def _finalize_run(self) -> None:
@@ -30,6 +27,7 @@ class GaussianPzEstimator(PzEstimator):
 
     name = "GaussianPzEstimator"
     entrypoint_function = "estimate"  # the user-facing science function for this class
+    interactive_function = "gaussian_pz_estimator"
     config_options = PzEstimator.config_options.copy()
 
     def _process_chunk(

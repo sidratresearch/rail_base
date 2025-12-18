@@ -4,7 +4,7 @@ for z_mode, and Gaussian centered at z_mode with width
 random_width*(1+zmode).
 """
 
-from typing import Any, Tuple
+from typing import Any
 
 import numpy as np
 import qp
@@ -21,6 +21,7 @@ class RandomGaussInformer(CatInformer):
 
     name = "RandomGaussInformer"
     entrypoint_function = "inform"  # the user-facing science function for this class
+    interactive_function = "random_gauss_informer"
     config_options = CatInformer.config_options.copy()
 
     def run(self) -> None:
@@ -32,6 +33,7 @@ class RandomGaussEstimator(CatEstimator):
 
     name = "RandomGaussEstimator"
     entrypoint_function = "estimate"  # the user-facing science function for this class
+    interactive_function = "random_gauss_estimator"
     inputs = [("input", TableHandle), ("model", ModelHandle)]
     config_options = CatEstimator.config_options.copy()
     config_options.update(

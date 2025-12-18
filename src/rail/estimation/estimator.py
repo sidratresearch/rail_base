@@ -12,9 +12,7 @@ import tables_io
 
 from rail.core.common_params import SHARED_PARAMS
 from rail.core.data import (
-    DataHandle,
     ModelHandle,
-    ModelLike,
     QPHandle,
     TableHandle,
     TableLike,
@@ -24,7 +22,9 @@ from rail.core.point_estimation import PointEstimationMixin
 from rail.core.stage import RailStage
 
 # for backwards compatibility, to avoid break stuff that imports it from here
-from .informer import CatInformer  # pylint: disable=unused-import
+from .informer import (  # pylint: disable=unused-import, relative-beyond-top-level
+    CatInformer,
+)
 
 
 class CatEstimator(RailStage, PointEstimationMixin):
@@ -64,7 +64,7 @@ class CatEstimator(RailStage, PointEstimationMixin):
         self.model = None
         self._partial_output = {}  # TODO: make this an ordered dict?
 
-    def estimate(self, input_data: TableLike) -> DataHandle:
+    def estimate(self, input_data: TableLike, **kwargs) -> QPHandle:
         """The main interface method for the photo-z estimation
 
         This will attach the input data (defined in ``inputs`` as "input") to this
@@ -79,12 +79,12 @@ class CatEstimator(RailStage, PointEstimationMixin):
 
         Parameters
         ----------
-        input_data
+        input_data : TableLike
             A dictionary of all input data
 
         Returns
         -------
-        DataHandle
+        QPHandle
             Handle providing access to QP ensemble with output data
         """
         self.set_data("input", input_data)
@@ -127,7 +127,8 @@ class CatEstimator(RailStage, PointEstimationMixin):
         if self.config.output_mode != "return":
             self._output_handle.finalize_write()
         elif self.config.output_mode == "return":
-            # turn this into an ordered list by sorting the keys and then appending the data into a sorted list
+            # turn this into an ordered list by sorting the keys and then appending the
+            # data into a sorted list
             # TODO: should we skip this bit and create a list from the start
             gathered_data = []
             start = 0
@@ -295,7 +296,7 @@ class PzEstimator(RailStage, PointEstimationMixin):
         self._output_handle: QPHandle | None = None
         self.model = None
 
-    def estimate(self, input_data: QPHandle) -> DataHandle:
+    def estimate(self, input_data: QPHandle, **kwargs) -> QPHandle:
         """The main interface method for the photo-z estimation
 
         This will attach the input data (defined in ``inputs`` as "input") to this
@@ -310,12 +311,12 @@ class PzEstimator(RailStage, PointEstimationMixin):
 
         Parameters
         ----------
-        input_data
+        input_data : QPHandle
             A dictionary of all input data
 
         Returns
         -------
-        DataHandle
+        QPHandle
             Handle providing access to QP ensemble with output data
         """
         self.set_data("input", input_data)

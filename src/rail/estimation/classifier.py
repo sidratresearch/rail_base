@@ -49,7 +49,7 @@ class CatClassifier(RailStage):  # pragma: no cover
             args = vars(args)
         self.open_model(**args)
 
-    def classify(self, input_data: TableLike) -> DataHandle:
+    def classify(self, input_data: TableLike, **kwargs) -> TableHandle:
         """The main run method for the classifier, should be implemented
         in the specific subclass.
 
@@ -66,12 +66,12 @@ class CatClassifier(RailStage):  # pragma: no cover
 
         Parameters
         ----------
-        input_data
+        input_data : TableLike
             A dictionary of all input data
 
         Returns
         -------
-        DataHandle
+        TableHandle
             Class assignment for each galaxy.
         """
         self.set_data("input", input_data)
@@ -101,7 +101,7 @@ class PZClassifier(RailStage):
         super().__init__(args, **kwargs)
         self._output_handle: DataHandle | None = None
 
-    def classify(self, input_data: qp.Ensemble) -> DataHandle:
+    def classify(self, input_data: qp.Ensemble, **kwargs) -> TableHandle:
         """The main run method for the classifier, should be implemented
         in the specific subclass.
 
@@ -124,12 +124,12 @@ class PZClassifier(RailStage):
 
         Parameters
         ----------
-        input_data
+        input_data : qp.Ensemble
             Per-galaxy p(z), and any ancilary data associated with it
 
         Returns
         -------
-        DataHandle
+        TableHandle
             Class assignment for each galaxy, typically in the form of a
             dictionary with IDs and class labels.
         """

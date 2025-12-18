@@ -14,6 +14,7 @@ class PointToPointEvaluator(Evaluator):
 
     name = "PointToPointEvaluator"
     entrypoint_function = "evaluate"  # the user-facing science function for this class
+    interactive_function = "point_to_point_evaluator"
     config_options = Evaluator.config_options.copy()
     config_options.update(
         hdf5_groupname=Param(
@@ -57,6 +58,7 @@ class PointToPointBinnedEvaluator(Evaluator):
 
     name = "PointToPointBinnedEvaluator"
     entrypoint_function = "evaluate"  # the user-facing science function for this class
+    interactive_function = "point_to_point_binned_evaluator"
     config_options = Evaluator.config_options.copy()
     config_options.update(
         hdf5_groupname=Param(

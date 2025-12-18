@@ -35,6 +35,9 @@ dev = [
     "pre-commit",    # Used to run checks before finalizing a git commit
     "pylint",        # Used for static linting of files
     "jupyter",       # Used to render simple test notebook
+    "numpydoc",
+    "black",         # Currently imported in interactive whether or not we're on dev
+    "isort",         # as above
 ]
 
 [project.scripts]
@@ -57,16 +60,20 @@ addopts   = ["--cov=rail", "--cov-report=html"]
 [tool.pylint]
 disable = [
     "abstract-method",
+    "arguments-differ",               # let child classes override methods with extra args
+    "attribute-defined-outside-init",
+    "broad-exception-caught",
+    "duplicate-code",
     "invalid-name",
-    "too-many-statements",
-    "too-many-arguments",
-    "missing-module-docstring",
     "missing-class-docstring",
     "missing-function-docstring",
+    "missing-module-docstring",
     "too-few-public-methods",
-    "duplicate-code",
+    "too-many-arguments",
+    "too-many-positional-arguments",
+    "too-many-statements",
+    "unused-argument",                # need extra **kwargs in some places
     "use-dict-literal",
-    "broad-exception-caught",
 ]
 max-line-length = 110
 max-locals = 50

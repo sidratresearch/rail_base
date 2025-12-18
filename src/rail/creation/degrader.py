@@ -6,7 +6,7 @@ and returns a pandas DataFrame, and wraps the run method.
 
 from ceci.config import StageParameter as Param
 
-from rail.core.data import DataHandle, PqHandle, TableLike
+from rail.core.data import PqHandle, TableLike
 from rail.core.stage import RailStage
 
 
@@ -28,7 +28,7 @@ class Degrader(RailStage):  # pragma: no cover
     inputs = [("input", PqHandle)]
     outputs = [("output", PqHandle)]
 
-    def __call__(self, sample: TableLike, seed: int | None = None) -> DataHandle:
+    def __call__(self, sample: TableLike, seed: int | None = None) -> PqHandle:
         """The main interface method for ``Degrader``.
 
         Applies degradation.
@@ -47,15 +47,15 @@ class Degrader(RailStage):  # pragma: no cover
 
         Parameters
         ----------
-        sample
+        sample : TableLike
             The sample to be degraded
 
-        seed
-            An integer to set the numpy random seed
+        seed : int, optional
+            An integer to set the numpy random seed, by default None
 
         Returns
         -------
-        DataHandle
+        PqHandle
             A handle giving access to a table with degraded sample
         """
         if seed is not None:

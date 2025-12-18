@@ -30,6 +30,7 @@ class DataHandle:  # pylint: disable=too-many-instance-attributes
     """
 
     suffix: str | None = ""
+    interactive_type = None
 
     # This is to keep track of all the sub-types
     _data_handle_type_dict: dict[str, type[DataHandle]] = {}
@@ -365,6 +366,7 @@ class TableHandle(DataHandle):
     """DataHandle for single tables of data"""
 
     suffix: str | None = None
+    interactive_type = "A tablesio-compatible table"
 
     def set_data(self, data: TableLike, partial: bool = False) -> None:
         """Set the data for a chunk, and set the partial flag if this is not all the data"""
@@ -457,6 +459,7 @@ class Hdf5Handle(TableHandle):  # pragma: no cover
     """DataHandle for a table written to HDF5"""
 
     suffix = "hdf5"
+    interactive_type = "dict"
 
     @classmethod
     def _initialize_write(
@@ -507,6 +510,7 @@ class PqHandle(TableHandle):
     """DataHandle for a parquet table"""
 
     suffix = "pq"
+    interactive_type = "pandas.core.frame.DataFrame"
 
     def _size(self, path: str, **kwargs: Any) -> int:
         return tab_hdf5.get_input_data_length(path, **kwargs)
@@ -516,6 +520,7 @@ class QPHandle(DataHandle):
     """DataHandle for qp ensembles"""
 
     suffix = "hdf5"
+    interactive_type = "qp.core.ensemble.Ensemble"
 
     @classmethod
     def _open(cls, path: str, **kwargs: Any) -> FileLike:
@@ -802,6 +807,7 @@ class ModelHandle(DataHandle):
     """DataHandle for machine learning models"""
 
     suffix = "pkl"
+    interactive_type = "numpy.ndarray"
 
     model_factory = ModelDict()
 

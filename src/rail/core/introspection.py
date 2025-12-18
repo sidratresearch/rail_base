@@ -33,6 +33,7 @@ class RailEnv:
         "rail.plotting",
         "rail.cli.rail_plot",
         "rail.cli.rail_project",
+        "rail.interactive",  # custom api generation
     ]
 
     _base_packages: list[str] = [
@@ -447,6 +448,20 @@ class RailEnv:
             cls.build_rail_namespace_tree()
 
         apitoc = """
+######################
+RAIL API Documentation
+######################
+
+***********
+Interactive
+***********
+
+.. toctree::
+   :maxdepth: 4
+   :caption: Interactive
+
+   api/rail.interactive
+
 
 *************
 Base Packages
@@ -546,7 +561,7 @@ Algorithm Packages
                     print(f"Failed to import {pkg} because: {str(msg)}")
 
     @classmethod
-    def attach_stages(cls, to_module: ModuleType) -> None:
+    def attach_stages(cls, to_module: ModuleType, silent: bool = False) -> None:
         """Attach all the available stages to this module
 
         Parameters
@@ -599,9 +614,10 @@ Algorithm Packages
                     break
             cls._stage_dict[baseclass].append(stage_name)
 
-        print(
-            f"Attached {n_base_classes} base classes and {n_stages} fully formed stages to rail.stages"
-        )
+        if not silent:
+            print(
+                f"Attached {n_base_classes} base classes and {n_stages} fully formed stages to rail.stages"
+            )
 
     @classmethod
     def print_rail_stage_dict(cls) -> None:

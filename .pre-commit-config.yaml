@@ -32,12 +32,23 @@ repos:
         name: Validate pyproject.toml
         description: Verify that pyproject.toml adheres to the established schema.
 
+  # Keep rail.interactive up to date
+  - repo: local
+    hooks:
+      - id: interactive-setup
+        name: Populate the interactive module
+        language: system
+        types: [python]
+        entry: python create_interactive_structure.py
+        pass_filenames: false
+
   # use the black code formatter
   - repo: https://github.com/psf/black-pre-commit-mirror
     # Using this mirror lets us use mypyc-compiled black, which is about 2x faster
     rev: 25.9.0
     hooks:
       - id: black
+      - id: black-jupyter
 
   # use the isort code formatter
   - repo: https://github.com/pycqa/isort

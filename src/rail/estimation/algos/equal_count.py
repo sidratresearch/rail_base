@@ -16,6 +16,7 @@ class EqualCountClassifier(PZClassifier):
 
     name = "EqualCountClassifier"
     entrypoint_function = "classify"  # the user-facing science function for this class
+    interactive_function = "equal_count_classifier"
     config_options = PZClassifier.config_options.copy()
     config_options.update(
         id_name=Param(
@@ -59,7 +60,7 @@ class EqualCountClassifier(PZClassifier):
             # because the data doesn't have ID yet
             # obj_id = test_data[self.config.id_name]
             obj_id = np.arange(npdf)
-        elif self.config.id_name == "":
+        else:
             # ID set to row index
             obj_id = np.arange(npdf)
             self.config.id_name = "row_index"

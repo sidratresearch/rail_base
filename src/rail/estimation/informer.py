@@ -13,7 +13,7 @@ import qp
 import tables_io
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import DataHandle, ModelHandle, QPHandle, TableHandle, TableLike
+from rail.core.data import ModelHandle, QPHandle, TableHandle, TableLike
 from rail.core.stage import RailStage
 
 
@@ -48,7 +48,7 @@ class CatInformer(RailStage):
         super().__init__(args, **kwargs)
         self.model = None
 
-    def inform(self, training_data: TableLike) -> DataHandle:
+    def inform(self, training_data: TableLike, **kwargs) -> ModelHandle:
         """The main interface method for Informers
 
         This will attach the input_data to this `Informer`
@@ -64,7 +64,7 @@ class CatInformer(RailStage):
 
         Parameters
         ----------
-        input_data
+        training_data : TableLike
             dictionary of all input data, or a `TableHandle` providing access to it
 
         Returns
@@ -127,7 +127,9 @@ class PzInformer(RailStage):
         self.model = None
         self.model_handle: ModelHandle | None = None
 
-    def _setup_iterator(self) -> Generator:
+    def _setup_iterator(  # pylint: disable=inconsistent-return-statements
+        self,
+    ) -> Generator:
 
         itrs = []
         input_itr = self.input_iterator("input", groupname="")
@@ -152,13 +154,14 @@ class PzInformer(RailStage):
                 else:  # pragma: no cover
                     true_redshift = d[self.config.redshift_col]
 
-            yield start, end, qp_ens, true_redshift
+            yield start, end, qp_ens, true_redshift  # pylint: disable=possibly-used-before-assignment
 
     def inform(
         self,
         training_data: qp.Ensemble | str = "None",
         truth_data: TableLike | str = "None",
-    ) -> dict[str, DataHandle]:
+        **kwargs,
+    ) -> dict[str, ModelHandle]:
         """The main interface method for Informers
 
         This will attach the input_data to this `Informer`
@@ -174,15 +177,15 @@ class PzInformer(RailStage):
 
         Parameters
         ----------
-        input_data
-            Per-galaxy p(z), and any ancilary data associated with it
+        training_data : qp.Ensemble | str, optional
+            Per-galaxy p(z), and any ancilary data associated with it, by default "None"
 
-        truth_data
-            Table with the true redshifts
+        truth_data : TableLike | str, optional
+            Table with the true redshifts, by default "None"
 
         Returns
         -------
-        dict[str, DataHandle]
+        dict[str, ModelHandle]
             Handle providing access to trained model
         """
         self.set_data("input", training_data)
@@ -191,6 +194,7 @@ class PzInformer(RailStage):
         self.run()
         self.finalize()
         self._model_handle = self.get_handle("model")
+        # INTERACTIVE-DO: figure out what to do with this in interactive
         return dict(
             model=self._model_handle,
         )

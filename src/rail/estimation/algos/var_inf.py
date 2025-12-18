@@ -22,6 +22,7 @@ class VarInfStackInformer(PzInformer):
 
     name = "VarInfStackInformer"
     entrypoint_function = "inform"  # the user-facing science function for this class
+    interactive_function = "var_inf_stack_informer"
     config_options = PzInformer.config_options.copy()
 
     def _finalize_run(self) -> None:
@@ -38,6 +39,7 @@ class VarInfStackSummarizer(PZSummarizer):
 
     name = "VarInfStackSummarizer"
     entrypoint_function = "summarize"  # the user-facing science function for this class
+    interactive_function = "var_inf_stack_summarizer"
     config_options = PZSummarizer.config_options.copy()
     config_options.update(
         zmin=Param(float, 0.0, msg="The minimum redshift of the z grid"),

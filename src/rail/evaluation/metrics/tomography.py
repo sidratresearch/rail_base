@@ -3,13 +3,14 @@ from ceci.config import StageParameter as Param
 from scipy import stats
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import DataHandle, Hdf5Handle, TableHandle, TableLike
+from rail.core.data import Hdf5Handle, TableHandle, TableLike
 from rail.core.stage import RailStage
 
 
 class KDEBinOverlap(RailStage):
     name = "KDEBinOverlap"
     entrypoint_function = "evaluate"  # the user-facing science function for this class
+    interactive_function = "kde_bin_overlap"
     inputs = [("truth", TableHandle), ("bin_index", Hdf5Handle)]
     outputs = [("output", Hdf5Handle)]
 
@@ -28,7 +29,21 @@ class KDEBinOverlap(RailStage):
     )
     # metric_base_class = Evaluator
 
-    def evaluate(self, bin_index: TableLike, truth: TableLike) -> DataHandle:
+    def evaluate(self, bin_index: TableLike, truth: TableLike, **kwargs) -> Hdf5Handle:
+        """Evaluate function for KDEBinOverlap
+
+        Parameters
+        ----------
+        bin_index : TableLike
+            bin_index
+        truth : TableLike
+            truth
+
+        Returns
+        -------
+        Hdf5Handle
+            Output data
+        """
         self.set_data("bin_index", bin_index)
         self.set_data("truth", truth)
 

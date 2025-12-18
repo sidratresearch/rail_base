@@ -33,6 +33,7 @@ class TrainZInformer(CatInformer):
 
     name = "TrainZInformer"
     entrypoint_function = "inform"  # the user-facing science function for this class
+    interactive_function = "train_z_informer"
     config_options = CatInformer.config_options.copy()
     config_options.update(
         zmin=SHARED_PARAMS,
@@ -76,6 +77,7 @@ class TrainZEstimator(CatEstimator):
 
     name = "TrainZEstimator"
     entrypoint_function = "estimate"  # the user-facing science function for this class
+    interactive_function = "train_z_estimator"
     config_options = CatEstimator.config_options.copy()
     config_options.update(zmin=SHARED_PARAMS, zmax=SHARED_PARAMS, nzbins=SHARED_PARAMS)
 

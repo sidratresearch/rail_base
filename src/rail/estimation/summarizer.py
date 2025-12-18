@@ -8,7 +8,7 @@ import numpy as np
 import qp
 
 from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import DataHandle, ModelHandle, QPHandle, TableHandle, TableLike
+from rail.core.data import ModelHandle, QPHandle, TableHandle, TableLike
 from rail.core.stage import RailStage
 
 # for backwards compatibility
@@ -31,7 +31,7 @@ class CatSummarizer(RailStage):  # pragma: no cover
     inputs = [("input", TableHandle)]
     outputs = [("output", QPHandle)]
 
-    def summarize(self, input_data: TableLike) -> DataHandle:
+    def summarize(self, input_data: TableLike) -> QPHandle:
         """The main run method for the summarization, should be implemented
         in the specific subclass.
 
@@ -48,12 +48,12 @@ class CatSummarizer(RailStage):  # pragma: no cover
 
         Parameters
         ----------
-        input_data
+        input_data : TableLike
             Either a dictionary of all input data or a `TableHandle` providing access to the same
 
         Returns
         -------
-        DataHandle
+        QPHandle
             Ensemble with n(z), and any ancillary data
         """
         self.set_data("input", input_data)
@@ -76,7 +76,7 @@ class PZSummarizer(RailStage):
     inputs = [("model", ModelHandle), ("input", QPHandle)]
     outputs = [("output", QPHandle)]
 
-    def summarize(self, input_data: qp.Ensemble) -> qp.Ensemble:
+    def summarize(self, input_data: qp.Ensemble, **kwargs) -> QPHandle:
         """The main run method for the summarization, should be implemented
         in the specific subclass.
 
@@ -93,12 +93,12 @@ class PZSummarizer(RailStage):
 
         Parameters
         ----------
-        input_data
+        input_data : qp.Ensemble
             Per-galaxy p(z), and any ancillary data associated with it
 
         Returns
         -------
-        qp.Ensemble
+        QPHandle
             Ensemble with n(z), and any ancillary data
         """
         self.set_data("input", input_data)
@@ -154,7 +154,9 @@ class SZPZSummarizer(RailStage):  # pragma: no cover
         # `open_model` call explicitly in the run method for
         # each summarizer.
 
-    def summarize(self, input_data: qp.Ensemble, spec_data: np.ndarray) -> qp.Ensemble:
+    def summarize(
+        self, input_data: qp.Ensemble, spec_data: np.ndarray, **kwargs
+    ) -> qp.Ensemble:
         """The main run method for the summarization, should be implemented
         in the specific subclass.
 
@@ -171,10 +173,9 @@ class SZPZSummarizer(RailStage):  # pragma: no cover
 
         Parameters
         ----------
-        input_data
+        input_data : qp.Ensemble
             Per-galaxy p(z), and any ancillary data associated with it
-
-        spec_data
+        spec_data : np.ndarray
             Spectroscopic data
 
         Returns
