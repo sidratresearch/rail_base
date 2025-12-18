@@ -216,6 +216,88 @@ def spec_selection_DEEP2(**kwargs) -> Any:
         A handle giving access to a table with selected sample
     """
 
+def spec_selection_DEEP2_LSST(**kwargs) -> Any:
+    """
+    The class of spectroscopic selections with DEEP2.
+
+    Approximate Rubin->CFHT12K transforms based off of
+    CWWSB SED colors
+
+    B = g + 0.35 * (g-r)
+    R = r - 0.3 * (r-i)
+    I = i - 0.5 * (r-i)
+
+    transform the cuts accordingly
+
+    Also, original has
+    B-R < 0.5
+    modify to
+    B-R < 0.33 to exclude a few more low-z galaxies
+    leave speczSuccess unchanged from original implementation
+
+    ---
+
+    The main interface method for ``Selector``.
+
+    Adds noise to the input catalog
+
+    This will attach the input to this `Selector`
+
+    Then it will call the select() which add a flag column to the catalog. flag=1 means
+    selected, 0 means dropped.
+
+    If dropRows = True, the dropped rows will not be presented in the output catalog,
+    otherwise, all rows will be presented.
+
+    Finally, this will return a PqHandle providing access to that output
+    data.
+
+    ---
+
+    This function was generated from the function
+    rail.creation.degraders.spectroscopic_selections.SpecSelection_DEEP2_LSST.__call__
+
+    Parameters
+    ----------
+    input : TableLike
+        The sample to be selected
+    drop_rows : bool, optional
+        Drop selected rows from output table
+        Default: True
+    seed : unknown type, optional
+        Set to an `int` to force reproducible results.
+        Default: None
+    N_tot : int, optional
+        Number of selected sources
+        Default: 10000
+    nondetect_val : float, optional
+        value to be removed for non detects
+        Default: 99.0
+    downsample : bool, optional
+        If true, downsample the selected sources into a total number of N_tot
+        Default: True
+    success_rate_dir : str, optional
+        The path to the directory containing success rate files.
+        Default: rail.utils.path_utils.RAILDIR/rail/examples_data/creation_data/data/suc
+        cess_rate_data
+    percentile_cut : int, optional
+        cut redshifts above this percentile
+        Default: 100
+    colnames : dict, optional
+        a dictionary that includes necessary columns (magnitudes, colors and redshift)
+        for selection. For magnitudes, the keys are ugrizy; for colors, the keys are,
+        for example, gr standing for g-r; for redshift, the key is 'redshift'
+        Default: {'u': 'mag_u_lsst', 'g': 'mag_g_lsst', 'r': 'mag_r_lsst', 'i':...}
+    random_seed : int, optional
+        random seed for reproducibility
+        Default: 42
+
+    Returns
+    -------
+    pandas.core.frame.DataFrame
+        A handle giving access to a table with selected sample
+    """
+
 def spec_selection_GAMA(**kwargs) -> Any:
     """
     The class of spectroscopic selections with GAMA.

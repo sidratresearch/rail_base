@@ -216,9 +216,9 @@ def lsst_flux_to_mag_converter(**kwargs) -> Any:
     ----------
     input : table-like
         The data to be converted
-    bands : str, optional
+    bands : list, optional
         Names of the bands
-        Default: ugrizy
+        Default: ['u', 'g', 'r', 'i', 'z', 'y']
     flux_name : str, optional
         Template for band names
         Default: {band}_gaap1p0Flux
