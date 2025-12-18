@@ -454,7 +454,6 @@ Base Packages
 
 .. toctree::
    :maxdepth: 4
-   :caption: Base Packages
 
 {base_packages}
 
@@ -465,7 +464,6 @@ Namespaces
 
 .. toctree::
    :maxdepth: 4
-   :caption: Namespaces
 
 {namespaces}
 
@@ -476,7 +474,6 @@ Algorithm Packages
 
 .. toctree::
    :maxdepth: 4
-   :caption: Algorithm Packages
 
 {algorithm_packages}
 
