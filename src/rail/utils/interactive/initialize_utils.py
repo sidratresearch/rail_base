@@ -273,7 +273,7 @@ def _write_stubs(
     for vm_name, vm_VM in virtual_modules.items():
         stub = stub_files[_get_stub_path(stub_directory, virtual_module_name=vm_name)]
         for child_module_name in vm_VM.children:
-            stub.append(f"from . import {child_module_name.split(".")[-1]}")
+            stub.append(f"from . import {child_module_name.split('.')[-1]}")
 
     # add function stubs
     for stage_name in stage_names:
