@@ -47,6 +47,27 @@ class NaiveStackSummarizer(PZSummarizer):
         super().__init__(args, **kwargs)
         self.zgrid: np.ndarray | None = None
 
+    def summarize(self, input_data: qp.Ensemble, **kwargs) -> QPHandle:
+        """Summarizer for NaiveStack which returns multiple items
+
+        Parameters
+        ----------
+        input_data : qp.Ensemble
+            Per-galaxy p(z), and any ancillary data associated with it
+
+        Returns
+        -------
+        dict[str, QPHandle]
+            Ensemble with n(z), and any ancillary data
+        """
+        self.set_data("input", input_data)
+        self.run()
+        self.finalize()
+        return {
+            "output": self.get_handle("output"),
+            "single_NZ": self.get_handle("single_NZ"),
+        }
+
     def _setup_iterator(self) -> Generator:
         itr = self.input_iterator("input")
         for s, e, d in itr:
