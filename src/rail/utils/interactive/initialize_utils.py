@@ -70,8 +70,12 @@ def _interactive_factory(
     entrypoint_function_name = instance.entrypoint_function
     entrypoint_function: Callable = getattr(instance, entrypoint_function_name)
 
-    if function_input_is_wrapped:  # INTERACTIVE-DO: implies stage_has_input?
-        if not isinstance(entrypoint_inputs, dict):
+    if function_input_is_wrapped:
+        if not stage_has_input:
+            raise ValueError(f"{entrypoint_function_name} requires an `input` kwarg")
+        if not isinstance(
+            entrypoint_inputs, dict  # pylint: disable=used-before-assignment
+        ):
             raise ValueError(
                 f"input parameter for {entrypoint_function_name} must be a dictionary"
             )
