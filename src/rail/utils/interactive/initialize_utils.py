@@ -71,6 +71,10 @@ def _interactive_factory(
     entrypoint_function: Callable = getattr(instance, entrypoint_function_name)
 
     if function_input_is_wrapped:  # INTERACTIVE-DO: implies stage_has_input?
+        if not isinstance(entrypoint_inputs, dict):
+            raise ValueError(
+                f"input parameter for {entrypoint_function_name} must be a dictionary"
+            )
         output = entrypoint_function(**entrypoint_inputs, **kwargs)
     elif stage_has_input:
         output = entrypoint_function(entrypoint_inputs, **kwargs)
