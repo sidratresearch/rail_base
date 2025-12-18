@@ -850,7 +850,7 @@ class DataStore(dict):
 
         Note
         ----
-        All of the values must be data handles of this will raise a TypeError
+        All of the values must be data handles or this will raise a TypeError
         """
         super(dict, self).__init__()
         for key, val in kwargs.items():
