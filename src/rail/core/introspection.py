@@ -448,20 +448,6 @@ class RailEnv:
             cls.build_rail_namespace_tree()
 
         apitoc = """
-######################
-RAIL API Documentation
-######################
-
-***********
-Interactive
-***********
-
-.. toctree::
-   :maxdepth: 4
-
-   api/rail.interactive
-
-
 *************
 Base Packages
 *************

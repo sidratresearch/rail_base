@@ -8,6 +8,18 @@ import rail
 import rail.interactive
 from rail.utils.interactive.base_utils import STAGE_NAMES, _get_virtual_submodule_names
 
+INTERACTIVE_RST = """
+***********
+Interactive
+***********
+
+{extra_content}
+
+.. toctree::
+   :maxdepth: 4
+
+   {children}
+"""
 NAMESPACE_RST = """
 {name} namespace
 {underline}==========
@@ -116,8 +128,14 @@ def write_interactive_api_rst(docs_path: str) -> None:
         children = [".".join([name, child]) for child in get_children(parts)]
         make_rst(name, children, docs_path)
 
-    make_rst(
-        "rail.interactive",
-        [f"rail.interactive.{child}" for child in recursive],
-        docs_path,
+    # Make a special, separate page for the top-level rail.interactive module
+    top_level_path = docs_path / "api_interactive.rst"
+    print(f"Writing {top_level_path}")
+    top_level_path.write_text(
+        INTERACTIVE_RST.format(
+            extra_content=get_extra_content("rail.interactive", docs_path),
+            children="\n   ".join(
+                [f"api/rail.interactive.{namespace}" for namespace in recursive]
+            ),
+        ).strip()
     )
