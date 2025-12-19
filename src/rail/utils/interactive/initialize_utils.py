@@ -38,7 +38,10 @@ class VirtualModule:
 
 
 def _interactive_factory(
-    rail_stage: type[RailStage], function_input_is_wrapped: bool, **kwargs
+    rail_stage: type[RailStage],
+    function_input_is_wrapped: bool,
+    function_requires_input: bool,
+    **kwargs,
 ) -> Any:
     """Create the actual interactive function for a RAIL stage
 
@@ -50,6 +53,8 @@ def _interactive_factory(
         Whether or not the interactive version of the entrypoint function has wrapped up
         multiple positional parameters into a dictionary, that needs to be unwrapped
         when passing it onwards
+    function_requires_input : bool
+        Whether or not the interactive version of the function needs to have an `input` kwarg
 
     Returns
     -------
@@ -57,24 +62,29 @@ def _interactive_factory(
         This function returns the result of calling the stage's entrypoint function
         (after calling make_stage)
     """
+    entrypoint_function_name = rail_stage.entrypoint_function
+
     # extract the input kwarg, and turn it into the appropriate DataHandle
     stage_has_input = "input" in kwargs
     if stage_has_input:
         entrypoint_inputs = kwargs.pop("input")
+    elif function_requires_input:
+        raise ValueError(f"{entrypoint_function_name} requires an `input` kwarg")
 
     for key, value in GLOBAL_INTERACTIVE_PARAMETERS.items():
         if key in kwargs:
             raise ValueError(f"In rail.interactive, {key} is set to {value}")
 
     instance = rail_stage.make_stage(**kwargs, **GLOBAL_INTERACTIVE_PARAMETERS)
-    entrypoint_function_name = instance.entrypoint_function
     entrypoint_function: Callable = getattr(instance, entrypoint_function_name)
 
     if function_input_is_wrapped:
-        if not stage_has_input:
+        if (
+            not stage_has_input
+        ):  # INTERACTIVE-DO: probably redundant with function_requires_input check above
             raise ValueError(f"{entrypoint_function_name} requires an `input` kwarg")
         if not isinstance(
-            entrypoint_inputs, dict  # pylint: disable=used-before-assignment
+            entrypoint_inputs, dict  # pylint: disable=possibly-used-before-assignment
         ):
             raise ValueError(
                 f"input parameter for {entrypoint_function_name} must be a dictionary"
@@ -203,9 +213,14 @@ def _attatch_interactive_function(
     virtual_module = stage_module_dict[virtual_module_name]
 
     # create the function
-    docstring, function_input_is_wrapped = create_interactive_docstring(stage_name)
+    docstring, function_input_is_wrapped, function_requires_input = (
+        create_interactive_docstring(stage_name)
+    )
     created_function: Callable = functools.partial(
-        _interactive_factory, stage_definition, function_input_is_wrapped
+        _interactive_factory,
+        stage_definition,
+        function_input_is_wrapped,
+        function_requires_input,
     )
     created_function.__doc__ = docstring
     created_function.__module__ = virtual_module.module

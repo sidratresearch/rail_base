@@ -399,6 +399,7 @@ def _create_parameters_section(
     input_is_wrapped = (
         False  # flag for the interactive function, indicating whether "input" is a dict
     )
+    requires_input = True  # flag for the interactive function, indicating whether "input" should exist
     input_parameter_names = [
         i.name
         for i in epf_inspected_parameters
@@ -430,6 +431,8 @@ def _create_parameters_section(
             description="\n".join(description_entries),
         )
         epf_parameters.insert(0, input_parameter)
+    else:
+        requires_input = False
 
     # Class parameters
     for parameter in class_parameters:
@@ -456,6 +459,7 @@ def _create_parameters_section(
     return (
         "\n".join([str(i) for i in _sort_parameters(epf_parameters)]),
         input_is_wrapped,
+        requires_input,
     )
 
 
@@ -601,7 +605,7 @@ def create_interactive_docstring(stage_name: str) -> str:
     )
 
     # handle the parameters
-    parameters_content, input_is_wrapped = _create_parameters_section(
+    parameters_content, input_is_wrapped, requires_input = _create_parameters_section(
         stage_definition, epf_sections["Parameters"]
     )
 
@@ -661,4 +665,4 @@ def create_interactive_docstring(stage_name: str) -> str:
         line_filter=param_annotation_filter,
     )
 
-    return docstring, input_is_wrapped
+    return docstring, input_is_wrapped, requires_input
