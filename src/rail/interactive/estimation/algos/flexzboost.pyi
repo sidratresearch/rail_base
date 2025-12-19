@@ -76,6 +76,9 @@ def flex_z_boost_estimator(**kwargs) -> Any:
     qp_representation : str, optional
         qp generator to use. [interp|flexzboost]
         Default: interp
+    include_mag_err : bool, optional
+        Include magnitude error in the training and estimationprocess
+        Default: False
 
     Returns
     -------
@@ -182,6 +185,9 @@ def flex_z_boost_informer(**kwargs) -> Any:
         dictionary of options passed to flexcode, includes max_depth (int), and
         objective, which should be set  to reg:squarederror
         Default: {'max_depth': 8, 'objective': 'reg:squarederror'}
+    include_mag_err : bool, optional
+        Include magnitude error in the training and estimationprocess
+        Default: False
 
     Returns
     -------
