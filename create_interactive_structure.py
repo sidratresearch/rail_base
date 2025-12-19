@@ -83,6 +83,7 @@ def check_rail_packages() -> list[str]:
     }
     package_info = RailEnv.list_rail_packages()
     del package_info["rail.hub"]
+    del package_info["rail._pipelines"]
     rail_base_path = package_info["rail.core"][0].path
 
     return ["pz-rail"] + [

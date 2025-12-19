@@ -19,8 +19,8 @@ inputdata = os.path.join(RAILDIR, "rail/examples_data/testdata/output_BPZ_lite.h
     "input_param",
     [
         {"zbin_edges": [0.0, 0.3]},
-        {"zmin": 0.0, "zmax": 0.3, "nbins": 1},
-        {"zbin_edges": [0.0, 0.3], "id_name": "CATAID"},
+        {"zmin": 0.0, "zmax": 0.3, "n_tom_bins": 1},
+        {"zbin_edges": [0.0, 0.3], "object_id_col": "CATAID"},
     ],
 )
 def test_UniformBinningClassifier(input_param: dict) -> None:
@@ -29,7 +29,7 @@ def test_UniformBinningClassifier(input_param: dict) -> None:
     input_data_handle = QPHandle("input_data", path=inputdata)
 
     tomo = UniformBinningClassifier.make_stage(
-        point_estimate="zmode",
+        point_estimate_key="zmode",
         no_assign=-99,
         **input_param,
     )
@@ -45,11 +45,11 @@ def test_UniformBinningClassifier_binsize() -> None:
     input_data.read()  # make sure the data is read in
 
     tomo = UniformBinningClassifier.make_stage(
-        point_estimate="zmode",
+        point_estimate_key="zmode",
         no_assign=-99,
         zmin=0.0,
         zmax=2.0,
-        nbins=2,
+        n_tom_bins=2,
     )
     output_data = tomo.classify(input_data)
     out_data = output_data.data
@@ -86,11 +86,11 @@ def test_UniformBinningClassifier_ancil() -> None:
     input_data = input_data_handle.read()
 
     tomo = UniformBinningClassifier.make_stage(
-        point_estimate="zmedian",
+        point_estimate_key="zmedian",
         no_assign=-99,
         zmin=0.0,
         zmax=2.0,
-        nbins=2,
+        n_tom_bins=2,
     )
     with pytest.raises(KeyError):
         _out_data = tomo.classify(input_data)
@@ -99,8 +99,8 @@ def test_UniformBinningClassifier_ancil() -> None:
 @pytest.mark.parametrize(
     "input_param",
     [
-        {"zmin": 0.0, "zmax": 0.3, "nbins": 1},
-        {"zmin": 0.0, "zmax": 0.3, "nbins": 1, "id_name": "CATAID"},
+        {"zmin": 0.0, "zmax": 0.3, "n_tom_bins": 1},
+        {"zmin": 0.0, "zmax": 0.3, "n_tom_bins": 1, "object_id_col": "CATAID"},
     ],
 )
 def test_EqualCountClassifier(input_param: dict) -> None:
@@ -110,7 +110,7 @@ def test_EqualCountClassifier(input_param: dict) -> None:
     input_data = input_data_handle.read()
 
     tomo = EqualCountClassifier.make_stage(
-        point_estimate="zmode",
+        point_estimate_key="zmode",
         no_assign=-99,
         **input_param,
     )
@@ -126,11 +126,11 @@ def test_EqualCountClassifier_nobj() -> None:
     input_data = input_data_handle.read()
 
     tomo = EqualCountClassifier.make_stage(
-        point_estimate="zmode",
+        point_estimate_key="zmode",
         no_assign=-99,
         zmin=0.0,
         zmax=2.0,
-        nbins=2,
+        n_tom_bins=2,
     )
     output_data = tomo.classify(input_data)
     out_data = output_data.data
@@ -162,11 +162,11 @@ def test_EqualCountClassifier_ancil() -> None:
     input_data = input_data_handle.read()
 
     tomo = EqualCountClassifier.make_stage(
-        point_estimate="zmedian",
+        point_estimate_key="zmedian",
         no_assign=-99,
         zmin=0.0,
         zmax=2.0,
-        nbins=2,
+        n_tom_bins=2,
     )
     with pytest.raises(KeyError):
         _out_data = tomo.classify(input_data)

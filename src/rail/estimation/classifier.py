@@ -7,7 +7,7 @@ from typing import Any
 
 import qp
 
-from rail.core.common_params import SHARED_PARAMS
+from rail.core.common_params import SHARED_PARAMS, SharedParams
 from rail.core.data import (
     DataHandle,
     Hdf5Handle,
@@ -34,8 +34,8 @@ class CatClassifier(RailStage):  # pragma: no cover
     entrypoint_function = "classify"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
-        chunk_size=SHARED_PARAMS,
-        hdf5_groupname=SHARED_PARAMS,
+        chunk_size=SharedParams.copy_param("chunk_size"),
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),
     )
     inputs = [("model", ModelHandle), ("input", TableHandle)]
     outputs = [("output", TableHandle)]
@@ -91,7 +91,7 @@ class PZClassifier(RailStage):
     name = "PZClassifier"
     entrypoint_function = "classify"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
-    config_options.update(chunk_size=SHARED_PARAMS)
+    config_options.update(chunk_size=SharedParams.copy_param("chunk_size"))
     inputs = [("input", QPHandle)]
     outputs = [("output", Hdf5Handle)]
     _partial_output = {}

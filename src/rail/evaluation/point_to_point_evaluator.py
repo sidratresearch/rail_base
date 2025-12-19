@@ -6,6 +6,7 @@ from qp.metrics.base_metric_classes import MetricOutputType
 from qp.metrics.point_estimate_metric_classes import PointToPointMetric
 
 from rail.core.data import QPHandle, TableHandle, TableLike
+from rail.core.common_params import SharedParams
 from rail.evaluation.evaluator import Evaluator
 
 
@@ -17,9 +18,7 @@ class PointToPointEvaluator(Evaluator):
     interactive_function = "point_to_point_evaluator"
     config_options = Evaluator.config_options.copy()
     config_options.update(
-        hdf5_groupname=Param(
-            str, "photometry", required=False, msg="HDF5 Groupname for truth table."
-        ),
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),  # for truth table
         reference_dictionary_key=Param(
             str,
             "redshift",
@@ -61,9 +60,7 @@ class PointToPointBinnedEvaluator(Evaluator):
     interactive_function = "point_to_point_binned_evaluator"
     config_options = Evaluator.config_options.copy()
     config_options.update(
-        hdf5_groupname=Param(
-            str, "photometry", required=False, msg="HDF5 Groupname for truth table."
-        ),
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),  # for truth table
         reference_dictionary_key=Param(
             str,
             "redshift",

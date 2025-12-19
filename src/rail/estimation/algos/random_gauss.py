@@ -12,6 +12,7 @@ from ceci.config import StageParameter as Param
 from scipy.stats import norm
 
 from rail.core.data import ModelHandle, TableHandle, TableLike
+from rail.core.common_params import SharedParams
 from rail.estimation.estimator import CatEstimator
 from rail.estimation.informer import CatInformer
 
@@ -37,10 +38,10 @@ class RandomGaussEstimator(CatEstimator):
     inputs = [("input", TableHandle), ("model", ModelHandle)]
     config_options = CatEstimator.config_options.copy()
     config_options.update(
-        rand_width=Param(float, 0.025, "ad hock width of PDF"),
-        rand_zmin=Param(float, 0.0, msg="The minimum redshift of the z grid"),
-        rand_zmax=Param(float, 3.0, msg="The maximum redshift of the z grid"),
-        nzbins=Param(int, 301, msg="The number of gridpoints in the z grid"),
+        rand_width=Param(float, 0.025, msg="ad hock width of PDF"),
+        zmin=SharedParams.copy_param("zmin"),
+        zmax=SharedParams.copy_param("zmax"),
+        nzbins=SharedParams.copy_param("nzbins"),
         seed=Param(int, 87, msg="random seed"),
         column_name=Param(
             str,

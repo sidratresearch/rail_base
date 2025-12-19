@@ -15,7 +15,7 @@ class DistToDistEvaluator(Evaluator):
     interactive_function = "dist_to_dist_evaluator"
     config_options = Evaluator.config_options.copy()
     config_options.update(
-        limits=Param(
+        metric_integration_limits=Param(
             list,
             [0.0, 3.0],
             required=False,
@@ -27,7 +27,7 @@ class DistToDistEvaluator(Evaluator):
             required=False,
             msg="The default step size when calculating metrics on a grid.",
         ),
-        num_samples=Param(
+        n_samples=Param(
             int,
             100,
             required=False,

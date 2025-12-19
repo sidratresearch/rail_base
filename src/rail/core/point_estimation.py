@@ -5,13 +5,15 @@ from numpy.typing import NDArray
 from scipy.integrate import simpson
 from scipy.optimize import minimize_scalar
 
-from rail.core.common_params import SHARED_PARAMS
+from rail.core.common_params import SHARED_PARAMS, SharedParams
 
 
 class PointEstimationMixin:
     config_options = dict(
-        calculated_point_estimates=SHARED_PARAMS,
-        recompute_point_estimates=SHARED_PARAMS,
+        calculated_point_estimates=SharedParams.copy_param(
+            "calculated_point_estimates"
+        ),
+        recompute_point_estimates=SharedParams.copy_param("recompute_point_estimates"),
     )
 
     @property

@@ -7,8 +7,8 @@ from typing import Any
 import numpy as np
 import qp
 
-from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import ModelHandle, QPHandle, TableHandle, TableLike
+from rail.core.common_params import SHARED_PARAMS, SharedParams
+from rail.core.data import DataHandle, ModelHandle, QPHandle, TableHandle, TableLike
 from rail.core.stage import RailStage
 
 # for backwards compatibility
@@ -27,7 +27,7 @@ class CatSummarizer(RailStage):  # pragma: no cover
     name = "CatSummarizer"
     entrypoint_function = "summarize"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
-    config_options.update(chunk_size=SHARED_PARAMS)
+    config_options.update(chunk_size=SharedParams.copy_param("chunk_size"))
     inputs = [("input", TableHandle)]
     outputs = [("output", QPHandle)]
 
@@ -72,7 +72,7 @@ class PZSummarizer(RailStage):
     name = "PZtoNZSummarizer"
     entrypoint_function = "summarize"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
-    config_options.update(chunk_size=SHARED_PARAMS)
+    config_options.update(chunk_size=SharedParams.copy_param("chunk_size"))
     inputs = [("model", ModelHandle), ("input", QPHandle)]
     outputs = [("output", QPHandle)]
 
@@ -112,7 +112,7 @@ class PZSummarizer(RailStage):
         ngal = self._input_length
         if self.rank == 0:
             bootstrap_matrix = rng.integers(
-                low=0, high=ngal, size=(ngal, self.config.nsamples)
+                low=0, high=ngal, size=(ngal, self.config.n_samples)
             )
         else:  # pragma: no cover
             bootstrap_matrix = None
@@ -138,7 +138,7 @@ class SZPZSummarizer(RailStage):  # pragma: no cover
     name = "SZPZtoNZSummarizer"
     entrypoint_function = "summarize"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
-    config_options.update(chunk_size=SHARED_PARAMS)
+    config_options.update(chunk_size=SharedParams.copy_param("chunk_size"))
     inputs = [
         ("input", TableHandle),
         ("spec_input", TableHandle),

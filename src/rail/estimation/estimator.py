@@ -10,9 +10,11 @@ import numpy as np
 import qp
 import tables_io
 
-from rail.core.common_params import SHARED_PARAMS
+from rail.core.common_params import SHARED_PARAMS, SharedParams
 from rail.core.data import (
+    DataHandle,
     ModelHandle,
+    ModelLike,
     QPHandle,
     TableHandle,
     TableLike,
@@ -42,15 +44,16 @@ class CatEstimator(RailStage, PointEstimationMixin):
     entrypoint_function = "estimate"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
-        chunk_size=SHARED_PARAMS,
-        hdf5_groupname=SHARED_PARAMS,
-        zmin=SHARED_PARAMS,
-        zmax=SHARED_PARAMS,
-        nzbins=SHARED_PARAMS,
-        id_col=SHARED_PARAMS,
-        redshift_col=SHARED_PARAMS,
-        calc_summary_stats=SHARED_PARAMS,
+        chunk_size=SharedParams.copy_param("chunk_size"),
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),
+        zmin=SharedParams.copy_param("zmin"),
+        zmax=SharedParams.copy_param("zmax"),
+        nzbins=SharedParams.copy_param("nzbins"),
+        id_col=SharedParams.copy_param("id_col"),
+        redshift_col=SharedParams.copy_param("redshift_col"),
+        calc_summary_stats=SharedParams.copy_param("calc_summary_stats"),
     )
+
     config_options.update(
         **PointEstimationMixin.config_options.copy(),
     )
@@ -281,8 +284,8 @@ class PzEstimator(RailStage, PointEstimationMixin):
     entrypoint_function = "estimate"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
-        chunk_size=SHARED_PARAMS,
-        hdf5_groupname=SHARED_PARAMS,
+        chunk_size=SharedParams.copy_param("chunk_size"),
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),
     )
     config_options.update(
         **PointEstimationMixin.config_options.copy(),

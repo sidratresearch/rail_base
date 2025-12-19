@@ -12,8 +12,8 @@ import numpy as np
 import qp
 import tables_io
 
-from rail.core.common_params import SHARED_PARAMS
-from rail.core.data import ModelHandle, QPHandle, TableHandle, TableLike
+from rail.core.common_params import SHARED_PARAMS, SharedParams
+from rail.core.data import DataHandle, ModelHandle, QPHandle, TableHandle, TableLike
 from rail.core.stage import RailStage
 
 
@@ -40,7 +40,7 @@ class CatInformer(RailStage):
     inputs = [("input", TableHandle)]
     outputs = [("model", ModelHandle)]
     config_options.update(
-        hdf5_groupname=SHARED_PARAMS,
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),
     )
 
     def __init__(self, args: Any, **kwargs: Any) -> None:
@@ -114,8 +114,8 @@ class PzInformer(RailStage):
     entrypoint_function = "inform"  # the user-facing science function for this class
     config_options = RailStage.config_options.copy()
     config_options.update(
-        hdf5_groupname=SHARED_PARAMS,
-        chunk_size=SHARED_PARAMS,
+        hdf5_groupname=SharedParams.copy_param("hdf5_groupname"),
+        chunk_size=SharedParams.copy_param("chunk_size"),
     )
 
     inputs = [("input", QPHandle), ("truth", TableHandle)]

@@ -9,6 +9,7 @@ import qp
 from ceci.config import StageParameter as Param
 
 from rail.core.data import QPHandle, TableHandle, TableLike
+from rail.core.common_params import SharedParams
 from rail.estimation.informer import PzInformer
 from rail.estimation.summarizer import PZSummarizer
 
@@ -34,11 +35,11 @@ class NaiveStackSummarizer(PZSummarizer):
     interactive_function = "naive_stack_summarizer"
     config_options = PZSummarizer.config_options.copy()
     config_options.update(
-        zmin=Param(float, 0.0, msg="The minimum redshift of the z grid"),
-        zmax=Param(float, 3.0, msg="The maximum redshift of the z grid"),
-        nzbins=Param(int, 301, msg="The number of gridpoints in the z grid"),
+        zmin=SharedParams.copy_param("zmin"),
+        zmax=SharedParams.copy_param("zmax"),
+        nzbins=SharedParams.copy_param("nzbins"),
         seed=Param(int, 87, msg="random seed"),
-        nsamples=Param(int, 1000, msg="Number of sample distributions to create"),
+        n_samples=Param(int, 1000, msg="Number of sample distributions to create"),
     )
     inputs = [("input", QPHandle)]
     outputs = [("output", QPHandle), ("single_NZ", QPHandle)]
@@ -88,9 +89,9 @@ class NaiveStackSummarizer(PZSummarizer):
             self.config.zmin, self.config.zmax, self.config.nzbins + 1
         )
         assert self.zgrid is not None
-        # Initiallizing the stacking pdf's
+        # Initializing the stacking pdf's
         yvals = np.zeros((1, len(self.zgrid)))
-        bvals = np.zeros((self.config.nsamples, len(self.zgrid)))
+        bvals = np.zeros((self.config.n_samples, len(self.zgrid)))
         bootstrap_matrix = self._broadcast_bootstrap_matrix()
 
         first = True
@@ -135,7 +136,7 @@ class NaiveStackSummarizer(PZSummarizer):
             0,
         )
         # qp_d is the normalized probability of the stack, we need to know how many galaxies were
-        for i in range(self.config.nsamples):
+        for i in range(self.config.n_samples):
             bootstrap_draws = bootstrap_matrix[:, i]
             # Neither all of the bootstrap_draws are in this chunk nor the index starts at "start"
             chunk_mask = (bootstrap_draws >= start) & (bootstrap_draws < end)
@@ -195,7 +196,7 @@ class NaiveStackMaskedSummarizer(NaiveStackSummarizer):
         Parameters
         ----------
         input_data : qp.Ensemble
-            Per-galaxy p(z), and any ancilary data associated with it
+            Per-galaxy p(z), and any ancillary data associated with it
 
         tomo_bins : TableLike | None, optional
             Tomographic bins file, by default None
@@ -203,7 +204,7 @@ class NaiveStackMaskedSummarizer(NaiveStackSummarizer):
         Returns
         -------
         QPHandle
-            Ensemble with n(z), and any ancilary data
+            Ensemble with n(z), and any ancillary data
         """
         self.set_data("input", input_data)
         if tomo_bins is None:

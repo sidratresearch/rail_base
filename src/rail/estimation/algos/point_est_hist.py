@@ -9,6 +9,7 @@ import qp
 from ceci.config import StageParameter as Param
 
 from rail.core.data import QPHandle, TableHandle, TableLike
+from rail.core.common_params import SharedParams
 from rail.estimation.informer import PzInformer
 from rail.estimation.summarizer import PZSummarizer
 
@@ -34,12 +35,12 @@ class PointEstHistSummarizer(PZSummarizer):
     interactive_function = "point_est_hist_summarizer"
     config_options = PZSummarizer.config_options.copy()
     config_options.update(
-        zmin=Param(float, 0.0, msg="The minimum redshift of the z grid"),
-        zmax=Param(float, 3.0, msg="The maximum redshift of the z grid"),
-        nzbins=Param(int, 301, msg="The number of gridpoints in the z grid"),
+        zmin=SharedParams.copy_param("zmin"),
+        zmax=SharedParams.copy_param("zmax"),
+        nzbins=SharedParams.copy_param("nzbins"),
         seed=Param(int, 87, msg="random seed"),
-        point_estimate=Param(str, "zmode", msg="Which point estimate to use"),
-        nsamples=Param(int, 1000, msg="Number of sample distributions to return"),
+        point_estimate_key=Param(str, "zmode", msg="Which point estimate to use"),
+        n_samples=Param(int, 1000, msg="Number of sample distributions to return"),
     )
     inputs = [("input", QPHandle)]
     outputs = [("output", QPHandle), ("single_NZ", QPHandle)]
@@ -66,7 +67,7 @@ class PointEstHistSummarizer(PZSummarizer):
         bootstrap_matrix = self._broadcast_bootstrap_matrix()
         # Initiallizing the histograms
         single_hist = np.zeros(self.config.nzbins)
-        hist_vals = np.zeros((self.config.nsamples, self.config.nzbins))
+        hist_vals = np.zeros((self.config.n_samples, self.config.nzbins))
 
         first = True
         for s, e, test_data, mask in iterator:
@@ -101,9 +102,9 @@ class PointEstHistSummarizer(PZSummarizer):
         hist_vals: np.ndarray,
     ) -> None:
         assert self.zgrid is not None
-        zb = test_data.ancil[self.config.point_estimate]
+        zb = test_data.ancil[self.config.point_estimate_key]
         single_hist += np.histogram(zb[mask], bins=self.zgrid)[0]
-        for i in range(self.config.nsamples):
+        for i in range(self.config.n_samples):
             bootstrap_indeces = bootstrap_matrix[:, i]
             # Neither all of the bootstrap_draws are in this chunk nor the index starts at "start"
             chunk_mask = (bootstrap_indeces >= start) & (bootstrap_indeces < end)
