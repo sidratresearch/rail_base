@@ -9,6 +9,8 @@ import rail.interactive
 from rail.utils.interactive.base_utils import STAGE_NAMES, _get_virtual_submodule_names
 
 INTERACTIVE_RST = """
+.. _page-interactive-api:
+
 ***********
 Interactive
 ***********

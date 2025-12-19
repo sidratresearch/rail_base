@@ -631,7 +631,9 @@ def create_interactive_docstring(stage_name: str) -> str:
             header = f"\n{section_name}\n{'-'*len(section_name)}"
             extra_documentation += f"{header}\n{section_content}"
     if stage_definition.extra_interactive_documentation is not None:
-        extra_documentation += f"\n{stage_definition.extra_interactive_documentation}"
+        extra_class_docs = stage_definition.extra_interactive_documentation
+        extra_class_docs = textwrap.dedent(extra_class_docs)
+        extra_documentation += f"\n{extra_class_docs}"
 
     # assemble the docstring
     docstring = DOCSTRING_FORMAT.format(
